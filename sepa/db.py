@@ -130,9 +130,9 @@ def write_signal(con, asof, s):
         footprint=excluded.footprint, pivot=excluded.pivot, entry=excluded.entry,
         stop=excluded.stop, buyable=excluded.buyable, tier=excluded.tier,
         reason=excluded.reason""",
-        (s["ticker"], asof, s["stage"], s["tt"], s["rs"], s["funda"], s["setup"],
-         s["footprint"], s["pivot"], s["entry"], s["stop"], int(s["buyable"]),
-         s["tier"], s["reason"]))
+        (s["ticker"], asof, int(s["stage"]), int(s["tt"]), int(s["rs"]), int(s["funda"]),
+         s["setup"], s["footprint"], float(s["pivot"]), float(s["entry"]),
+         float(s["stop"]), int(s["buyable"]), s["tier"], s["reason"]))
 
 
 def set_state(con, ticker, tier, added, asof):

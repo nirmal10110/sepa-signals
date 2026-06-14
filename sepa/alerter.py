@@ -40,6 +40,10 @@ def build_card(sig):
             f"(-{risk_pct*100:.1f}%) · target `{target}` (3:1 R:R) "
             f"· size `{shares}` sh @ {C.RISK_PER_TRADE*100:.2f}% risk"
         )
+    tt = sig.get("tt", 0)
+    if isinstance(tt, bytes):
+        tt = int.from_bytes(tt, "little")
+    sig = {**sig, "tt": tt}
     tone = sig.get("market_tone", "—")
     ud = sig.get("ud_vol", 0)
     ud_tag = f"· vol ratio `{ud:.2f}` {'⬆' if ud >= 1.0 else '⬇'}" if ud else ""
