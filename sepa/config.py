@@ -70,6 +70,9 @@ TELEGRAM_CHAT_ID   = _get("TELEGRAM_CHAT_ID")
 
 # --- AI validator ---
 VALIDATOR_MODEL    = _get("VALIDATOR_MODEL", "claude-haiku-4-5-20251001")
+# Max stocks validated per night. Candidates are sorted by RS first; extras
+# still fire as alerts but without the AI Company/Thesis/Catalysts block.
+VALIDATOR_MAX_CALLS = _getint("VALIDATOR_MAX_CALLS", 10)
 
 # --- account / risk ---
 ACCOUNT_SIZE       = _getfloat("ACCOUNT_SIZE",    100_000)

@@ -197,8 +197,15 @@ def run(con=None, market_tone=None):
                if s in ("NEW", "PROMOTED") and curr.get(t, {}).get("tier") == "Buy Ready"]
 
     # Phase 7: run AI validator on each candidate; REJECT suppresses, CAUTION annotates
+    # Cap nightly API calls to VALIDATOR_MAX_CALLS (sorted by RS, best first).
     if buyable:
-        verdicts = val.validate_batch(buyable, chart_dir=str(C.CHART_DIR))
+        buyable_sorted = sorted(buyable, key=lambda s: s["rs"], reverse=True)
+        to_validate = buyable_sorted[:C.VALIDATOR_MAX_CALLS]
+        skipped_ai  = buyable_sorted[C.VALIDATOR_MAX_CALLS:]
+        if skipped_ai:
+            log.warning("validator cap hit: skipping AI for %s",
+                        [s["ticker"] for s in skipped_ai])
+        verdicts = val.validate_batch(to_validate, chart_dir=str(C.CHART_DIR))
         confirmed = []
         for sig in buyable:
             v = verdicts.get(sig["ticker"], {"verdict": "CONFIRM", "reason": "",
@@ -214,6 +221,9 @@ def run(con=None, market_tone=None):
             sig["ai_thesis"] = v.get("thesis", "")
             sig["ai_catalysts"] = v.get("catalysts", "")
             confirmed.append(sig)
+        # Stocks that exceeded the cap: alert without AI context
+        for sig in skipped_ai:
+            confirmed.append(dict(sig))
         buyable = confirmed
 
     sent = alerter.process(con, buyable, hist, asof)
