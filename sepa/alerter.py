@@ -93,16 +93,22 @@ def send(token, chat_id, text, image_path=None):
         print("[telegram not configured] would send:\n" + text +
               (f"\n[+image {image_path}]" if image_path else ""))
         return False
-    import requests
+    import logging, requests
+    _log = logging.getLogger("sepa.alerter")
     if image_path:
         with open(image_path, "rb") as f:
-            requests.post(f"https://api.telegram.org/bot{token}/sendPhoto",
-                          data={"chat_id": chat_id, "caption": text, "parse_mode": "Markdown"},
-                          files={"photo": f}, timeout=30)
+            r = requests.post(f"https://api.telegram.org/bot{token}/sendPhoto",
+                              data={"chat_id": chat_id, "caption": text, "parse_mode": "Markdown"},
+                              files={"photo": f}, timeout=30)
     else:
-        requests.post(f"https://api.telegram.org/bot{token}/sendMessage",
-                      data={"chat_id": chat_id, "text": text, "parse_mode": "Markdown"},
-                      timeout=30)
+        r = requests.post(f"https://api.telegram.org/bot{token}/sendMessage",
+                          data={"chat_id": chat_id, "text": text, "parse_mode": "Markdown"},
+                          timeout=30)
+    resp = r.json()
+    if not resp.get("ok"):
+        _log.error("Telegram send failed: %s", resp)
+        print(f"  [telegram error] {resp}")
+        return False
     return True
 
 
