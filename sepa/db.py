@@ -252,10 +252,15 @@ def get_fundamentals(con, ticker):
         "SELECT * FROM fundamentals WHERE ticker=? ORDER BY period_end", con,
         params=(ticker,))
     if df.empty:
-        return {"eps": [], "sales": [], "op_margin": 0, "roe": 0}
-    return {"eps": df["eps"].tail(4).tolist(), "sales": df["sales"].tail(4).tolist(),
-            "op_margin": float(df["op_margin"].iloc[-1]),
-            "roe": float(df["roe"].iloc[-1])}
+        return {"eps": [], "sales": [], "op_margin": 0, "op_margins": [], "roe": 0}
+    tail8 = df.tail(8)
+    return {
+        "eps":        tail8["eps"].tolist(),          # up to 8 quarters, oldest first
+        "sales":      tail8["sales"].tolist(),
+        "op_margin":  float(tail8["op_margin"].iloc[-1]),   # most recent (backward compat)
+        "op_margins": tail8["op_margin"].tolist(),    # list for trend detection
+        "roe":        float(tail8["roe"].iloc[-1]),
+    }
 
 
 def get_meta(con, ticker):

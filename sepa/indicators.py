@@ -38,6 +38,18 @@ def swing_points(close: np.ndarray, k: int = 3):
     return highs, lows
 
 
+def up_day_vol_ratio(df: pd.DataFrame, lookback: int = 60) -> float:
+    """Institutional sponsorship proxy: avg volume on up-days / avg volume on down-days.
+    Minervini looks for > 1.0 (more volume on advances than declines = accumulation).
+    Uses close vs open to classify each day."""
+    recent = df.tail(lookback)
+    up_vol = recent.loc[recent["close"] > recent["open"], "volume"].mean()
+    dn_vol = recent.loc[recent["close"] <= recent["open"], "volume"].mean()
+    if dn_vol == 0 or np.isnan(dn_vol):
+        return 1.0
+    return float(up_vol / dn_vol)
+
+
 def contractions(close: np.ndarray, k: int = 3):
     """Sequence of peak->trough drawdown depths (fractions) across the base,
     oldest to newest. This is the raw material for the VCP footprint."""

@@ -68,16 +68,65 @@ def rank_rs(returns: dict[str, float]) -> dict[str, int]:
 
 
 def fundamental_screen(f: dict):
-    """Returns (passes, score 0-4, note). Looks for acceleration + quality."""
-    eps, sales = f.get("eps", []), f.get("sales", [])
-    eps_accel = len(eps) >= 3 and eps[-1] > eps[-2] > eps[-3]
-    sales_accel = len(sales) >= 3 and sales[-1] > sales[-2] > sales[-3]
-    margin_ok = f.get("op_margin", 0) >= 0.10
-    roe_ok = f.get("roe", 0) >= 0.17
-    score = sum([eps_accel, sales_accel, margin_ok, roe_ok])
-    tags = []
-    if eps_accel: tags.append("EPS↑")
-    if sales_accel: tags.append("Sales↑")
-    if roe_ok: tags.append("ROE>17")
+    """Full SEPA fundamental check. Returns (passes, score, note).
+
+    Checks (in order of Minervini's priority):
+    1. EPS positive (must be profitable — hard gate)
+    2. EPS sequential acceleration (direction)
+    3. EPS YoY growth >= FUND_EPS_GROWTH_MIN (magnitude, when 5+ quarters available)
+    4. Sales sequential acceleration
+    5. Sales YoY growth >= FUND_SALES_GROWTH_MIN (when 5+ quarters available)
+    6. Operating margin >= floor (FUND_OP_MARGIN_MIN)
+    7. Expanding margins (current > 4 quarters ago, when available)
+    8. ROE >= FUND_ROE_MIN
+
+    Pass = score >= FUND_MIN_SCORE. YoY checks are skipped (not penalised) when
+    fewer than 5 quarters of data are available — common early in a live run.
+    """
+    eps     = f.get("eps", [])
+    sales   = f.get("sales", [])
+    margins = f.get("op_margins", [])
+    op_margin = f.get("op_margin", 0)
+    roe     = f.get("roe", 0)
+
+    # Hard gate: company must be profitable. A money-loser never qualifies.
+    if not eps or eps[-1] <= 0:
+        return False, 0, "unprofitable"
+
+    score = 0
+    tags  = []
+
+    # 1. Sequential EPS acceleration (last 3 quarters trending up)
+    if len(eps) >= 3 and eps[-1] > eps[-2] > eps[-3]:
+        score += 1; tags.append("EPS↑")
+
+    # 2. EPS YoY growth >= threshold (compare Q to same Q previous year)
+    if len(eps) >= 5 and eps[-5] > 0:
+        eps_yoy = eps[-1] / eps[-5] - 1
+        if eps_yoy >= C.FUND_EPS_GROWTH_MIN:
+            score += 1; tags.append(f"EPS+{eps_yoy*100:.0f}%yr")
+
+    # 3. Sales sequential acceleration
+    if len(sales) >= 3 and sales[-1] > sales[-2] > sales[-3]:
+        score += 1; tags.append("Sales↑")
+
+    # 4. Sales YoY growth >= threshold
+    if len(sales) >= 5 and sales[-5] > 0:
+        sales_yoy = sales[-1] / sales[-5] - 1
+        if sales_yoy >= C.FUND_SALES_GROWTH_MIN:
+            score += 1; tags.append(f"Sales+{sales_yoy*100:.0f}%yr")
+
+    # 5. Operating margin floor
+    if op_margin >= C.FUND_OP_MARGIN_MIN:
+        score += 1; tags.append(f"Mrgn>{C.FUND_OP_MARGIN_MIN*100:.0f}%")
+
+    # 6. Expanding margins (current quarter vs 4 quarters ago)
+    if len(margins) >= 4 and margins[-1] > margins[-4]:
+        score += 1; tags.append("Mrgn↑")
+
+    # 7. Return on Equity >= threshold
+    if roe >= C.FUND_ROE_MIN:
+        score += 1; tags.append(f"ROE>{C.FUND_ROE_MIN*100:.0f}%")
+
     note = "+".join(tags) if tags else "weak"
-    return score >= 3, score, note
+    return score >= C.FUND_MIN_SCORE, score, note

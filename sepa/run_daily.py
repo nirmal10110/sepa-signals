@@ -9,7 +9,7 @@ from datetime import date
 from . import config as C
 from . import db
 from .providers import DBProvider
-from .indicators import add_mas
+from .indicators import add_mas, up_day_vol_ratio
 from .screens import (trend_template, classify_stage, weighted_rs_return,
                       rank_rs, fundamental_screen)
 from .patterns import detect_setups
@@ -96,7 +96,9 @@ def run(con=None, market_tone=None):
                 stage = 2
             stages_now[t] = stage
             tier, reason = decide_tier(stage, tt, rs, f_pass, setup, market_tone)
+            ud_ratio = round(up_day_vol_ratio(df), 2)
             sig = {"ticker": t, "stage": stage, "tt": tt, "rs": rs or 0, "funda": int(f_pass),
+                   "ud_vol": ud_ratio,   # up-day/down-day volume ratio (>1 = accumulation)
                    "setup": setup.type if setup else "—",
                    "footprint": setup.footprint if setup else "—",
                    "pivot": setup.pivot if setup else 0.0,

@@ -82,7 +82,7 @@ Recent headlines:
     t0 = time.monotonic()
     try:
         response = client.messages.create(
-            model="claude-opus-4-7",
+            model=C.VALIDATOR_MODEL,
             max_tokens=120,
             system=_SYSTEM,
             messages=[{"role": "user", "content": parts}],

@@ -1,4 +1,11 @@
-"""Central configuration. Every tunable threshold lives here."""
+"""Central configuration.
+
+User-facing settings (credentials, account, market tone) are loaded from a
+.env file at the project root. All algorithm thresholds stay in this file.
+
+Priority: .env file > environment variable > hardcoded default.
+"""
+import os
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -6,14 +13,91 @@ DATA_DIR = ROOT / "data"
 STATE_PATH = DATA_DIR / "state.json"
 WORKBOOK_PATH = DATA_DIR / "SEPA_Watchlist.xlsx"
 
-# --- account / risk (mirrors the Dashboard) ---
-ACCOUNT_SIZE = 100_000
-RISK_PER_TRADE = 0.0125          # 1.25%
+
+# ---------------------------------------------------------------------------
+# .env loader — no external dependency required
+# ---------------------------------------------------------------------------
+def _load_env(path: Path) -> None:
+    """Parse a .env file and inject into os.environ (does not overwrite)."""
+    if not path.exists():
+        return
+    with open(path) as f:
+        for line in f:
+            line = line.strip()
+            if not line or line.startswith("#") or "=" not in line:
+                continue
+            key, _, val = line.partition("=")
+            key = key.strip()
+            val = val.strip().strip('"').strip("'")
+            os.environ.setdefault(key, val)
+
+
+_load_env(ROOT / ".env")
+
+
+def _get(key: str, default: str = "") -> str:
+    return os.environ.get(key, default)
+
+
+def _getfloat(key: str, default: float) -> float:
+    try:
+        return float(os.environ.get(key, default))
+    except (ValueError, TypeError):
+        return default
+
+
+def _getint(key: str, default) -> int | None:
+    val = os.environ.get(key)
+    if val is None:
+        return default
+    val = val.strip()
+    if val.lower() in ("none", ""):
+        return None
+    try:
+        return int(val)
+    except ValueError:
+        return default
+
+
+# ===========================================================================
+# USER-FACING SETTINGS  (set these in .env — see .env.example)
+# ===========================================================================
+
+# --- credentials ---
+ANTHROPIC_API_KEY  = _get("ANTHROPIC_API_KEY")
+TELEGRAM_TOKEN     = _get("TELEGRAM_TOKEN")
+TELEGRAM_CHAT_ID   = _get("TELEGRAM_CHAT_ID")
+
+# --- AI validator ---
+VALIDATOR_MODEL    = _get("VALIDATOR_MODEL", "claude-haiku-4-5-20251001")
+
+# --- account / risk ---
+ACCOUNT_SIZE       = _getfloat("ACCOUNT_SIZE",    100_000)
+RISK_PER_TRADE     = _getfloat("RISK_PER_TRADE",  0.0125)   # 1.25% per trade
+
+# --- market tone gate (third axis) ---
+# "Confirmed uptrend" | "Under pressure" | "Correction"
+MARKET_TONE        = _get("MARKET_TONE", "Confirmed uptrend")
+
+# --- universe ---
+SEC_USER_AGENT     = _get("SEC_USER_AGENT",
+                           "SEPA personal scanner lather10110@gmail.com")
+UNIVERSE_LIMIT     = _getint("UNIVERSE_LIMIT", None)   # None = all SEC tickers
+PRICE_LOOKBACK     = _get("PRICE_LOOKBACK", "2y")
+
+
+# ===========================================================================
+# ALGORITHM THRESHOLDS  (tune in .env after Phase 2 calibration)
+# ===========================================================================
+
 BUY_ZONE_WIDTH = 0.05            # price is "buyable" within 5% of pivot
 
-# --- market tone gate (third axis). Set from your market-health gauge. ---
-# one of: "Confirmed uptrend", "Under pressure", "Correction"
-MARKET_TONE = "Confirmed uptrend"
+# --- Fundamentals (SEPA: Accelerating Growth) ---
+FUND_EPS_GROWTH_MIN  = _getfloat("FUND_EPS_GROWTH_MIN",  0.20)  # EPS YoY >= 20%
+FUND_SALES_GROWTH_MIN= _getfloat("FUND_SALES_GROWTH_MIN",0.20)  # Sales YoY >= 20%
+FUND_OP_MARGIN_MIN   = _getfloat("FUND_OP_MARGIN_MIN",   0.10)  # op margin floor 10%
+FUND_ROE_MIN         = _getfloat("FUND_ROE_MIN",          0.17)  # ROE >= 17%
+FUND_MIN_SCORE       = int(_getfloat("FUND_MIN_SCORE",    3))    # checks to pass (out of 7)
 
 # --- Trend Template / RS ---
 RS_MIN = 70                      # min RS percentile to qualify
@@ -36,26 +120,26 @@ PP_FLAG_MAX_DAYS = 30
 PP_DORMANCY_VOL = 0.06           # pre-thrust realized vol ceiling (dormant)
 
 # --- Cup-with-Handle ---
-CUP_MIN_BARS = 35                  # ~7 weeks minimum cup
-CUP_MAX_BARS = 260                 # ~52 weeks maximum base
-CUP_MIN_DEPTH = 0.12               # cup corrects at least 12%
-CUP_MAX_DEPTH = 0.35               # cup corrects no more than 35%
-CUP_RIM_TOLERANCE = 0.05           # right rim within 5% of left rim
-CUP_HANDLE_MAX_DEPTH = 0.12        # handle corrects <= 12%
+CUP_MIN_BARS = 35                # ~7 weeks minimum cup
+CUP_MAX_BARS = 260               # ~52 weeks maximum base
+CUP_MIN_DEPTH = 0.12             # cup corrects at least 12%
+CUP_MAX_DEPTH = 0.35             # cup corrects no more than 35%
+CUP_RIM_TOLERANCE = 0.05         # right rim within 5% of left rim
+CUP_HANDLE_MAX_DEPTH = 0.12      # handle corrects <= 12%
 
 # --- Cheat (4-phase A-B-C-D)  VERIFY-AGAINST-BOOK ---
 CHEAT_MIN_BARS = 40
-CHEAT_LOOKBACK = 120               # look back this many bars for the pattern
-CHEAT_B_RECOUP_MIN = 0.33          # B uptrend recoupes >= 33% of A decline
-CHEAT_B_RECOUP_MAX = 0.60          # B recoupes no more than 60% (full recoup = not a cheat)
-CHEAT_PLATEAU_MIN = 0.03           # C plateau depth at least 3%
-CHEAT_PLATEAU_MAX = 0.12           # C plateau depth no more than 12%
-CHEAT_LOW_ENTRY_ZONE = 0.03        # "low-cheat" if price within 3% of plateau low
+CHEAT_LOOKBACK = 120
+CHEAT_B_RECOUP_MIN = 0.33        # B uptrend recoups >= 33% of A decline
+CHEAT_B_RECOUP_MAX = 0.60        # B recoups no more than 60%
+CHEAT_PLATEAU_MIN = 0.03         # C plateau depth at least 3%
+CHEAT_PLATEAU_MAX = 0.12         # C plateau depth no more than 12%
+CHEAT_LOW_ENTRY_ZONE = 0.03      # "low-cheat" if within 3% of plateau low
 
 # --- Livermore Pivot Point  VERIFY-AGAINST-BOOK ---
 LPP_MIN_BARS = 40
 LPP_LOOKBACK = 120
-LPP_MIN_PRIOR_DECLINE = 0.15       # prior downtrend must be >= 15%
+LPP_MIN_PRIOR_DECLINE = 0.15     # prior downtrend must be >= 15%
 
 TIER_ORDER = ["Watch", "Buy Alert", "Buy Ready"]
 
@@ -64,19 +148,5 @@ DB_PATH = DATA_DIR / "sepa.db"
 CHART_DIR = DATA_DIR / "charts"
 
 # --- L0 hygiene filters ---
-HYGIENE_MIN_PRICE = 10.0         # minimum last close price ($)
-HYGIENE_MIN_DOLLAR_VOL = 1_000_000  # minimum avg daily dollar-volume
-
-# --- US ingestion ---
-SEC_USER_AGENT = "SEPA personal scanner lather10110@gmail.com"  # SEC requires real UA + contact
-UNIVERSE_LIMIT = None        # cap number of tickers (for testing); None = all
-PRICE_LOOKBACK = "2y"        # yfinance history window
-
-# --- Telegram alerts ---
-TELEGRAM_TOKEN = ""          # from @BotFather
-TELEGRAM_CHAT_ID = ""        # your chat id
-
-# --- AI validator (Phase 7) ---
-# Set via environment or fill in here. The validator falls back to CAUTION if absent.
-import os as _os
-ANTHROPIC_API_KEY = _os.environ.get("ANTHROPIC_API_KEY", "")
+HYGIENE_MIN_PRICE = 10.0
+HYGIENE_MIN_DOLLAR_VOL = 1_000_000
