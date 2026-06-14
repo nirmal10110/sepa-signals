@@ -107,16 +107,18 @@ def load_prices(con, tickers, period=None):
     import yfinance as yf
     period = period or C.PRICE_LOOKBACK
     loaded = skipped = failed = 0
-    for i in range(0, len(tickers), 200):
-        batch = tickers[i:i + 200]
+    batches = list(range(0, len(tickers), 100))   # 100-ticker batches (safer for yfinance)
+    for batch_num, i in enumerate(batches):
+        batch = tickers[i:i + 100]
         try:
             data = _retry(lambda: yf.download(
                 batch, period=period, interval="1d",
                 auto_adjust=True, group_by="ticker",
-                progress=False, threads=True))
+                progress=False, threads=False))    # threads=False reduces burst load
         except Exception as e:
             log.error("batch download failed (tickers %d-%d): %s", i, i + len(batch), e)
             failed += len(batch)
+            time.sleep(5)   # back off after a batch error
             continue
         for t in batch:
             try:
@@ -132,7 +134,11 @@ def load_prices(con, tickers, period=None):
                 log.warning("price load failed %s: %s", t, e)
                 failed += 1
         con.commit()
-    log.info("prices: loaded=%d skipped=%d failed=%d", loaded, skipped, failed)
+        log.info("prices batch %d/%d: loaded=%d skipped=%d failed=%d",
+                 batch_num + 1, len(batches), loaded, skipped, failed)
+        if batch_num < len(batches) - 1:
+            time.sleep(3)   # 3s between batches — stays well under Yahoo rate limits
+    log.info("prices total: loaded=%d skipped=%d failed=%d", loaded, skipped, failed)
 
 
 # ---------------------------------------------------------------- fundamentals
@@ -269,3 +275,10 @@ def seed_synthetic(con):
                                   f["op_margin"], f["roe"])
     con.commit()
     print(f"seeded {len(p.universe())} synthetic US tickers")
+
+
+if __name__ == "__main__":
+    from .log_config import setup_logging
+    setup_logging()
+    con = db.connect()
+    ingest_us(con)
