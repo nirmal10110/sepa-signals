@@ -98,11 +98,11 @@ def validate(sig: dict, chart_path: str | None = None,
             f"{climax_note}"
         )
 
-    metrics_text = f"""Ticker: {sig['ticker']}
+    metrics_text = f"""Ticker: {sig['ticker']} (US-listed equity — NYSE/NASDAQ stock, NOT crypto)
+Company: {sig.get('meta', sig['ticker'])}
 Setup: {sig['setup']} | Footprint: {sig['footprint']}
 Stage: {sig['stage']} | Trend Template: {sig['tt']}/8 | RS: {sig['rs']}
-Fundamentals: {'Pass' if sig['funda'] else 'Marginal'} | Pivot: {sig['pivot']} | Stop: {sig['stop']}
-Description: {sig.get('meta', '')}{trend_line}
+Fundamentals: {'Pass' if sig['funda'] else 'Marginal'} | Pivot: {sig['pivot']} | Stop: {sig['stop']}{trend_line}
 
 Recent headlines:
 {hl_text}"""
@@ -123,8 +123,11 @@ Recent headlines:
                  sig["ticker"], response.content[0].text.strip(),
                  usage.input_tokens, usage.output_tokens, elapsed)
 
-        import json
+        import json, re
         raw = response.content[0].text.strip()
+        # Strip markdown code fences the model sometimes adds despite instructions
+        raw = re.sub(r"^```(?:json)?\s*", "", raw)
+        raw = re.sub(r"\s*```$", "", raw).strip()
         result = json.loads(raw)
         verdict = result.get("verdict", "CAUTION")
         if verdict not in ("CONFIRM", "CAUTION", "REJECT"):
