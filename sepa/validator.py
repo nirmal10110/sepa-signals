@@ -80,11 +80,29 @@ def validate(sig: dict, chart_path: str | None = None,
 
     # Metrics summary
     hl_text = "\n".join(f"- {h}" for h in headlines) if headlines else "No headlines provided."
+
+    ret_1y  = sig.get("ret_1y")
+    ext_200 = sig.get("ext_200", 0)
+    climax  = sig.get("climax_flag", False)
+    trend_line = ""
+    if ret_1y is not None:
+        climax_note = (
+            "\n⚠️  CLIMAX RUN FLAG: this is a Power Play on a stock already up "
+            f"{ret_1y:+.0f}% over the past year. Ask yourself: is this a "
+            "first breakout from a fresh base, or late-stage parabolic blow-off?"
+            if climax else ""
+        )
+        trend_line = (
+            f"\n1-year return: {ret_1y:+.0f}% | "
+            f"Extension above 200 SMA: {ext_200:+.0f}%"
+            f"{climax_note}"
+        )
+
     metrics_text = f"""Ticker: {sig['ticker']}
 Setup: {sig['setup']} | Footprint: {sig['footprint']}
 Stage: {sig['stage']} | Trend Template: {sig['tt']}/8 | RS: {sig['rs']}
 Fundamentals: {'Pass' if sig['funda'] else 'Marginal'} | Pivot: {sig['pivot']} | Stop: {sig['stop']}
-Description: {sig.get('meta', '')}
+Description: {sig.get('meta', '')}{trend_line}
 
 Recent headlines:
 {hl_text}"""

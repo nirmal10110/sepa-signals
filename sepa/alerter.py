@@ -43,6 +43,18 @@ def build_card(sig):
     ud = sig.get("ud_vol", 0)
     ud_tag = f"· vol ratio `{ud:.2f}` {'⬆' if ud >= 1.0 else '⬇'}" if ud else ""
 
+    # 1-year return + 200 SMA extension + climax flag
+    ret_1y  = sig.get("ret_1y")   # already in %, e.g. 150.0
+    ext_200 = sig.get("ext_200", 0)
+    climax  = sig.get("climax_flag", False)
+    trend_line = ""
+    if ret_1y is not None:
+        climax_warn = "  ⚠️ *CLIMAX RISK — late-stage Power Play*" if climax else ""
+        trend_line = (
+            f"\n*Trend*  1yr `{ret_1y:+.0f}%` · `{ext_200:+.0f}%` above 200SMA"
+            f"{climax_warn}"
+        )
+
     # AI context block (populated by the Claude validator)
     ai_summary   = sig.get("ai_summary", "")
     ai_thesis    = sig.get("ai_thesis", "")
@@ -64,7 +76,8 @@ def build_card(sig):
         f"_{sig['meta']}_\n\n"
         f"*Market*  {tone}\n"
         f"*Signal*  Stage {sig['stage']} ✓ · TT {sig['tt']}/8 · RS {sig['rs']} · "
-        f"Fund {'✓' if sig['funda'] else '?'} {ud_tag}\n"
+        f"Fund {'✓' if sig['funda'] else '?'} {ud_tag}"
+        f"{trend_line}\n"
         f"*Setup*  footprint `{sig['footprint']}` · pivot taken out → in buy zone"
         f"{plan_line}"
         f"{context_block}"

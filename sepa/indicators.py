@@ -38,6 +38,24 @@ def swing_points(close: np.ndarray, k: int = 3):
     return highs, lows
 
 
+def ret_1y(df: pd.DataFrame) -> float | None:
+    """Total price return over the past 252 trading days (≈ 1 year).
+    Returns None when history is shorter than 252 bars."""
+    if len(df) < 252:
+        return None
+    return float(df["close"].iloc[-1] / df["close"].iloc[-252] - 1)
+
+
+def ext_from_200(df: pd.DataFrame) -> float:
+    """How far above (positive) or below (negative) the 200 SMA the current
+    price sits, as a fraction. Requires add_mas() to have been called first."""
+    c = df["close"].iloc[-1]
+    s200 = df["sma200"].iloc[-1]
+    if pd.isna(s200) or s200 == 0:
+        return 0.0
+    return float((c - s200) / s200)
+
+
 def up_day_vol_ratio(df: pd.DataFrame, lookback: int = 60) -> float:
     """Institutional sponsorship proxy: avg volume on up-days / avg volume on down-days.
     Minervini looks for > 1.0 (more volume on advances than declines = accumulation).

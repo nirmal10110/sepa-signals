@@ -103,6 +103,11 @@ FUND_CACHE_DAYS_EARNINGS = _getfloat("FUND_CACHE_DAYS_EARNINGS", 0.25)  # 6 h
 
 BUY_ZONE_WIDTH = 0.05            # price is "buyable" within 5% of pivot
 
+# --- Climax run detection ---
+# A Power Play on top of an already >200% 1-year gain is a potential climax
+# (late-stage blow-off, not a first-base breakout). Flagged in the card + AI prompt.
+CLIMAX_RET_1Y_MIN = _getfloat("CLIMAX_RET_1Y_MIN", 2.0)   # 200% = 3× from prior year
+
 # --- Fundamentals (SEPA: Accelerating Growth) ---
 FUND_EPS_GROWTH_MIN  = _getfloat("FUND_EPS_GROWTH_MIN",  0.20)  # EPS YoY >= 20%
 FUND_SALES_GROWTH_MIN= _getfloat("FUND_SALES_GROWTH_MIN",0.20)  # Sales YoY >= 20%

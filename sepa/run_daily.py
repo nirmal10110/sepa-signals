@@ -9,7 +9,7 @@ from datetime import date
 from . import config as C
 from . import db
 from .providers import DBProvider
-from .indicators import add_mas, up_day_vol_ratio
+from .indicators import add_mas, up_day_vol_ratio, ret_1y as _ret1y, ext_from_200 as _ext200
 from .screens import (trend_template, classify_stage, weighted_rs_return,
                       rank_rs, fundamental_screen)
 from .patterns import detect_setups
@@ -113,6 +113,14 @@ def run(con=None, market_tone=None):
                 stage = 2
             stages_now[t] = stage
             ud_ratio = round(up_day_vol_ratio(df), 2)
+            r1y = _ret1y(df)
+            e200 = round(_ext200(df) * 100, 1)
+            climax = bool(
+                r1y is not None
+                and r1y > C.CLIMAX_RET_1Y_MIN
+                and setup is not None
+                and setup.type == "Power Play"
+            )
             pre_tier[t] = {
                 "ticker": t, "stage": stage, "tt": tt, "rs": rs or 0,
                 "funda": int(f_pass), "ud_vol": ud_ratio,
@@ -123,6 +131,9 @@ def run(con=None, market_tone=None):
                 "stop": setup.stop if setup else 0.0,
                 "buyable": bool(setup and setup.buyable),
                 "meta": prov.meta(t)["summary"],
+                "ret_1y": round(r1y * 100, 1) if r1y is not None else None,
+                "ext_200": e200,
+                "climax_flag": climax,
                 "_setup": setup,
             }
         except Exception as e:
