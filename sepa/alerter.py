@@ -28,20 +28,47 @@ def render_chart(df, sig, path):
 
 def build_card(sig):
     """The 'clear picture of why & what'. Telegram Markdown."""
-    rr = ""
+    plan_line = ""
     if sig["entry"] and sig["stop"] and sig["entry"] != sig["stop"]:
-        risk = (sig["entry"] - sig["stop"]) / sig["entry"]
-        shares = int(round((C.ACCOUNT_SIZE * C.RISK_PER_TRADE) / (sig["entry"] - sig["stop"])))
-        rr = (f"\n*Plan*  entry `{sig['entry']}` · stop `{sig['stop']}` "
-              f"(-{risk*100:.1f}%) · size `{shares}` sh @ {C.RISK_PER_TRADE*100:.2f}% risk")
-    ai_line = f"\n*AI*  {sig['ai_note']}" if sig.get("ai_note") else ""
+        risk_pts = sig["entry"] - sig["stop"]
+        risk_pct = risk_pts / sig["entry"]
+        shares = int(round((C.ACCOUNT_SIZE * C.RISK_PER_TRADE) / risk_pts))
+        target = round(sig["entry"] + 3 * risk_pts, 2)     # 3:1 R:R target
+        plan_line = (
+            f"\n*Plan*  entry `{sig['entry']}` · stop `{sig['stop']}` "
+            f"(-{risk_pct*100:.1f}%) · target `{target}` (3:1 R:R) "
+            f"· size `{shares}` sh @ {C.RISK_PER_TRADE*100:.2f}% risk"
+        )
+    tone = sig.get("market_tone", "—")
+    ud = sig.get("ud_vol", 0)
+    ud_tag = f"· vol ratio `{ud:.2f}` {'⬆' if ud >= 1.0 else '⬇'}" if ud else ""
+
+    # AI context block (populated by the Claude validator)
+    ai_summary   = sig.get("ai_summary", "")
+    ai_thesis    = sig.get("ai_thesis", "")
+    ai_catalysts = sig.get("ai_catalysts", "")
+    ai_note      = sig.get("ai_note", "")
+
+    context_block = ""
+    if ai_summary or ai_thesis or ai_catalysts:
+        lines = []
+        if ai_summary:   lines.append(f"*Company*  {ai_summary}")
+        if ai_thesis:    lines.append(f"*Thesis*   {ai_thesis}")
+        if ai_catalysts: lines.append(f"*Catalysts*  {ai_catalysts}")
+        context_block = "\n" + "\n".join(lines)
+
+    ai_line = f"\n*AI*  {ai_note}" if ai_note else ""
+
     return (
         f"🟢 *{sig['ticker']} → BUY READY*  ({sig['setup']})\n"
         f"_{sig['meta']}_\n\n"
-        f"*Why*  Stage {sig['stage']} ✓ · Trend Template {sig['tt']}/8 · RS {sig['rs']} · "
-        f"Fundamentals {'✓' if sig['funda'] else '?'} · Tape {C.MARKET_TONE} ✓\n"
+        f"*Market*  {tone}\n"
+        f"*Signal*  Stage {sig['stage']} ✓ · TT {sig['tt']}/8 · RS {sig['rs']} · "
+        f"Fund {'✓' if sig['funda'] else '?'} {ud_tag}\n"
         f"*Setup*  footprint `{sig['footprint']}` · pivot taken out → in buy zone"
-        f"{rr}{ai_line}\n\n"
+        f"{plan_line}"
+        f"{context_block}"
+        f"{ai_line}\n\n"
         f"chart: tradingview.com/chart/?symbol={sig['ticker']}"
     )
 

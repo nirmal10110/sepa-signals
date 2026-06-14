@@ -26,6 +26,18 @@ STAGE_NAME = {1: "Base", 2: "Advance", 3: "Top", 4: "Decline"}
 _DANGER_TRANSITIONS = {(2, 3), (2, 4), (3, 4)}   # advance→topping/decline
 
 
+def _compute_tone(stages_now: dict) -> str:
+    """Derive market tone from breadth: % of universe currently in Stage 2."""
+    if not stages_now:
+        return "Under pressure"
+    pct2 = sum(1 for s in stages_now.values() if s == 2) / len(stages_now)
+    if pct2 >= C.BREADTH_BULL_THRESHOLD:
+        return "Confirmed uptrend"
+    if pct2 >= C.BREADTH_NEUTRAL_THRESHOLD:
+        return "Under pressure"
+    return "Correction"
+
+
 def _check_stage_transitions(con, asof, stages_now: dict, prev_stages: dict):
     """Log + alert if an owned or watched name's stage deteriorated."""
     positions = {p["ticker"] for p in db.get_positions(con)}
@@ -48,12 +60,13 @@ def _check_stage_transitions(con, asof, stages_now: dict, prev_stages: dict):
 
 def run(con=None, market_tone=None):
     con = con or db.connect()
-    market_tone = market_tone or C.MARKET_TONE
+    # market_tone arg or env override; empty string → auto-compute from breadth
+    market_tone_override = market_tone or C.MARKET_TONE_OVERRIDE
     prov = DBProvider(con)
     tickers = prov.universe()
     asof = str(date.today())
 
-    log.info("SEPA scan starting — %d tickers, tone=%s", len(tickers), market_tone)
+    log.info("SEPA scan starting — %d tickers", len(tickers))
 
     # pass 1: metrics + raw RS + cache histories (with MAs, for charts)
     hist, raw_rs = {}, {}
@@ -76,10 +89,14 @@ def run(con=None, market_tone=None):
     if done:
         log.info("resuming — %d tickers already classified today", len(done))
 
-    curr, sigs, stages_now = {}, {}, {}
-    for t, df in hist.items():                      # pass 3: classify
+    # pass 3a: classify stage + detect patterns for all tickers
+    # Tier decision is deferred until we know the full breadth picture.
+    pre_tier = {}    # {ticker: partial sig dict + "_setup" key}
+    stages_now = {}
+    curr, sigs = {}, {}
+
+    for t, df in hist.items():
         if t in done:
-            # Restore previously computed signal from the signals table
             row = con.execute("""SELECT tier, stage FROM signals
                 WHERE ticker=? AND asof=?""", (t, asof)).fetchone()
             if row and row[0]:
@@ -95,25 +112,48 @@ def run(con=None, market_tone=None):
             if setup and setup.type == "Power Play":
                 stage = 2
             stages_now[t] = stage
-            tier, reason = decide_tier(stage, tt, rs, f_pass, setup, market_tone)
             ud_ratio = round(up_day_vol_ratio(df), 2)
-            sig = {"ticker": t, "stage": stage, "tt": tt, "rs": rs or 0, "funda": int(f_pass),
-                   "ud_vol": ud_ratio,   # up-day/down-day volume ratio (>1 = accumulation)
-                   "setup": setup.type if setup else "—",
-                   "footprint": setup.footprint if setup else "—",
-                   "pivot": setup.pivot if setup else 0.0,
-                   "entry": setup.entry if setup else 0.0,
-                   "stop": setup.stop if setup else 0.0,
-                   "buyable": bool(setup and setup.buyable),
-                   "tier": tier or "", "reason": reason,
-                   "meta": prov.meta(t)["summary"]}
+            pre_tier[t] = {
+                "ticker": t, "stage": stage, "tt": tt, "rs": rs or 0,
+                "funda": int(f_pass), "ud_vol": ud_ratio,
+                "setup": setup.type if setup else "—",
+                "footprint": setup.footprint if setup else "—",
+                "pivot": setup.pivot if setup else 0.0,
+                "entry": setup.entry if setup else 0.0,
+                "stop": setup.stop if setup else 0.0,
+                "buyable": bool(setup and setup.buyable),
+                "meta": prov.meta(t)["summary"],
+                "_setup": setup,
+            }
+        except Exception as e:
+            log.warning("classify failed %s: %s", t, e)
+
+    # compute market tone from breadth (or use manual override)
+    if market_tone_override:
+        market_tone = market_tone_override
+        log.info("market tone: %s (manual override)", market_tone)
+    else:
+        market_tone = _compute_tone(stages_now)
+        n2 = sum(1 for s in stages_now.values() if s == 2)
+        pct2 = n2 / max(len(stages_now), 1) * 100
+        log.info("breadth: %d/%d (%.1f%%) Stage 2 → tone: %s",
+                 n2, len(stages_now), pct2, market_tone)
+        print(f"  breadth: {n2}/{len(stages_now)} ({pct2:.1f}%) Stage 2 → {market_tone}")
+
+    # pass 3b: decide tier + write signals using the computed tone
+    for t, pre in pre_tier.items():
+        try:
+            setup = pre.pop("_setup")
+            tier, reason = decide_tier(pre["stage"], pre["tt"], pre["rs"],
+                                       bool(pre["funda"]), setup, market_tone)
+            sig = {**pre, "tier": tier or "", "reason": reason, "market_tone": market_tone}
             db.write_signal(con, asof, sig)
             db.checkpoint_done(con, asof, t)
             if tier:
                 sigs[t] = sig
                 curr[t] = {"tier": tier, "added": prev.get(t, {}).get("added", asof)}
         except Exception as e:
-            log.warning("classify failed %s: %s", t, e)
+            log.warning("tier failed %s: %s", t, e)
     con.commit()
 
     # diff -> persist state + transitions
@@ -150,16 +190,18 @@ def run(con=None, market_tone=None):
         verdicts = val.validate_batch(buyable, chart_dir=str(C.CHART_DIR))
         confirmed = []
         for sig in buyable:
-            v = verdicts.get(sig["ticker"], {"verdict": "CONFIRM", "reason": ""})
+            v = verdicts.get(sig["ticker"], {"verdict": "CONFIRM", "reason": "",
+                                             "summary": "", "thesis": "", "catalysts": ""})
             if v["verdict"] == "REJECT":
                 log.warning("AI REJECT %s: %s", sig["ticker"], v["reason"])
                 print(f"  AI REJECT {sig['ticker']}: {v['reason']}")
                 continue
             sig = dict(sig)   # don't mutate the original
-            if v["verdict"] == "CAUTION":
-                sig["ai_note"] = f"⚠️ CAUTION: {v['reason']}"
-            else:
-                sig["ai_note"] = f"✅ AI CONFIRM: {v['reason']}"
+            icon = "⚠️ CAUTION" if v["verdict"] == "CAUTION" else "✅ AI CONFIRM"
+            sig["ai_note"] = f"{icon}: {v['reason']}"
+            sig["ai_summary"] = v.get("summary", "")
+            sig["ai_thesis"] = v.get("thesis", "")
+            sig["ai_catalysts"] = v.get("catalysts", "")
             confirmed.append(sig)
         buyable = confirmed
 
@@ -167,12 +209,15 @@ def run(con=None, market_tone=None):
 
     # summary / heartbeat
     counts = {tier: sum(1 for v in curr.values() if v["tier"] == tier) for tier in C.TIER_ORDER}
+    n2 = sum(1 for s in stages_now.values() if s == 2)
+    pct2 = n2 / max(len(stages_now), 1) * 100
     moves = {t: s for t, s in trans.items() if s != "SAME"}
     promotions = len([m for m in moves.values() if m in ("NEW", "PROMOTED")])
     hb = (f"SEPA scan {asof}: {counts.get('Buy Ready', 0)} Buy Ready, "
-          f"{promotions} promotions, {len(sent)} alerts.")
+          f"{promotions} promotions, {len(sent)} alerts. "
+          f"Breadth {pct2:.1f}% Stage2 → {market_tone}")
 
-    print(f"\n=== SEPA {asof} | tone {market_tone} | universe {len(hist)} ===")
+    print(f"\n=== SEPA {asof} | {market_tone} | {pct2:.1f}% Stage2 | universe {len(hist)} ===")
     for tier in C.TIER_ORDER:
         print(f"  {tier:<10} {counts[tier]}")
     if stage_alerts:

@@ -76,14 +76,25 @@ ACCOUNT_SIZE       = _getfloat("ACCOUNT_SIZE",    100_000)
 RISK_PER_TRADE     = _getfloat("RISK_PER_TRADE",  0.0125)   # 1.25% per trade
 
 # --- market tone gate (third axis) ---
-# "Confirmed uptrend" | "Under pressure" | "Correction"
-MARKET_TONE        = _get("MARKET_TONE", "Confirmed uptrend")
+# Empty = auto-computed from breadth (recommended).
+# Set to override: "Confirmed uptrend" | "Under pressure" | "Correction"
+MARKET_TONE_OVERRIDE = _get("MARKET_TONE", "")
+
+# Breadth thresholds: % of universe in Stage 2 that maps to each tone.
+BREADTH_BULL_THRESHOLD    = _getfloat("BREADTH_BULL_THRESHOLD",    0.20)  # ≥20% → Confirmed
+BREADTH_NEUTRAL_THRESHOLD = _getfloat("BREADTH_NEUTRAL_THRESHOLD", 0.10)  # ≥10% → Under pressure
 
 # --- universe ---
 SEC_USER_AGENT     = _get("SEC_USER_AGENT",
                            "SEPA personal scanner lather10110@gmail.com")
 UNIVERSE_LIMIT     = _getint("UNIVERSE_LIMIT", None)   # None = all SEC tickers
 PRICE_LOOKBACK     = _get("PRICE_LOOKBACK", "2y")
+
+# --- fundamental caching (skip EDGAR re-fetch when data is fresh) ---
+# Outside earnings windows: re-fetch after 7 days. During earnings months
+# (Jan/Feb, Apr/May, Jul/Aug, Oct/Nov): re-fetch after 6 hours.
+FUND_CACHE_DAYS_NORMAL   = _getfloat("FUND_CACHE_DAYS_NORMAL",   7.0)
+FUND_CACHE_DAYS_EARNINGS = _getfloat("FUND_CACHE_DAYS_EARNINGS", 0.25)  # 6 h
 
 
 # ===========================================================================

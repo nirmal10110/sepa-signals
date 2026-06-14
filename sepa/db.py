@@ -9,7 +9,8 @@ PRAGMA journal_mode=WAL;
 
 CREATE TABLE IF NOT EXISTS securities(
   ticker TEXT PRIMARY KEY, name TEXT, exchange TEXT, sector TEXT,
-  cik TEXT, active INTEGER DEFAULT 1, added_at TEXT);
+  cik TEXT, active INTEGER DEFAULT 1, added_at TEXT,
+  fund_fetched_at TEXT);
 
 CREATE TABLE IF NOT EXISTS prices(
   ticker TEXT, date TEXT, open REAL, high REAL, low REAL, close REAL, volume REAL,
@@ -74,11 +75,20 @@ CREATE TABLE IF NOT EXISTS run_checkpoint(
 """
 
 
+def _migrate(con):
+    """Add columns introduced after initial release without dropping existing data."""
+    try:
+        con.execute("ALTER TABLE securities ADD COLUMN fund_fetched_at TEXT")
+    except Exception:
+        pass  # column already exists
+
+
 def connect(path=None):
     path = path or C.DB_PATH
     path.parent.mkdir(parents=True, exist_ok=True)
     con = sqlite3.connect(str(path))
     con.executescript(SCHEMA)
+    _migrate(con)
     return con
 
 
@@ -261,6 +271,19 @@ def get_fundamentals(con, ticker):
         "op_margins": tail8["op_margin"].tolist(),    # list for trend detection
         "roe":        float(tail8["roe"].iloc[-1]),
     }
+
+
+def mark_fundamentals_fetched(con, ticker):
+    """Record the UTC timestamp when EDGAR was last successfully fetched."""
+    con.execute("UPDATE securities SET fund_fetched_at=datetime('now') WHERE ticker=?",
+                (ticker,))
+
+
+def get_fundamentals_fetched_at(con, ticker) -> str | None:
+    """Return the ISO datetime string when fundamentals were last fetched, or None."""
+    row = con.execute("SELECT fund_fetched_at FROM securities WHERE ticker=?",
+                      (ticker,)).fetchone()
+    return row[0] if row else None
 
 
 def get_meta(con, ticker):

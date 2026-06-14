@@ -128,5 +128,11 @@ def fundamental_screen(f: dict):
     if roe >= C.FUND_ROE_MIN:
         score += 1; tags.append(f"ROE>{C.FUND_ROE_MIN*100:.0f}%")
 
+    # 8. Revenue decline penalty — 2+ consecutive QoQ declines signal deterioration.
+    # A company can pass the YoY gate on a soft comp while actively shrinking; this
+    # catches it. Deduct one point so borderline names don't squeak through.
+    if len(sales) >= 3 and sales[-1] < sales[-2] < sales[-3]:
+        score -= 1; tags.append("Rev↓")
+
     note = "+".join(tags) if tags else "weak"
     return score >= C.FUND_MIN_SCORE, score, note

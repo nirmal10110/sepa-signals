@@ -17,6 +17,10 @@ from .providers import SyntheticProvider
 
 log = logging.getLogger("sepa.ingest")
 
+# Months when quarterly 10-Q/10-K filings are actively landing on EDGAR.
+# Re-fetch fundamentals more aggressively (every 6h) during these windows.
+_EARNINGS_MONTHS = frozenset({1, 2, 4, 5, 7, 8, 10, 11})
+
 SEC_TICKERS = "https://www.sec.gov/files/company_tickers.json"
 EDGAR_FACTS = "https://data.sec.gov/api/xbrl/companyfacts/CIK{cik:010d}.json"
 
@@ -182,8 +186,25 @@ def _quarterly(facts, concepts):
     return []
 
 
+def _fundamentals_fresh(con, ticker) -> bool:
+    """Return True if cached fundamentals are recent enough to skip EDGAR."""
+    import datetime
+    fetched_at = db.get_fundamentals_fetched_at(con, ticker)
+    if not fetched_at:
+        return False
+    age_h = (datetime.datetime.utcnow() -
+              datetime.datetime.fromisoformat(fetched_at)).total_seconds() / 3600
+    month = datetime.datetime.utcnow().month
+    max_h = (C.FUND_CACHE_DAYS_EARNINGS * 24 if month in _EARNINGS_MONTHS
+             else C.FUND_CACHE_DAYS_NORMAL * 24)
+    return age_h < max_h
+
+
 def load_fundamentals(con, ticker, cik):
     """Map EDGAR companyfacts -> the engine's fundamentals schema."""
+    if _fundamentals_fresh(con, ticker):
+        log.debug("fundamentals fresh, skipping EDGAR for %s", ticker)
+        return
     import requests
     url = EDGAR_FACTS.format(cik=int(cik))
     try:
@@ -213,6 +234,7 @@ def load_fundamentals(con, ticker, cik):
         db.upsert_fundamental(con, ticker, end, eps_v, sales_v, op_margin, roe)
         rows_written += 1
     if rows_written:
+        db.mark_fundamentals_fetched(con, ticker)
         con.commit()
 
 

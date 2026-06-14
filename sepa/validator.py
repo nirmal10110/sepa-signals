@@ -16,24 +16,36 @@ log = logging.getLogger("sepa.validator")
 # Bounded prompt — the AI only evaluates what the scripts already approved.
 _SYSTEM = """You are a senior stock analyst reviewing a SINGLE buy candidate that
 has already passed a strict quantitative SEPA screen (Minervini methodology).
-Your job is to sanity-check the alert — look for anything the quant model
-cannot catch: deteriorating story, recent bad news, obvious technical red flags,
-or an implausible setup.
+Your job is to (1) sanity-check the alert and (2) add brief context so the
+trader understands the story at a glance.
 
 Reply with a JSON object and nothing else:
-{"verdict": "CONFIRM" | "CAUTION" | "REJECT", "reason": "<one sentence>"}
+{
+  "verdict": "CONFIRM" | "CAUTION" | "REJECT",
+  "reason": "<one sentence — why you confirmed/cautioned/rejected>",
+  "summary": "<one sentence — what this company does>",
+  "thesis": "<one sentence — why this setup could work given the company's position>",
+  "catalysts": "<one sentence — specific upcoming events that could push the stock higher>"
+}
 
-CONFIRM = the setup looks consistent with the metrics; no obvious red flags.
+CONFIRM = setup is consistent with the metrics; no obvious red flags.
 CAUTION = proceed with extra care (annotates the card, does not suppress).
 REJECT  = clear red flag that overrides the quant signal (suppresses the alert).
 
-Be conservative: only REJECT when there is a clear, specific reason. A CAUTION
-is appropriate for genuine uncertainty. Absence of conviction is not a REJECT."""
+Be conservative: only REJECT for a clear, specific reason. A CAUTION is
+appropriate for genuine uncertainty. Absence of conviction is not a REJECT.
+
+For summary/thesis/catalysts: be specific and factual. If you have no knowledge
+of the company (rare ticker), write "Limited public information available" for
+summary and use the provided metrics for thesis/catalysts."""
 
 
 class Verdict(TypedDict):
-    verdict: str   # "CONFIRM" | "CAUTION" | "REJECT"
+    verdict: str    # "CONFIRM" | "CAUTION" | "REJECT"
     reason: str
+    summary: str    # what the company does
+    thesis: str     # why this setup could work
+    catalysts: str  # upcoming events that could push the stock higher
 
 
 def validate(sig: dict, chart_path: str | None = None,
@@ -83,7 +95,7 @@ Recent headlines:
     try:
         response = client.messages.create(
             model=C.VALIDATOR_MODEL,
-            max_tokens=120,
+            max_tokens=350,
             system=_SYSTEM,
             messages=[{"role": "user", "content": parts}],
         )
@@ -97,17 +109,22 @@ Recent headlines:
         raw = response.content[0].text.strip()
         result = json.loads(raw)
         verdict = result.get("verdict", "CAUTION")
-        reason = result.get("reason", "")
         if verdict not in ("CONFIRM", "CAUTION", "REJECT"):
             log.warning("unexpected verdict '%s' — treating as CAUTION", verdict)
             verdict = "CAUTION"
-        return Verdict(verdict=verdict, reason=reason)
+        return Verdict(
+            verdict=verdict,
+            reason=result.get("reason", ""),
+            summary=result.get("summary", ""),
+            thesis=result.get("thesis", ""),
+            catalysts=result.get("catalysts", ""),
+        )
 
     except Exception as e:
         elapsed = time.monotonic() - t0
         log.error("validator API error for %s (%.1fs): %s", sig["ticker"], elapsed, e)
-        # On error: CAUTION so the alert is not silently suppressed
-        return Verdict(verdict="CAUTION", reason=f"Validator unavailable: {e}")
+        return Verdict(verdict="CAUTION", reason=f"Validator unavailable: {e}",
+                       summary="", thesis="", catalysts="")
 
 
 def validate_batch(sigs: list[dict], chart_dir: str | None = None,
