@@ -1,0 +1,63 @@
+"""Price/volume indicators and the swing/contraction primitives the pattern
+detectors build on."""
+import numpy as np
+import pandas as pd
+
+
+def add_mas(df: pd.DataFrame) -> pd.DataFrame:
+    df = df.copy()
+    for w in (10, 21, 50, 150, 200):
+        df[f"sma{w}"] = df["close"].rolling(w).mean()
+    df["vol50"] = df["volume"].rolling(50).mean()
+    return df
+
+
+def hi_lo_52w(df: pd.DataFrame):
+    win = df["close"].iloc[-252:]
+    return float(win.max()), float(win.min())
+
+
+def sma_rising(df: pd.DataFrame, col: str, lookback: int) -> bool:
+    s = df[col].dropna()
+    if len(s) <= lookback:
+        return False
+    return bool(s.iloc[-1] > s.iloc[-1 - lookback])
+
+
+def swing_points(close: np.ndarray, k: int = 3):
+    """Return (highs, lows) as lists of (index, price). A swing high is a bar
+    higher than k neighbours each side; symmetric for lows."""
+    highs, lows = [], []
+    n = len(close)
+    for i in range(k, n - k):
+        window = close[i - k:i + k + 1]
+        if close[i] == window.max() and close[i] > close[i - 1]:
+            highs.append((i, close[i]))
+        if close[i] == window.min() and close[i] < close[i - 1]:
+            lows.append((i, close[i]))
+    return highs, lows
+
+
+def contractions(close: np.ndarray, k: int = 3):
+    """Sequence of peak->trough drawdown depths (fractions) across the base,
+    oldest to newest. This is the raw material for the VCP footprint."""
+    highs, lows = swing_points(close, k)
+    pivots = sorted(highs + [(i, p, "L") for i, p in lows] +
+                    [(i, p, "H") for i, p in highs], key=lambda x: x[0])
+    # walk alternating H->L legs
+    depths = []
+    last_high = None
+    for i, p, *_ in [(i, p, "H") for i, p in highs] + [(i, p, "L") for i, p in lows]:
+        pass
+    # simpler: pair each swing high with the next lower swing low
+    hi = sorted(highs); lo = sorted(lows)
+    for hidx, hp in hi:
+        following = [(lidx, lp) for lidx, lp in lo if lidx > hidx]
+        if not following:
+            continue
+        lidx, lp = min(following, key=lambda x: x[0])
+        if hp > 0:
+            depths.append((hidx, (hp - lp) / hp))
+    # keep chronological, dedupe overlapping
+    depths.sort(key=lambda x: x[0])
+    return [d for _, d in depths]

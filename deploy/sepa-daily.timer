@@ -1,0 +1,14 @@
+[Unit]
+Description=SEPA nightly scan timer (fires after US market close)
+
+[Timer]
+# 22:00 ET = 03:00 UTC next day on the mini PC (set to your local UTC offset)
+# Change to match your timezone: e.g. OnCalendar=*-*-* 22:00:00 America/New_York
+OnCalendar=*-*-* 22:00:00
+# Fire a missed run on boot if the last run was skipped (e.g. mini PC was off)
+Persistent=true
+# Add up to 5 minutes of random delay to avoid thundering-herd with other jobs
+RandomizedDelaySec=300
+
+[Install]
+WantedBy=timers.target

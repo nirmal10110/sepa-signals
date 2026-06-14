@@ -1,0 +1,17 @@
+.venv/
+__pycache__/
+*.pyc
+.DS_Store
+
+# runtime data (generated, not source)
+data/sepa.db
+data/charts/
+data/logs/
+data/state.json
+
+# local Claude Code memory / session files
+.claude/
+
+# credentials — never commit
+.env
+*.env

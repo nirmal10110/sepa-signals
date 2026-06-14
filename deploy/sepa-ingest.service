@@ -1,0 +1,17 @@
+[Unit]
+Description=SEPA nightly data ingest (prices + fundamentals)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+User=sepa
+WorkingDirectory=/opt/sepa
+ExecStart=/opt/sepa/.venv/bin/python -c "from sepa import db, ingest; con=db.connect(); ingest.ingest_us(con)"
+EnvironmentFile=-/opt/sepa/.env
+StandardOutput=append:/opt/sepa/data/logs/sepa-ingest.log
+StandardError=append:/opt/sepa/data/logs/sepa-ingest.log
+TimeoutStopSec=3600
+
+[Install]
+WantedBy=multi-user.target

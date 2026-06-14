@@ -1,0 +1,11 @@
+[Unit]
+Description=SEPA nightly ingest timer (fires at 21:00 ET, before the scan)
+
+[Timer]
+# 21:00 ET = one hour before the scan timer — prices + fundamentals first
+OnCalendar=*-*-* 21:00:00
+Persistent=true
+RandomizedDelaySec=120
+
+[Install]
+WantedBy=timers.target

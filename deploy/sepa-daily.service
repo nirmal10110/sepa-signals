@@ -1,0 +1,29 @@
+[Unit]
+Description=SEPA nightly stock scan
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+# Change User and WorkingDirectory to match your mini PC setup
+User=sepa
+WorkingDirectory=/opt/sepa
+
+# Source the venv's python
+ExecStart=/opt/sepa/.venv/bin/python -m sepa.run_daily
+
+# Environment — set your real credentials here or in an EnvironmentFile
+Environment="ANTHROPIC_API_KEY="
+EnvironmentFile=-/opt/sepa/.env
+
+StandardOutput=append:/opt/sepa/data/logs/sepa.log
+StandardError=append:/opt/sepa/data/logs/sepa.log
+
+# Restart policy: if the scan dies it'll be retried once by the timer tomorrow
+Restart=no
+
+# Watchdog: if the process hangs > 30 minutes, kill it and send a dead heartbeat
+TimeoutStopSec=1800
+
+[Install]
+WantedBy=multi-user.target
