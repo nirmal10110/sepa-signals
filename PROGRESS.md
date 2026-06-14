@@ -110,6 +110,14 @@ _Last updated: 2026-06-11 (Claude). Resume point: **Phase 2 (mini PC)**._
 
 ---
 
+## Backlog / future upgrades
+- [ ] **Universe: switch to S&P 1500** (S&P 500 + MidCap 400 + SmallCap 600) instead of first-N
+  from SEC registry. Current approach takes the oldest 3,000 SEC registrants (by CIK), which
+  is roughly the right stocks but not sorted by quality/liquidity. S&P 1500 is the true
+  institutional universe Minervini targets and would give cleaner signal quality.
+  Approach: fetch constituent list from a free source (e.g. Wikipedia S&P 500 table + iShares
+  ETF holdings for the other two), replace `fetch_us_universe()` with a constituent loader.
+
 ## Discovered work / TODOs found mid-build
 - Makefile needed `venv` target (first-time setup on mini PC)
 - `tests/conftest.py` needed for Agg backend in test context

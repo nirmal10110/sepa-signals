@@ -346,8 +346,16 @@ def detect_livermore_pp(df: pd.DataFrame) -> Setup | None:
 def detect_setups(df: pd.DataFrame) -> Setup | None:
     """Return the highest-priority setup present.
     Priority: Power Play > VCP > Cup-with-Handle > Cheat > Livermore PP."""
-    return (detect_power_play(df) or
-            detect_vcp(df) or
-            detect_cup_handle(df) or
-            detect_cheat(df) or
-            detect_livermore_pp(df))
+    from dataclasses import replace
+    s = (detect_power_play(df) or
+         detect_vcp(df) or
+         detect_cup_handle(df) or
+         detect_cheat(df) or
+         detect_livermore_pp(df))
+    if s is None:
+        return None
+    # Hard cap: stop never wider than MAX_STOP_PCT below entry (Minervini: 7-10%)
+    floor = round(s.entry * (1 - C.MAX_STOP_PCT), 2)
+    if s.stop < floor:
+        s = replace(s, stop=floor)
+    return s
