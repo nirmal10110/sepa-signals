@@ -125,10 +125,12 @@ Recent headlines:
 
         import json, re
         raw = response.content[0].text.strip()
-        # Strip markdown code fences the model sometimes adds despite instructions
-        raw = re.sub(r"^```(?:json)?\s*", "", raw)
-        raw = re.sub(r"\s*```$", "", raw).strip()
-        result = json.loads(raw)
+        # Extract the JSON object directly — handles code fences and any
+        # trailing prose the model adds despite instructions to return JSON only.
+        match = re.search(r"\{.*\}", raw, re.DOTALL)
+        if not match:
+            raise ValueError(f"No JSON object found in response: {raw[:200]}")
+        result = json.loads(match.group(0))
         verdict = result.get("verdict", "CAUTION")
         if verdict not in ("CONFIRM", "CAUTION", "REJECT"):
             log.warning("unexpected verdict '%s' — treating as CAUTION", verdict)
