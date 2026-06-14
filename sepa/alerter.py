@@ -2,6 +2,7 @@ import matplotlib
 matplotlib.use("Agg")  # headless mini-PC
 """Turns a 'newly buyable' signal into the Telegram card: an annotated chart
 plus a plain-English 'why & what'. Dedupes so each setup alerts once."""
+import time
 from datetime import date
 from . import config as C
 from . import db
@@ -121,5 +122,6 @@ def process(con, buyable_sigs, histories, asof):
         send(C.TELEGRAM_TOKEN, C.TELEGRAM_CHAT_ID, build_card(sig), img)
         db.log_alert(con, key, sig["ticker"], asof, sig["setup"], sig["pivot"])
         sent.append((sig["ticker"], img))
+        time.sleep(1)   # Telegram rate limit: 1 msg/sec per chat
     con.commit()
     return sent

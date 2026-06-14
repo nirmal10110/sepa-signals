@@ -291,8 +291,9 @@ def get_meta(con, ticker):
                     (ticker,)).fetchone()
     if not r:
         return {"name": ticker, "exchange": "US", "sector": "—", "summary": ""}
-    return {"name": r[0], "exchange": r[1], "sector": r[2],
-            "summary": f"{r[2]} — {r[0]}"}
+    sector = r[2] if r[2] and r[2] != "—" else ""
+    summary = f"{sector} — {r[0]}" if sector else r[0]
+    return {"name": r[0], "exchange": r[1], "sector": r[2], "summary": summary}
 
 
 def prev_state(con):
