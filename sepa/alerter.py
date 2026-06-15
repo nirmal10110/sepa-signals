@@ -92,27 +92,38 @@ def build_card(sig):
 
 
 def send(token, chat_id, text, image_path=None):
-    """Send to Telegram. No-op (prints) if not configured — safe offline."""
+    """Send to Telegram. No-op (prints) if not configured — safe offline.
+
+    Always sends text as a message (4096-char limit); chart photo follows
+    separately. This avoids Telegram's 1024-char caption limit on photos.
+    """
     if not token or not chat_id:
         print("[telegram not configured] would send:\n" + text +
               (f"\n[+image {image_path}]" if image_path else ""))
         return False
     import logging, requests
     _log = logging.getLogger("sepa.alerter")
-    if image_path:
-        with open(image_path, "rb") as f:
-            r = requests.post(f"https://api.telegram.org/bot{token}/sendPhoto",
-                              data={"chat_id": chat_id, "caption": text, "parse_mode": "Markdown"},
-                              files={"photo": f}, timeout=30)
-    else:
-        r = requests.post(f"https://api.telegram.org/bot{token}/sendMessage",
-                          data={"chat_id": chat_id, "text": text, "parse_mode": "Markdown"},
-                          timeout=30)
+
+    # Send the text card first
+    r = requests.post(f"https://api.telegram.org/bot{token}/sendMessage",
+                      data={"chat_id": chat_id, "text": text, "parse_mode": "Markdown"},
+                      timeout=30)
     resp = r.json()
     if not resp.get("ok"):
         _log.error("Telegram send failed: %s", resp)
         print(f"  [telegram error] {resp}")
         return False
+
+    # Then send the chart photo (no caption — the text card above is the context)
+    if image_path:
+        time.sleep(1)
+        with open(image_path, "rb") as f:
+            r2 = requests.post(f"https://api.telegram.org/bot{token}/sendPhoto",
+                               data={"chat_id": chat_id},
+                               files={"photo": f}, timeout=30)
+        if not r2.json().get("ok"):
+            _log.warning("Chart photo send failed for %s: %s", image_path, r2.json())
+
     return True
 
 
@@ -129,9 +140,10 @@ def process(con, buyable_sigs, histories, asof):
             render_chart(histories[sig["ticker"]], sig, img)
         except Exception as e:
             print(f"  chart render failed {sig['ticker']}: {e}"); img = None
-        send(C.TELEGRAM_TOKEN, C.TELEGRAM_CHAT_ID, build_card(sig), img)
-        db.log_alert(con, key, sig["ticker"], asof, sig["setup"], sig["pivot"])
-        sent.append((sig["ticker"], img))
+        ok = send(C.TELEGRAM_TOKEN, C.TELEGRAM_CHAT_ID, build_card(sig), img)
+        if ok:
+            db.log_alert(con, key, sig["ticker"], asof, sig["setup"], sig["pivot"])
+            sent.append((sig["ticker"], img))
         time.sleep(1)   # Telegram rate limit: 1 msg/sec per chat
     con.commit()
     return sent
