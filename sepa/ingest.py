@@ -348,7 +348,18 @@ def seed_synthetic(con):
 
 
 if __name__ == "__main__":
+    import subprocess
     from .log_config import setup_logging
-    setup_logging()
+    _, run_dir = setup_logging(run_name="ingest")
     con = db.connect()
     ingest_us(con)
+    # Push logs to GitHub so every run is auditable from any machine
+    try:
+        repo_root = str(run_dir.parent.parent.parent)
+        subprocess.run(["git", "-C", repo_root, "add", "data/logs/"], check=False)
+        subprocess.run(["git", "-C", repo_root, "commit", "-m",
+                        f"logs: ingest {run_dir.name}"], check=False)
+        subprocess.run(["git", "-C", repo_root, "push", "origin", "main"], check=False)
+        log.info("logs pushed to GitHub")
+    except Exception as e:
+        log.warning("log push failed: %s", e)

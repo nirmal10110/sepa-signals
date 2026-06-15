@@ -6,7 +6,7 @@ __pycache__/
 # runtime data (generated, not source)
 data/sepa.db
 data/charts/
-data/logs/
+# data/logs/ — tracked intentionally; each run commits its own folder
 data/state.json
 
 # local Claude Code memory / session files
