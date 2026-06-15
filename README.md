@@ -120,21 +120,126 @@ chart: tradingview.com/chart/?symbol=AAPL
 | `sepa/validator.py` | Claude Haiku bounded validator (CONFIRM / CAUTION / REJECT) |
 | `sepa/run_daily.py` | orchestrator; breadth gate; stage-transition monitor |
 | `sepa/log_config.py` | rotating file log (7-day) + console handler |
-| `deploy/` | systemd service + timer units, logrotate config |
+| `deploy/windows/` | Windows Task Scheduler scripts (`install_tasks.ps1`, bat launchers) |
+| `deploy/` | Linux systemd service + timer units, logrotate config |
 
 ---
 
-## What runs when
+## What runs when (London timezone)
 
-| time | systemd unit | what it does |
-|---|---|---|
-| 9:00 pm | `sepa-ingest.timer` | downloads prices + fundamentals (EDGAR-cached) |
-| 10:00 pm | `sepa-daily.timer` | full scan → alerts |
-| nightly | (end of scan) | WAL checkpoint + VACUUM + checkpoint clear |
+| London | US Eastern | task | what it does |
+|--------|-----------|------|--------------|
+| 14:00 | 09:00 | `SEPA-PreMarket` | scan on yesterday's data — see what's buyable at the open |
+| 21:30 | 16:30 | `SEPA-Ingest` | download today's settled prices + fundamentals |
+| 22:00 | 17:00 | `SEPA-Daily` | full scan → Telegram alerts |
+| nightly | (end of scan) | — | WAL checkpoint + VACUUM + checkpoint clear |
+
+> **Why 21:30 for ingest?** US market closes at 16:00 ET. yfinance data settles
+> within ~15 min. Pre-market earnings (released 07–08 ET) are baked into today's
+> close. After-hours earnings show up in tomorrow's price action — no need to rush.
 
 ---
 
-## Mini PC: first-time setup
+## Windows mini PC: first-time setup
+
+> The mini PC runs Windows. Run through this once, then Task Scheduler
+> handles the three daily runs automatically.
+
+### 1. Prerequisites
+
+- Python 3.11+ from [python.org](https://python.org) — tick **"Add to PATH"** during install
+- Git from [git-scm.com](https://git-scm.com)
+
+### 2. Clone and install
+
+Open **Command Prompt** (not PowerShell):
+
+```bat
+git clone git@github.com:nirmal10110/sepa-signals.git C:\sepa-signals
+cd C:\sepa-signals
+python -m venv .venv
+.venv\Scripts\pip install -r requirements.txt
+```
+
+### 3. Configure credentials
+
+```bat
+copy deploy\.env.example .env
+notepad .env
+```
+
+Fill in these values:
+
+| key | where to get it |
+|-----|----------------|
+| `ANTHROPIC_API_KEY` | console.anthropic.com → Settings → API Keys |
+| `TELEGRAM_TOKEN` | @BotFather on Telegram |
+| `TELEGRAM_CHAT_ID` | message your bot, then visit `api.telegram.org/bot<TOKEN>/getUpdates` |
+| `ACCOUNT_SIZE` | your trading account size in USD |
+| `RISK_PER_TRADE` | e.g. `0.0125` for 1.25% risk per trade |
+| `UNIVERSE_LIMIT` | `3000` recommended |
+| `MARKET_TONE` | leave blank — auto-computed from market breadth |
+
+### 4. Run first ingest (seeds the database)
+
+```bat
+.venv\Scripts\python.exe -m sepa.ingest
+```
+
+Takes ~40–60 min for 3,000 stocks. Prices download first (~5 min), then
+fundamentals from EDGAR (~35 min). Progress logs to `data\logs\ingest.log`.
+
+### 5. Test Telegram
+
+```bat
+.venv\Scripts\python.exe -c "from sepa import alerter, config as C; alerter.send(C.TELEGRAM_TOKEN, C.TELEGRAM_CHAT_ID, 'SEPA test ping')"
+```
+
+You should receive "SEPA test ping" on your phone within a few seconds.
+
+### 6. Run first scan
+
+```bat
+.venv\Scripts\python.exe -m sepa.run_daily
+```
+
+Check the output — verify stage labels, breadth %, and tier counts look sane.
+Open a few Buy Ready names in TradingView to spot-check the setups.
+
+### 7. Install Task Scheduler tasks
+
+Right-click **PowerShell** → **Run as Administrator**, then:
+
+```powershell
+cd C:\sepa-signals\deploy\windows
+.\install_tasks.ps1
+```
+
+This registers three tasks:
+
+| Task | Time (London) | What |
+|------|--------------|------|
+| `SEPA-PreMarket` | 14:00 | Morning signal review |
+| `SEPA-Ingest` | 21:30 | Download today's prices |
+| `SEPA-Daily` | 22:00 | Scan + Telegram alerts |
+
+### 8. Verify tasks are registered
+
+Open **Task Scheduler** (search in Start menu) → look for `SEPA-PreMarket`,
+`SEPA-Ingest`, `SEPA-Daily` in the task list. Right-click any task → **Run**
+to test it manually.
+
+Logs appear in `C:\sepa-signals\data\logs\`.
+
+### 9. Paper-trading period (4–8 weeks)
+
+Log every alert you receive — entry price, setup type, RS, stop. Track
+the outcome after 4–8 weeks. Only trust the signals after this period
+confirms the alerts are sane and stage/footprint labels match the charts.
+
+---
+
+## Linux mini PC: first-time setup
 
 > Everything below runs on the mini PC. Run through this once, then the
 > systemd timers handle nightly automation.
