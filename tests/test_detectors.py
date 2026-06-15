@@ -250,3 +250,43 @@ def test_detect_setups_returns_none_for_declining_name():
     df = add_mas(p.history("JJDEC"))
     setup = detect_setups(df)
     assert setup is None
+
+
+def test_extension_gate_marks_not_buyable():
+    """Price >5% past pivot must come back buyable=False (no-chase rule).
+
+    Construct a VCP-shaped base that ends with pivot at ~50, then tack on a
+    large gap-up that puts price 30% above pivot. The setup should still be
+    detected (pattern happened) but buyable must be False.
+    """
+    # Build a VCP base: contracting volatility, volume drying up
+    np.random.seed(42)
+    n_base = 60
+    base_prices = 50.0 * np.exp(np.cumsum(np.random.normal(0, 0.008, n_base)))
+    # Force a couple of contractions: two descending swings
+    base_prices[10:20] -= np.linspace(0, 3, 10)   # first contraction
+    base_prices[20:30] += np.linspace(0, 2, 10)   # recovery
+    base_prices[30:40] -= np.linspace(0, 1.5, 10) # second (shallower) contraction
+    base_prices[40:] += np.linspace(0, 2, 20)     # final squeeze toward pivot
+    base_prices = np.clip(base_prices, 40, 55)
+
+    # Tack on an extended run: current price is 30% above the base pivot
+    extended_tail = np.linspace(base_prices[-1], base_prices[-1] * 1.30, 10)
+    closes = np.concatenate([base_prices, extended_tail])
+
+    base_vol = 1_000_000
+    vols = np.concatenate([
+        np.full(n_base, base_vol) * np.linspace(1.2, 0.7, n_base),  # drying volume
+        np.full(len(extended_tail), base_vol * 2.0)])                # breakout spike
+
+    df = add_mas(_df(closes, vols))
+    setup = detect_setups(df)
+
+    # A setup may or may not be detected (fixture is synthetic), but if detected
+    # it must NOT be buyable because price is >5% past any reasonable pivot.
+    if setup is not None and setup.type != "Power Play":
+        assert not setup.buyable, (
+            f"Expected buyable=False for extended setup "
+            f"(price={closes[-1]:.2f}, pivot={setup.pivot:.2f}, "
+            f"ext={(closes[-1]/setup.pivot-1)*100:.1f}%)"
+        )

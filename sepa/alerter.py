@@ -46,7 +46,7 @@ def build_card(sig):
     sig = {**sig, "tt": tt}
     tone = sig.get("market_tone", "—")
     ud = sig.get("ud_vol", 0)
-    ud_tag = f"· vol ratio `{ud:.2f}` {'⬆' if ud >= 1.0 else '⬇'}" if ud else ""
+    ud_tag = f"· vol ratio `{ud:.2f}` {'✅' if ud >= C.VOL_CONFIRM_RATIO else '⚠️'}" if ud else ""
 
     # 1-year return + 200 SMA extension + climax flag
     ret_1y  = sig.get("ret_1y")   # already in %, e.g. 150.0
@@ -100,7 +100,7 @@ def send(token, chat_id, text, image_path=None):
     if not token or not chat_id:
         print("[telegram not configured] would send:\n" + text +
               (f"\n[+image {image_path}]" if image_path else ""))
-        return False
+        return True   # still log + dedupe — treat stdout delivery as success
     import logging, requests
     _log = logging.getLogger("sepa.alerter")
 

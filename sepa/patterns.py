@@ -44,7 +44,7 @@ def detect_vcp(df: pd.DataFrame) -> Setup | None:
         return None
     pivot = float(np.max(close))
     last = float(close[-1])
-    buyable = pivot <= last * (1 + C.BUY_ZONE_WIDTH)
+    buyable = pivot * (1 - C.BUY_ZONE_WIDTH) <= last <= pivot * (1 + C.BUY_ZONE_WIDTH)
     stop = min(close[-int(len(close)/4):]) * 0.99
     weeks = max(1, len(close) // 5)
     fp = f"{weeks}W {int(round(max(depths)*100))}/{int(round(depths[-1]*100))} {len(depths)}T"
@@ -167,7 +167,7 @@ def detect_cup_handle(df: pd.DataFrame) -> Setup | None:
             continue
 
         last = float(close[-1])
-        buyable = last >= pivot * (1 - C.BUY_ZONE_WIDTH)
+        buyable = pivot * (1 - C.BUY_ZONE_WIDTH) <= last <= pivot * (1 + C.BUY_ZONE_WIDTH)
         stop = handle_low * 0.99
         cup_weeks = max(1, (n - handle_len - cup_start) // 5)
         handle_weeks = max(1, handle_len // 5)
@@ -327,7 +327,7 @@ def detect_livermore_pp(df: pd.DataFrame) -> Setup | None:
 
         # Pivot = r2_high (buy above 2nd reaction high)
         pivot = float(r2_high)
-        buyable = last >= pivot * (1 - C.BUY_ZONE_WIDTH)
+        buyable = pivot * (1 - C.BUY_ZONE_WIDTH) <= last <= pivot * (1 + C.BUY_ZONE_WIDTH)
 
         # Stop below mid-low (the trough between the two reactions)
         stop = float(mid_low) * 0.99
@@ -358,4 +358,14 @@ def detect_setups(df: pd.DataFrame) -> Setup | None:
     floor = round(s.entry * (1 - C.MAX_STOP_PCT), 2)
     if s.stop < floor:
         s = replace(s, stop=floor)
+    # Extension gate: if price has run more than BUY_ZONE_WIDTH past the pivot,
+    # this is a chase — mark not-buyable regardless of what the detector said.
+    # Power Play explicitly bypasses extension (PP by design looks "extended"
+    # vs its pre-thrust base — that is the pattern, not a flaw).
+    last = float(df["close"].iloc[-1])
+    if s.type != "Power Play" and s.pivot > 0:
+        ext = last / s.pivot - 1
+        if ext > C.BUY_ZONE_WIDTH:
+            s = replace(s, buyable=False,
+                        notes=(s.notes + f" [EXTENDED +{ext*100:.0f}%]").strip())
     return s

@@ -279,6 +279,19 @@ def mark_fundamentals_fetched(con, ticker):
                 (ticker,))
 
 
+def get_price_latest_dates(con, tickers: list) -> dict:
+    """Return {ticker: "YYYY-MM-DD"} for the most recent stored price date.
+    Tickers with no stored data are omitted from the result."""
+    if not tickers:
+        return {}
+    placeholders = ",".join("?" * len(tickers))
+    rows = con.execute(
+        f"SELECT ticker, MAX(date) FROM prices WHERE ticker IN ({placeholders}) GROUP BY ticker",
+        tickers,
+    ).fetchall()
+    return {t: d for t, d in rows if d}
+
+
 def get_fundamentals_fetched_at(con, ticker) -> str | None:
     """Return the ISO datetime string when fundamentals were last fetched, or None."""
     row = con.execute("SELECT fund_fetched_at FROM securities WHERE ticker=?",

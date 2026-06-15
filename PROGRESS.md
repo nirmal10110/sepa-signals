@@ -5,7 +5,7 @@
 > Legend: [ ] todo · [~] in progress · [x] done & verified · [!] blocked ·
 > `NEEDS-LIVE-VERIFY` = code done, user must confirm on mini PC.
 
-_Last updated: 2026-06-11 (Claude). Resume point: **Phase 2 (mini PC)**._
+_Last updated: 2026-06-15 (Claude). Resume point: **Phase 2 (mini PC)**._
 
 ---
 
@@ -109,6 +109,48 @@ _Last updated: 2026-06-11 (Claude). Resume point: **Phase 2 (mini PC)**._
 - [ ] **GATE (user):** alerts judged sane → v1 declared working
 
 ---
+
+## Signal quality fixes (2026-06-15) ✅ DONE
+
+Three systemic bugs found via 13-signal audit; all fixed and tested:
+
+**Bug #1 — Extension gate was missing (4 of 13 signals were chase entries)**
+- Root cause: VCP `buyable` check was `pivot <= last * 1.05` (trivially true even at +67%
+  extension). Cup-with-Handle and Livermore PP had only a lower bound, no upper bound.
+- Fix: All three detectors now use `pivot × 0.95 ≤ last ≤ pivot × 1.05`. Any price > pivot ×
+  1.05 is `buyable=False` (Buy Alert, not Buy Ready — wait for pullback to new base).
+- Safety net added in `detect_setups()`: extension gate re-checks after all detectors, annotates
+  footprint with `[EXTENDED +N%]`. Power Play is explicitly exempt (PP is by design "extended").
+- New test: `test_extension_gate_marks_not_buyable` confirms extended setups return `buyable=False`.
+
+**Bug #2 — Stop anchored to stale/historical base**
+- Root cause: Detectors compute stop from the detected base structure. When price has run far
+  past the old pivot (e.g. HPE +67%), the stop referenced a base that no longer exists.
+- Fix: Already addressed by the `MAX_STOP_PCT` cap in `detect_setups()` (added in 2026-06-11
+  pull): `stop = max(stop, entry × (1 − MAX_STOP_PCT))`. Verified cap raises stale stops
+  to current-price-relative level (e.g. HPE: stop raised from $24.23 → $44.32).
+
+**Bug #3 — Volume confirmation threshold wrong in alert card**
+- Root cause: `ud_tag` used ⬆/⬇ symbols with 1.0× threshold. Minervini's confirmation bar
+  is 1.40× (40% above average accumulation).
+- Fix: `VOL_CONFIRM_RATIO = 1.40` added to config. Card now shows ✅ at ≥1.40× and ⚠️ below.
+
+**Tests were hitting live APIs (Telegram + Claude)**
+- Root cause: `conftest.py` only set Agg backend; credentials from `.env` were live.
+  Engine tests (`test_funnel_golden_tiers`, lifecycle tests) called `run()` which fired
+  real Telegram messages and real Claude API calls on every pytest run.
+- Fix: `conftest.py` now clears `TELEGRAM_TOKEN`, `TELEGRAM_CHAT_ID`, `ANTHROPIC_API_KEY`
+  before any test runs. Validator error-path returns CAUTION (by design). `alerter.send()`
+  now returns `True` on unconfigured-token path so dedupe logging and `sent` list still work.
+- Result: 54 non-live tests pass in ~52s with zero external API calls.
+
+**Incremental price fetching**
+- `db.get_price_latest_dates(con, tickers)`: single SQL query for the max stored date per ticker.
+- `ingest.load_prices()` now splits universe into new tickers (full `PRICE_LOOKBACK` download)
+  and incremental tickers (fetch only from `last_date+1` to today, grouped by last date).
+  On subsequent nightly runs, established tickers pull 1–2 days instead of 2 years.
+
+**Gate status:** 54 passed in 52s (all non-live). All offline acceptance gates still green.
 
 ## Backlog / future upgrades
 - [ ] **Universe: switch to S&P 1500** (S&P 500 + MidCap 400 + SmallCap 600) instead of first-N

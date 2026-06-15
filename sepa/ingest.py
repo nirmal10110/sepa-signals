@@ -102,43 +102,113 @@ def load_universe(con, rows):
 
 
 # ---------------------------------------------------------------- prices
-def load_prices(con, tickers, period=None):
-    """Batch-download prices via yfinance; apply hygiene filter; upsert."""
+def _download_batch(tickers, *, period=None, start=None, end=None):
+    """yfinance batch download; returns the raw DataFrame."""
     import yfinance as yf
-    period = period or C.PRICE_LOOKBACK
+    kwargs = dict(interval="1d", auto_adjust=True, group_by="ticker",
+                  progress=False, threads=False)
+    if start:
+        kwargs["start"] = start
+        if end:
+            kwargs["end"] = end
+    else:
+        kwargs["period"] = period
+    return _retry(lambda: yf.download(tickers, **kwargs))
+
+
+def _process_batch(con, batch, data, counter):
+    """Extract per-ticker DataFrames from a batch download result and upsert."""
     loaded = skipped = failed = 0
-    batches = list(range(0, len(tickers), 100))   # 100-ticker batches (safer for yfinance)
-    for batch_num, i in enumerate(batches):
-        batch = tickers[i:i + 100]
+    for t in batch:
         try:
-            data = _retry(lambda: yf.download(
-                batch, period=period, interval="1d",
-                auto_adjust=True, group_by="ticker",
-                progress=False, threads=False))    # threads=False reduces burst load
+            df = data[t] if len(batch) > 1 else data
+            df = df.rename(columns=str.lower)[["open", "high", "low", "close", "volume"]].dropna()
+            df = hygiene_filter(df)
+            if df.empty:
+                skipped += 1
+                continue
+            db.upsert_prices(con, t, df)
+            loaded += 1
         except Exception as e:
-            log.error("batch download failed (tickers %d-%d): %s", i, i + len(batch), e)
-            failed += len(batch)
-            time.sleep(5)   # back off after a batch error
+            log.warning("price load failed %s: %s", t, e)
+            failed += 1
+    counter[0] += loaded
+    counter[1] += skipped
+    counter[2] += failed
+
+
+def load_prices(con, tickers, period=None):
+    """Batch-download prices via yfinance; apply hygiene filter; upsert.
+
+    Incremental strategy:
+      - Tickers already in the DB have their most-recent stored date checked.
+        Only data AFTER that date is fetched (start = last_date + 1 day).
+      - Tickers with no stored data get the full PRICE_LOOKBACK period.
+    This avoids re-downloading years of history on every nightly run.
+    """
+    import datetime
+    import yfinance as yf
+    full_period = period or C.PRICE_LOOKBACK
+    today = datetime.date.today().isoformat()
+
+    # Determine last stored date per ticker (bulk query)
+    latest = db.get_price_latest_dates(con, tickers)
+
+    # Split into new (no history) vs incremental (has history)
+    new_tickers = [t for t in tickers if t not in latest]
+    incr_tickers = [t for t in tickers if t in latest]
+
+    # Group incremental tickers by their latest date so we can batch them
+    from collections import defaultdict
+    by_last_date = defaultdict(list)
+    for t in incr_tickers:
+        by_last_date[latest[t]].append(t)
+
+    counter = [0, 0, 0]   # [loaded, skipped, failed]
+    batch_idx = 0
+
+    # --- new tickers: full period download ---
+    new_batches = [new_tickers[i:i + 100] for i in range(0, len(new_tickers), 100)]
+    for batch in new_batches:
+        try:
+            data = _download_batch(batch, period=full_period)
+        except Exception as e:
+            log.error("new-ticker batch failed: %s", e)
+            counter[2] += len(batch)
+            time.sleep(5)
             continue
-        for t in batch:
-            try:
-                df = data[t] if len(batch) > 1 else data
-                df = df.rename(columns=str.lower)[["open", "high", "low", "close", "volume"]].dropna()
-                df = hygiene_filter(df)
-                if df.empty:
-                    skipped += 1
-                    continue
-                db.upsert_prices(con, t, df)
-                loaded += 1
-            except Exception as e:
-                log.warning("price load failed %s: %s", t, e)
-                failed += 1
+        _process_batch(con, batch, data, counter)
         con.commit()
-        log.info("prices batch %d/%d: loaded=%d skipped=%d failed=%d",
-                 batch_num + 1, len(batches), loaded, skipped, failed)
-        if batch_num < len(batches) - 1:
-            time.sleep(3)   # 3s between batches — stays well under Yahoo rate limits
-    log.info("prices total: loaded=%d skipped=%d failed=%d", loaded, skipped, failed)
+        batch_idx += 1
+        log.info("prices new-ticker batch %d: loaded=%d skipped=%d failed=%d",
+                 batch_idx, *counter)
+        time.sleep(3)
+
+    # --- incremental tickers: fetch only from last_date+1 to today ---
+    for last_date, group in sorted(by_last_date.items()):
+        # Skip if already up-to-date (last stored date is today)
+        if last_date >= today:
+            log.debug("prices already current for %d tickers (last=%s)", len(group), last_date)
+            continue
+        start_date = (datetime.date.fromisoformat(last_date) +
+                      datetime.timedelta(days=1)).isoformat()
+        incr_batches = [group[i:i + 100] for i in range(0, len(group), 100)]
+        for batch in incr_batches:
+            try:
+                data = _download_batch(batch, start=start_date, end=today)
+            except Exception as e:
+                log.error("incremental batch failed (start=%s): %s", start_date, e)
+                counter[2] += len(batch)
+                time.sleep(5)
+                continue
+            _process_batch(con, batch, data, counter)
+            con.commit()
+            batch_idx += 1
+            log.info("prices incr batch %d (start=%s): loaded=%d skipped=%d failed=%d",
+                     batch_idx, start_date, *counter)
+            time.sleep(3)
+
+    log.info("prices total: loaded=%d skipped=%d failed=%d", *counter)
 
 
 # ---------------------------------------------------------------- fundamentals

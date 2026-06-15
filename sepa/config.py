@@ -106,6 +106,10 @@ FUND_CACHE_DAYS_EARNINGS = _getfloat("FUND_CACHE_DAYS_EARNINGS", 0.25)  # 6 h
 
 BUY_ZONE_WIDTH = 0.05            # price is "buyable" within 5% of pivot
 MAX_STOP_PCT   = _getfloat("MAX_STOP_PCT", 0.08)  # hard cap: stop never > 8% below entry
+# Up-day/down-day volume ratio threshold for confirmed institutional accumulation.
+# Minervini: breakout day volume should be >= 40% above average; here we use
+# the 60-day up/down ratio as the running proxy — flag anything below 1.40x.
+VOL_CONFIRM_RATIO = _getfloat("VOL_CONFIRM_RATIO", 1.40)
 
 # --- Climax run detection ---
 # A Power Play on top of an already >200% 1-year gain is a potential climax
