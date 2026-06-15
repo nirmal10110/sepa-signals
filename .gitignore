@@ -5,6 +5,10 @@ __pycache__/
 
 # runtime data (generated, not source)
 data/sepa.db
+data/sepa.db-shm
+data/sepa.db-wal
+data/logs/sepa.log
+data/logs/sepa.log.*
 data/charts/
 # data/logs/ — tracked intentionally; each run commits its own folder
 data/state.json

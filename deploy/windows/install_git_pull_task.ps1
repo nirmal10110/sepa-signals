@@ -16,7 +16,7 @@ $action  = New-ScheduledTaskAction `
     -Argument "/c `"$batFile`""
 
 # Repeat every 2 hours, starting at midnight, running indefinitely
-$trigger = New-ScheduledTaskTrigger -RepetitionInterval (New-TimeSpan -Hours 2) `
+$trigger = New-ScheduledTaskTrigger -RepetitionInterval (New-TimeSpan -Minutes 30) `
     -Once -At "00:00"
 
 Register-ScheduledTask `
@@ -27,5 +27,5 @@ Register-ScheduledTask `
     -RunLevel   Highest `
     -Force
 
-Write-Host "OK SEPA-GitPull task registered (runs every 2 hours)"
+Write-Host "OK SEPA-GitPull task registered (runs every 30 minutes)"
 Write-Host "Log: $sepaDir\data\logs\git_pull.log"

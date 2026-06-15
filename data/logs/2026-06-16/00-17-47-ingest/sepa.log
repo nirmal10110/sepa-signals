@@ -1,0 +1,11 @@
+2026-06-16 00:17:47 INFO    sepa  log file: C:\Users\lathe\sepa-signals\data\logs\2026-06-16\00-17-47-ingest\sepa.log
+2026-06-16 00:17:48 INFO    sepa.ingest  universe: 5000 US tickers (after ETF/shell filter)
+2026-06-16 00:17:56 ERROR   yfinance  $CONE: possibly delisted; no price data found  (period=2y) (Yahoo error = "No data found, symbol may be delisted")
+2026-06-16 00:17:58 ERROR   yfinance  
+1 Failed download:
+2026-06-16 00:17:58 ERROR   yfinance  ['CONE']: possibly delisted; no price data found  (period=2y) (Yahoo error = "No data found, symbol may be delisted")
+2026-06-16 00:18:00 INFO    sepa.ingest  prices new-ticker batch 1: loaded=47 skipped=53 failed=0
+2026-06-16 00:18:16 INFO    sepa.ingest  prices new-ticker batch 2: loaded=140 skipped=60 failed=0
+2026-06-16 00:18:33 INFO    sepa.ingest  prices new-ticker batch 3: loaded=232 skipped=68 failed=0
+2026-06-16 00:18:50 INFO    sepa.ingest  prices new-ticker batch 4: loaded=319 skipped=81 failed=0
+2026-06-16 00:19:07 INFO    sepa.ingest  prices new-ticker batch 5: loaded=407 skipped=93 failed=0
