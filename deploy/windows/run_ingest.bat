@@ -1,6 +1,7 @@
 @echo off
-:: SEPA Signals — nightly data ingest (prices + fundamentals)
-:: Scheduled via Task Scheduler to run at 9:00 PM daily.
+:: SEPA Signals — post-close data ingest (prices + fundamentals)
+:: Scheduled via Task Scheduler to run at 21:30 London / 16:30 ET daily.
+:: 30 minutes after US market close — prices are settled by then.
 
 set SEPA_DIR=%~dp0..\..
 set LOG_FILE=%SEPA_DIR%\data\logs\ingest.log
