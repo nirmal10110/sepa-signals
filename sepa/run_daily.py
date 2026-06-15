@@ -23,7 +23,7 @@ log = logging.getLogger("sepa.run")
 STAGE_NAME = {1: "Base", 2: "Advance", 3: "Top", 4: "Decline"}
 
 # Stage transitions worth alerting when a name is in Positions or watchlist
-_DANGER_TRANSITIONS = {(2, 3), (2, 4), (3, 4)}   # advance→topping/decline
+_DANGER_TRANSITIONS = {(2, 3), (2, 4), (3, 4)}   # advance->topping/decline
 
 
 def _compute_tone(stages_now: dict) -> str:
@@ -60,7 +60,7 @@ def _check_stage_transitions(con, asof, stages_now: dict, prev_stages: dict):
 
 def run(con=None, market_tone=None):
     con = con or db.connect()
-    # market_tone arg or env override; empty string → auto-compute from breadth
+    # market_tone arg or env override; empty string -> auto-compute from breadth
     market_tone_override = market_tone or C.MARKET_TONE_OVERRIDE
     prov = DBProvider(con)
     tickers = prov.universe()
@@ -147,9 +147,9 @@ def run(con=None, market_tone=None):
         market_tone = _compute_tone(stages_now)
         n2 = sum(1 for s in stages_now.values() if s == 2)
         pct2 = n2 / max(len(stages_now), 1) * 100
-        log.info("breadth: %d/%d (%.1f%%) Stage 2 → tone: %s",
+        log.info("breadth: %d/%d (%.1f%%) Stage 2 -> tone: %s",
                  n2, len(stages_now), pct2, market_tone)
-        print(f"  breadth: {n2}/{len(stages_now)} ({pct2:.1f}%) Stage 2 → {market_tone}")
+        print(f"  breadth: {n2}/{len(stages_now)} ({pct2:.1f}%) Stage 2 -> {market_tone}")
 
     # pass 3b: decide tier + write signals using the computed tone
     for t, pre in pre_tier.items():
@@ -184,7 +184,7 @@ def run(con=None, market_tone=None):
     if stage_alerts:
         for sa in stage_alerts:
             msg = (f"⚠️ STAGE CHANGE {sa['ticker']}: "
-                   f"Stage {sa['from_stage']}→{sa['to_stage']} "
+                   f"Stage {sa['from_stage']}->{sa['to_stage']} "
                    f"[{sa['source']}]")
             print(msg)
             log.warning(msg)
@@ -236,7 +236,7 @@ def run(con=None, market_tone=None):
     promotions = len([m for m in moves.values() if m in ("NEW", "PROMOTED")])
     hb = (f"SEPA scan {asof}: {counts.get('Buy Ready', 0)} Buy Ready, "
           f"{promotions} promotions, {len(sent)} alerts. "
-          f"Breadth {pct2:.1f}% Stage2 → {market_tone}")
+          f"Breadth {pct2:.1f}% Stage2 -> {market_tone}")
 
     print(f"\n=== SEPA {asof} | {market_tone} | {pct2:.1f}% Stage2 | universe {len(hist)} ===")
     for tier in C.TIER_ORDER:
