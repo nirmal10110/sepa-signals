@@ -1,0 +1,6 @@
+2026-06-16 14:00:01 INFO    sepa  log file: C:\Users\lathe\sepa-signals\data\logs\2026-06-16\14-00-01-scan\sepa.log
+2026-06-16 14:00:01 INFO    sepa.run  SEPA scan starting — 5000 tickers
+2026-06-16 14:00:22 INFO    sepa.run  breadth: 1407/2824 (49.8%) Stage 2 -> tone: Confirmed uptrend
+2026-06-16 14:00:22 INFO    sepa.run  HEARTBEAT: SEPA scan 2026-06-16: 16 Buy Ready, 0 promotions, 0 alerts. Breadth 49.8% Stage2 -> Confirmed uptrend
+2026-06-16 14:00:23 INFO    sepa.run  DB maintenance complete
+2026-06-16 14:00:25 INFO    sepa.run  logs pushed to GitHub
