@@ -1,0 +1,111 @@
+2026-06-16 10:25:22 INFO    sepa  log file: C:\Users\lathe\sepa-signals\data\logs\2026-06-16\10-25-22-scan\sepa.log
+2026-06-16 10:25:22 INFO    sepa.run  SEPA scan starting — 5000 tickers
+2026-06-16 10:25:49 INFO    sepa.run  breadth: 1407/2824 (49.8%) Stage 2 -> tone: Confirmed uptrend
+2026-06-16 10:25:49 WARNING sepa.run  validator cap hit: skipping AI for ['NXPI', 'CROX', 'RYM', 'ALGT', 'EVR', 'SFST']
+2026-06-16 10:25:55 INFO    httpx  HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-06-16 10:25:55 INFO    sepa.validator  validator STX: ```json
+{
+  "verdict": "CAUTION",
+  "reason": "Exceptional 1-year return (+711%) and extreme extension (+150% above 200 SMA) suggest late-stage parabolic move rather than fresh breakout; climax run risk outweighs clean technical setup.",
+  "summary": "Seagate Technology is a global leader in data storage solutions (hard drives, SSDs, cloud infrastructure) serving enterprise, consumer, and surveillance markets.",
+  "thesis": "Stage 2 setup with 8/8 trend template and 98 RS normally signals institutional accumulation, but the magnitude of prior gains and extension make this a climax scenario where institutional supply may overwhelm demand.",
+  "catalysts": "No recent headlines provided; without visibility on earnings dates, product announcements, or sector tailwinds, the setup relies purely on technicals in an already-extended stock."
+}
+```
+
+**Additional context:** This is a textbook case of a quantitative signal appearing at an inflection point. The metrics are clean, but the macro context (massive YTD run, extreme extension) suggests we're near an exhaustion event rather than the *beginning* of a new leg. Recommend waiting for a pullback and fresh base formation before entering, or taking only a partial position with strict risk management. | in=503 out=294 tokens | 4.6s
+2026-06-16 10:26:00 INFO    httpx  HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-06-16 10:26:00 INFO    sepa.validator  validator ALAB: ```json
+{
+  "verdict": "CAUTION",
+  "reason": "Exceptional 1-year return (+334%) and extreme extension (+112% above 200 SMA) suggest late-stage momentum rather than early-stage breakout; climax run dynamics warrant reduced position sizing despite passing quant screen.",
+  "summary": "Astera Labs designs high-performance interconnect chipsets for data center and AI infrastructure applications.",
+  "thesis": "Stage 2 setup with strong RS (98) and trend structure could signal continuation, but the stock is already massively extended after a year-long rally, increasing risk of mean reversion or consolidation rather than fresh leg up.",
+  "catalysts": "AI infrastructure demand tailwinds and potential data center customer wins; however, without fresh headline catalysts visible, momentum may be self-referential rather than fundamentally driven."
+}
+```
+
+**Key context:** ALAB has already delivered spectacular returns. While the quantitative setup is clean, the risk/reward is compressed. This is a *trader's* setup more than an *investor's* setup—treat it as a swing trade with tight discipline, not a core position. Consider waiting for a deeper pullback to a more reasonable valuation zone if conviction is uncertain. | in=502 out=279 tokens | 4.4s
+2026-06-16 10:26:03 INFO    httpx  HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-06-16 10:26:03 INFO    sepa.validator  validator TTMI: ```json
+{
+  "verdict": "CAUTION",
+  "reason": "Exceptional 1-year return (+484%) combined with extreme extension (+116% above 200 SMA) suggests late-stage momentum rather than early breakout; climax run risk is material despite clean technicals.",
+  "summary": "TTM Technologies is a semiconductor equipment and technology services company serving the electronics and defense industries.",
+  "thesis": "Stage 2 setup with 8/8 trend template and RS 97 shows textbook momentum structure, but explosive prior gains and deep extension leave limited margin for error if sentiment shifts.",
+  "catalysts": "Semiconductor cycle strength, potential defense/aerospace contract wins, or earnings beats could sustain momentum, but lack of announced catalysts increases reliance on pure technicals."
+}
+``` | in=501 out=184 tokens | 3.2s
+2026-06-16 10:26:08 INFO    httpx  HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-06-16 10:26:08 INFO    sepa.validator  validator GTX: ```json
+{
+  "verdict": "CAUTION",
+  "reason": "Extreme 1-year outperformance (+236%) and extended price action (+79% above 200 SMA) suggest crowding; strong technical setup is sound, but risk/reward is asymmetric at this stage of the move.",
+  "summary": "Garrett Motion is a turbocharging and electric supercharging technology company serving automotive OEMs globally.",
+  "thesis": "Stage 2 setup with 8/8 trend template and 95 RS in a turnaround story (automotive electrification tailwind); however, the stock has already re-rated dramatically, leaving limited margin of safety.",
+  "catalysts": "Earnings beats, EV platform adoption wins, or margin expansion commentary; conversely, any automotive demand softness could trigger sharp profit-taking given the extended valuation."
+}
+``` | in=465 out=205 tokens | 4.1s
+2026-06-16 10:26:13 INFO    httpx  HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-06-16 10:26:13 INFO    sepa.validator  validator OGN: ```json
+{
+  "verdict": "CONFIRM",
+  "reason": "Setup exhibits textbook Power Play dynamics with strong relative strength (92) and clean trend template alignment; fundamentals passed; no obvious red flags in the technical structure.",
+  "summary": "Organon & Co. is a pure-play women's health and primary care pharmaceutical company spun off from Merck in 2021, focused on contraceptives, fertility, and other specialty medications.",
+  "thesis": "Stock has already moved +35% YTD and is 49% extended above the 200-day MA, but the 10-day flag consolidation after a 130% 40-day run suggests institutional accumulation into a Stage 2 trend; RS of 92 indicates outperformance relative to pharma peers.",
+  "catalysts": "Potential FDA approvals or label expansions in women's health portfolio, quarterly earnings beats driven by contraceptive demand resilience, or M&A activity in the specialty pharma space."
+}
+``` | in=445 out=232 tokens | 4.2s
+2026-06-16 10:26:17 INFO    httpx  HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-06-16 10:26:17 INFO    sepa.validator  validator ETON: ```json
+{
+  "verdict": "CAUTION",
+  "reason": "Strong technical setup and relative strength, but micro-cap pharma with no recent catalysts disclosed and high execution risk on pipeline programs.",
+  "summary": "Eton Pharmaceuticals develops and commercializes rare disease and specialty pharmaceutical products, primarily dermatology and other therapeutic areas.",
+  "thesis": "Cup-with-handle pattern with 51W depth suggests institutional accumulation; 91 RS and +125% YTD indicate sustained momentum; Stage 2 entry with tight 1.9% stop offers favorable risk/reward if pivot holds.",
+  "catalysts": "Upcoming FDA decisions on pipeline candidates, clinical trial readouts, or commercial milestone announcements for existing products could validate the setup, but none are currently highlighted."
+}
+```
+
+**Note:** Eton is a small-cap pharma play. The technical setup is clean, but absence of near-term catalysts and the inherent binary risk of drug development warrant position sizing discipline and close monitoring of any clinical or regulatory updates. | in=457 out=238 tokens | 3.9s
+2026-06-16 10:26:21 INFO    httpx  HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-06-16 10:26:21 INFO    sepa.validator  validator ARW: ```json
+{
+  "verdict": "CONFIRM",
+  "reason": "Cup-with-handle setup is textbook Minervini; strong RS (88), perfect trend template, and fundamentals pass; no negative headlines to contradict the technicals.",
+  "summary": "Arrow Electronics is a global distributor of electronic components and computing products for industrial, commercial, and consumer applications.",
+  "thesis": "Stage 2 breakout from a deep 51-week cup with tight handle entry offers favorable risk/reward; +88% YTD and 60% extension above 200 SMA suggest institutional accumulation and sustained momentum in semiconductor/tech distribution.",
+  "catalysts": "Earnings beats on strong tech hardware demand, margin expansion from supply-chain normalization, or M&A activity in the electronics distribution space could accelerate the move."
+}
+``` | in=455 out=193 tokens | 3.2s
+2026-06-16 10:26:30 INFO    httpx  HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-06-16 10:26:30 INFO    sepa.validator  validator AAON: ```json
+{
+  "verdict": "CONFIRM",
+  "reason": "Strong technical setup (8/8 trend template, RS 88) with clean cup-and-handle pattern and solid fundamental pass; 81% YTD run suggests institutional accumulation rather than retail euphoria.",
+  "summary": "AAON manufactures heating, ventilation, and air conditioning (HVAC) equipment and packaged rooftop units for commercial and residential markets.",
+  "thesis": "Stage 2 breakout from a deep, 50-week cup with tight handle in a high-RS environment suggests institutional buyers are positioning ahead of a move; 36% extension above 200 SMA indicates the trend is intact and sustainable.",
+  "catalysts": "Commercial construction cycle strength, margin expansion from operational leverage, or positive guidance revision could trigger a continuation; watch earnings for backlog and pricing commentary."
+}
+``` | in=457 out=204 tokens | 8.4s
+2026-06-16 10:26:34 INFO    httpx  HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-06-16 10:26:34 INFO    sepa.validator  validator GRC: ```json
+{
+  "verdict": "CONFIRM",
+  "reason": "Strong technical setup with 8/8 trend template alignment, RS of 88, and clean VCP structure; fundamentals pass screening and price is in healthy extension above 200 SMA without overextension.",
+  "summary": "Gorman-Rupp is an industrial pump and fluid-handling equipment manufacturer serving oil & gas, water/wastewater, construction, and chemical markets globally.",
+  "thesis": "Stock has nearly doubled in 12 months and remains in disciplined uptrend with proper support structure (pivot at 85.4, stop at 78.57); 3C volatility contraction into breakout suggests institutional accumulation ahead of an inflection.",
+  "catalysts": "Industrial cyclical tailwinds (infrastructure spending, energy capex recovery) and earnings reports should provide near-term confirmation; lack of recent news means next earnings beat or guidance raise could re-accelerate momentum."
+}
+``` | in=449 out=224 tokens | 3.3s
+2026-06-16 10:26:37 INFO    httpx  HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-06-16 10:26:37 INFO    sepa.validator  validator NUTX: ```json
+{
+  "verdict": "CAUTION",
+  "reason": "Strong technical setup, but Nutex Health operates in a fragmented, commoditized healthcare services segment with thin margins and limited competitive moat; stock lacks recent positive catalysts and 20% extension above 200 SMA suggests late-stage momentum.",
+  "summary": "Nutex Health is a healthcare services and management company operating urgent care and occupational health clinics across multiple states.",
+  "thesis": "The VCP setup with solid RS (87) and stage 2 structure aligns with a potential breakout, but only if the company can demonstrate sustainable revenue growth and margin expansion in an increasingly price-competitive market.",
+  "catalysts": "Potential M&A activity, expansion announcements, or positive same-store sales growth; however, no near-term catalysts are evident from recent news flow."
+}
+``` | in=449 out=202 tokens | 3.4s
+2026-06-16 10:26:38 WARNING matplotlib.font_manager  findfont: Failed to find font weight semibold, now using 700.
