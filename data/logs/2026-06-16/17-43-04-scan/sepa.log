@@ -1,0 +1,328 @@
+2026-06-16 17:43:04 INFO    sepa  log file: C:\Users\lathe\sepa-signals\data\logs\2026-06-16\17-43-04-scan\sepa.log
+2026-06-16 17:43:04 INFO    sepa.run  SEPA scan starting — 5000 tickers
+2026-06-16 17:43:24 INFO    sepa.run  breadth: 1407/2824 (49.8%) Stage 2 -> tone: Confirmed uptrend
+2026-06-16 17:43:24 WARNING sepa.run  resume: re-queueing missed alert for AAON
+2026-06-16 17:43:24 WARNING sepa.run  resume: re-queueing missed alert for ALAB
+2026-06-16 17:43:24 WARNING sepa.run  resume: re-queueing missed alert for ALGT
+2026-06-16 17:43:24 WARNING sepa.run  resume: re-queueing missed alert for ARW
+2026-06-16 17:43:24 WARNING sepa.run  resume: re-queueing missed alert for CROX
+2026-06-16 17:43:24 WARNING sepa.run  resume: re-queueing missed alert for ETON
+2026-06-16 17:43:24 WARNING sepa.run  resume: re-queueing missed alert for EVR
+2026-06-16 17:43:24 WARNING sepa.run  resume: re-queueing missed alert for GRC
+2026-06-16 17:43:24 WARNING sepa.run  resume: re-queueing missed alert for GTX
+2026-06-16 17:43:24 WARNING sepa.run  resume: re-queueing missed alert for NUTX
+2026-06-16 17:43:24 WARNING sepa.run  resume: re-queueing missed alert for NXPI
+2026-06-16 17:43:24 WARNING sepa.run  resume: re-queueing missed alert for OGN
+2026-06-16 17:43:24 WARNING sepa.run  resume: re-queueing missed alert for RYM
+2026-06-16 17:43:24 WARNING sepa.run  resume: re-queueing missed alert for SFST
+2026-06-16 17:43:24 WARNING sepa.run  resume: re-queueing missed alert for STX
+2026-06-16 17:43:24 WARNING sepa.run  resume: re-queueing missed alert for TTMI
+2026-06-16 17:43:24 WARNING sepa.run  validator cap hit: skipping AI for ['NXPI', 'CROX', 'RYM', 'ALGT', 'EVR', 'SFST']
+2026-06-16 17:43:30 INFO    httpx  HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-06-16 17:43:30 INFO    sepa.validator  validator ALAB: ```json
+{
+  "verdict": "CAUTION",
+  "reason": "Exceptional 1-year gain (+334%) combined with +197% in 40 days and +112% above 200 SMA suggests late-stage extension; setup may be real, but timing risk is elevated.",
+  "summary": "Astera Labs designs high-performance connectivity and power management semiconductors for cloud data centers and AI infrastructure.",
+  "thesis": "AI/data center tailwinds support fundamental strength, and Stage 2 with 6/8 trend metrics indicate technical structure is intact; however, the stock is trading at extreme extension after already delivering outsized returns.",
+  "catalysts": "Cloud capex cycle acceleration, new product wins at hyperscalers, or earnings beats could sustain momentum, but absence of near-term catalysts increases fade risk at these levels."
+}
+```
+
+**Key note:** This is a genuine technical setup on a real company with secular tailwinds, but the risk/reward is asymmetric. The Power Play signal is valid *if* the stock can hold above 389.2 pivot on volume; a break below 358 stop would confirm a capitulation fade. Position size accordingly. | in=502 out=271 tokens | 4.7s
+2026-06-16 17:43:36 INFO    httpx  HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-06-16 17:43:36 INFO    sepa.validator  validator STX: ```json
+{
+  "verdict": "CAUTION",
+  "reason": "Exceptional 1-year return (+711%) and extreme extension (+150% above 200 SMA) suggest late-stage momentum rather than early-stage breakout; climax run risk is material despite strong technical setup.",
+  "summary": "Seagate Technology is a global leader in data storage solutions (hard disk drives, SSDs) serving enterprise, cloud, and consumer markets.",
+  "thesis": "Stage 2 setup with 8/8 trend template and RS 98 is textbook Minervini; however, the stock's massive prior advance and extreme valuation extension reduce margin of safety—this reads as acceleration into exhaustion rather than fresh breakout.",
+  "catalysts": "Earnings beats, AI/cloud capex strength, or margin expansion could extend the run, but without near-term catalysts the setup risks a sharp pullback after such an extended climb."
+}
+```
+
+**Key note:** This is a *technical* CAUTION, not a fundamental one. The quant metrics are pristine, but risk/reward is skewed by prior performance and extension. Position sizing should reflect the elevated fade risk. | in=503 out=269 tokens | 5.6s
+2026-06-16 17:43:41 INFO    httpx  HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-06-16 17:43:41 INFO    sepa.validator  validator TTMI: ```json
+{
+  "verdict": "CAUTION",
+  "reason": "Exceptional 1-year return (+484%) combined with extreme extension (+116% above 200 SMA) suggests late-stage parabolic momentum rather than early-stage breakout; climax risk is material despite clean technicals.",
+  "summary": "TTM Technologies is a circuit board assembly and electronics manufacturing services provider serving aerospace, defense, and industrial customers.",
+  "thesis": "Stage 2 trend with 8/8 template adherence and RS 97 indicate strong relative strength, but the setup risks being a exhaustion break rather than a sustainable new leg given the stock's already-exceptional 12-month run.",
+  "catalysts": "Specific near-term catalysts not provided in headlines; monitor earnings guidance, defense/aerospace order flow, and margin expansion for confirmation of fundamental support at current valuations."
+}
+``` | in=501 out=205 tokens | 4.8s
+2026-06-16 17:43:47 INFO    httpx  HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-06-16 17:43:47 INFO    sepa.validator  validator GTX: ```json
+{
+  "verdict": "CAUTION",
+  "reason": "Exceptional momentum (+236% YTD, +79% above 200 SMA) creates elevated reversal risk despite clean technicals; lack of recent news makes it hard to validate the move's durability.",
+  "summary": "Garrett Motion is a turbocharger and air management systems supplier to global automakers, spun out of Honeywell in 2018.",
+  "thesis": "After multi-year underperformance, GTX has recovered sharply into a 24-week pivot structure with perfect trend alignment (8/8), suggesting institutional re-rating; Stage 2 positioning offers room if auto cycle stays constructive.",
+  "catalysts": "Pending guidance updates on turbo demand from legacy OEM contracts, potential M&A activity in powertrain suppliers, or improved automotive production guidance post-supply chain normalization."
+}
+```
+
+**Trader note:** The setup is textbook—perfect trend template, strong RS, clean pivot—but GTX's +236% YTD run is extreme. Without recent catalysts cited, confirm this isn't momentum exhaustion before entry. Auto suppliers are cyclical; watch for macro/production headwinds. | in=465 out=279 tokens | 5.0s
+2026-06-16 17:43:52 INFO    httpx  HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-06-16 17:43:52 INFO    sepa.validator  validator OGN: ```json
+{
+  "verdict": "CONFIRM",
+  "reason": "Strong technical setup with 130% flag breakout, high RS (92), and solid stage-2 trend template alignment; fundamentals pass screening and valuation metrics support continuation.",
+  "summary": "Organon & Co. is a pure-play women's health and biosimilars company spun from Merck in 2021, focused on contraceptives, fertility treatments, and biosimilar therapies.",
+  "thesis": "The 49% extension above the 200-day SMA combined with a 10-day flag consolidation after a 130% run suggests accumulation by institutional players; stage 2 with 6/8 trend template indicates early-to-mid uptrend with room for continuation.",
+  "catalysts": "FDA approvals or clinical data for key women's health pipeline assets, earnings beats driven by contraceptive/biosimilar volume growth, or M&A activity in the women's health sector could act as catalysts."
+}
+``` | in=445 out=235 tokens | 4.2s
+2026-06-16 17:43:57 INFO    httpx  HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-06-16 17:43:57 INFO    sepa.validator  validator ETON: ```json
+{
+  "verdict": "CAUTION",
+  "reason": "Strong technical setup and relative strength, but micro-cap pharma with zero recent news makes execution risk and catalyst visibility uncertain.",
+  "summary": "Eton Pharmaceuticals is a small-cap specialty pharma company focused on rare and orphan disease treatments.",
+  "thesis": "Cup-with-handle breakout with 8/8 trend template and RS 91 suggests institutional accumulation; +125% YTD move indicates strong momentum tailwind into pivot.",
+  "catalysts": "FDA approvals or clinical trial data for pipeline programs are typical pharma catalysts, but absence of announced near-term milestones increases binary risk."
+}
+``` | in=457 out=166 tokens | 5.2s
+2026-06-16 17:44:01 INFO    httpx  HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-06-16 17:44:01 INFO    sepa.validator  validator AAON: ```json
+{
+  "verdict": "CONFIRM",
+  "reason": "Perfect technicals (8/8 trend template, 88 RS, clean cup-with-handle in stage 2) aligned with strong fundamentals and 81% YTD momentum; 36% extension above 200 SMA is healthy, not stretched.",
+  "summary": "AAON manufactures HVAC equipment and indoor air quality systems for commercial and residential markets.",
+  "thesis": "Stock has built a textbook cup-with-handle continuation pattern after an 81% run, suggesting institutional accumulation; stage 2 entry with 88 RS and 8/8 trend metrics positions for acceleration into new highs.",
+  "catalysts": "Earnings beat/guidance raise, commercial HVAC demand recovery, or margin expansion from operational efficiency would likely trigger breakout above pivot 132.05."
+}
+``` | in=457 out=206 tokens | 3.0s
+2026-06-16 17:44:05 INFO    httpx  HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-06-16 17:44:05 INFO    sepa.validator  validator ARW: ```json
+{
+  "verdict": "CONFIRM",
+  "reason": "Perfect 8/8 trend template match with strong RS (88) and institutional-grade cup-with-handle setup confirms the Minervini screen; no conflicting fundamental red flags.",
+  "summary": "Arrow Electronics is a global distributor of electronic components and computing products serving IT, industrial, and OEM customers.",
+  "thesis": "Strong relative strength (88th percentile) combined with a textbook Stage 2 cup-with-handle breakout suggests institutional accumulation is driving the move; the +88% one-year gain reflects genuine momentum, not overextension.",
+  "catalysts": "Earnings beats, guidance raises, or broad semiconductor/IT spending recovery could accelerate breakout; monitor quarterly results and channel inventory trends for confirmation."
+}
+``` | in=455 out=189 tokens | 3.4s
+2026-06-16 17:44:08 INFO    httpx  HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-06-16 17:44:08 INFO    sepa.validator  validator GRC: ```json
+{
+  "verdict": "CONFIRM",
+  "reason": "Strong quantitative setup (VCP, 8/8 trend, RS 88) with solid fundamentals and +144% YTD gains; no red flags present.",
+  "summary": "Gorman-Rupp manufactures pumps and fluid handling equipment for industrial, municipal, and residential applications.",
+  "thesis": "Stock is in Stage 2 of a multi-month advance with high relative strength; extended 50% above 200 SMA suggests sustained institutional accumulation despite late-stage positioning.",
+  "catalysts": "Earnings reports, municipal/industrial capex cycles, or operational margin expansion from higher volumes could trigger further breakout."
+}
+``` | in=449 out=169 tokens | 2.9s
+2026-06-16 17:44:12 INFO    httpx  HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-06-16 17:44:12 INFO    sepa.validator  validator NUTX: ```json
+{
+  "verdict": "CAUTION",
+  "reason": "Strong technical setup and relative strength, but lack of recent news or catalyst visibility in a small-cap healthcare name warrants extra caution on entry discipline.",
+  "summary": "Nutex Health operates urgent care and primary care clinics, primarily in Texas, providing integrated healthcare services.",
+  "thesis": "Stock has consolidated constructively with improving relative strength (RS 87) and clean stage-2 setup; 20% extension above 200 SMA suggests institutional accumulation, positioning for breakout above 147.17 pivot.",
+  "catalysts": "Quarterly earnings, clinic expansion announcements, or payer/partnership deals could accelerate; absence of recent headlines suggests catalysts may be near-term or undisclosed."
+}
+``` | in=449 out=184 tokens | 3.3s
+2026-06-16 17:44:13 WARNING matplotlib.font_manager  findfont: Failed to find font weight semibold, now using 700.
+2026-06-16 17:44:59 ERROR   sepa.alerter  alert processing failed for ARW: HTTPSConnectionPool(host='api.telegram.org', port=443): Read timed out. (read timeout=30)
+Traceback (most recent call last):
+  File "C:\Users\lathe\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\urllib3\connectionpool.py", line 464, in _make_request
+    self._validate_conn(conn)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Users\lathe\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\urllib3\connectionpool.py", line 1093, in _validate_conn
+    conn.connect()
+    ~~~~~~~~~~~~^^
+  File "C:\Users\lathe\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\urllib3\connection.py", line 796, in connect
+    sock_and_verified = _ssl_wrap_socket_and_match_hostname(
+        sock=sock,
+    ...<14 lines>...
+        assert_fingerprint=self.assert_fingerprint,
+    )
+  File "C:\Users\lathe\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\urllib3\connection.py", line 975, in _ssl_wrap_socket_and_match_hostname
+    ssl_sock = ssl_wrap_socket(
+        sock=sock,
+    ...<8 lines>...
+        tls_in_tls=tls_in_tls,
+    )
+  File "C:\Users\lathe\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\urllib3\util\ssl_.py", line 483, in ssl_wrap_socket
+    ssl_sock = _ssl_wrap_socket_impl(sock, context, tls_in_tls, server_hostname)
+  File "C:\Users\lathe\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\urllib3\util\ssl_.py", line 527, in _ssl_wrap_socket_impl
+    return ssl_context.wrap_socket(sock, server_hostname=server_hostname)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\lathe\AppData\Local\Python\pythoncore-3.14-64\Lib\ssl.py", line 455, in wrap_socket
+    return self.sslsocket_class._create(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        sock=sock,
+        ^^^^^^^^^^
+    ...<5 lines>...
+        session=session
+        ^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\lathe\AppData\Local\Python\pythoncore-3.14-64\Lib\ssl.py", line 1076, in _create
+    self.do_handshake()
+    ~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\lathe\AppData\Local\Python\pythoncore-3.14-64\Lib\ssl.py", line 1372, in do_handshake
+    self._sslobj.do_handshake()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~^^
+TimeoutError: _ssl.c:1063: The handshake operation timed out
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\lathe\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\requests\adapters.py", line 644, in send
+    resp = conn.urlopen(
+        method=request.method,
+    ...<9 lines>...
+        chunked=chunked,
+    )
+  File "C:\Users\lathe\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\urllib3\connectionpool.py", line 841, in urlopen
+    retries = retries.increment(
+        method, url, error=new_e, _pool=self, _stacktrace=sys.exc_info()[2]
+    )
+  File "C:\Users\lathe\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\urllib3\util\retry.py", line 474, in increment
+    raise reraise(type(error), error, _stacktrace)
+          ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\lathe\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\urllib3\util\util.py", line 39, in reraise
+    raise value
+  File "C:\Users\lathe\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\urllib3\connectionpool.py", line 787, in urlopen
+    response = self._make_request(
+        conn,
+    ...<10 lines>...
+        **response_kw,
+    )
+  File "C:\Users\lathe\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\urllib3\connectionpool.py", line 488, in _make_request
+    raise new_e
+  File "C:\Users\lathe\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\urllib3\connectionpool.py", line 466, in _make_request
+    self._raise_timeout(err=e, url=url, timeout_value=conn.timeout)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\lathe\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\urllib3\connectionpool.py", line 367, in _raise_timeout
+    raise ReadTimeoutError(
+        self, url, f"Read timed out. (read timeout={timeout_value})"
+    ) from err
+urllib3.exceptions.ReadTimeoutError: HTTPSConnectionPool(host='api.telegram.org', port=443): Read timed out. (read timeout=30)
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\lathe\sepa-signals\sepa\alerter.py", line 148, in process
+    ok = send(C.TELEGRAM_TOKEN, C.TELEGRAM_CHAT_ID, build_card(sig), img)
+  File "C:\Users\lathe\sepa-signals\sepa\alerter.py", line 123, in send
+    r2 = requests.post(f"https://api.telegram.org/bot{token}/sendPhoto",
+                       data={"chat_id": chat_id},
+                       files={"photo": f}, timeout=30)
+  File "C:\Users\lathe\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\requests\api.py", line 115, in post
+    return request("post", url, data=data, json=json, **kwargs)
+  File "C:\Users\lathe\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\requests\api.py", line 59, in request
+    return session.request(method=method, url=url, **kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\lathe\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\requests\sessions.py", line 589, in request
+    resp = self.send(prep, **send_kwargs)
+  File "C:\Users\lathe\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\requests\sessions.py", line 703, in send
+    r = adapter.send(request, **kwargs)
+  File "C:\Users\lathe\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\requests\adapters.py", line 690, in send
+    raise ReadTimeout(e, request=request)
+requests.exceptions.ReadTimeout: HTTPSConnectionPool(host='api.telegram.org', port=443): Read timed out. (read timeout=30)
+2026-06-16 17:46:17 ERROR   sepa.alerter  alert processing failed for STX: HTTPSConnectionPool(host='api.telegram.org', port=443): Read timed out. (read timeout=30)
+Traceback (most recent call last):
+  File "C:\Users\lathe\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\urllib3\connectionpool.py", line 464, in _make_request
+    self._validate_conn(conn)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Users\lathe\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\urllib3\connectionpool.py", line 1093, in _validate_conn
+    conn.connect()
+    ~~~~~~~~~~~~^^
+  File "C:\Users\lathe\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\urllib3\connection.py", line 796, in connect
+    sock_and_verified = _ssl_wrap_socket_and_match_hostname(
+        sock=sock,
+    ...<14 lines>...
+        assert_fingerprint=self.assert_fingerprint,
+    )
+  File "C:\Users\lathe\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\urllib3\connection.py", line 975, in _ssl_wrap_socket_and_match_hostname
+    ssl_sock = ssl_wrap_socket(
+        sock=sock,
+    ...<8 lines>...
+        tls_in_tls=tls_in_tls,
+    )
+  File "C:\Users\lathe\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\urllib3\util\ssl_.py", line 483, in ssl_wrap_socket
+    ssl_sock = _ssl_wrap_socket_impl(sock, context, tls_in_tls, server_hostname)
+  File "C:\Users\lathe\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\urllib3\util\ssl_.py", line 527, in _ssl_wrap_socket_impl
+    return ssl_context.wrap_socket(sock, server_hostname=server_hostname)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\lathe\AppData\Local\Python\pythoncore-3.14-64\Lib\ssl.py", line 455, in wrap_socket
+    return self.sslsocket_class._create(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        sock=sock,
+        ^^^^^^^^^^
+    ...<5 lines>...
+        session=session
+        ^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\lathe\AppData\Local\Python\pythoncore-3.14-64\Lib\ssl.py", line 1076, in _create
+    self.do_handshake()
+    ~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\lathe\AppData\Local\Python\pythoncore-3.14-64\Lib\ssl.py", line 1372, in do_handshake
+    self._sslobj.do_handshake()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~^^
+TimeoutError: _ssl.c:1063: The handshake operation timed out
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\lathe\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\requests\adapters.py", line 644, in send
+    resp = conn.urlopen(
+        method=request.method,
+    ...<9 lines>...
+        chunked=chunked,
+    )
+  File "C:\Users\lathe\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\urllib3\connectionpool.py", line 841, in urlopen
+    retries = retries.increment(
+        method, url, error=new_e, _pool=self, _stacktrace=sys.exc_info()[2]
+    )
+  File "C:\Users\lathe\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\urllib3\util\retry.py", line 474, in increment
+    raise reraise(type(error), error, _stacktrace)
+          ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\lathe\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\urllib3\util\util.py", line 39, in reraise
+    raise value
+  File "C:\Users\lathe\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\urllib3\connectionpool.py", line 787, in urlopen
+    response = self._make_request(
+        conn,
+    ...<10 lines>...
+        **response_kw,
+    )
+  File "C:\Users\lathe\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\urllib3\connectionpool.py", line 488, in _make_request
+    raise new_e
+  File "C:\Users\lathe\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\urllib3\connectionpool.py", line 466, in _make_request
+    self._raise_timeout(err=e, url=url, timeout_value=conn.timeout)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\lathe\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\urllib3\connectionpool.py", line 367, in _raise_timeout
+    raise ReadTimeoutError(
+        self, url, f"Read timed out. (read timeout={timeout_value})"
+    ) from err
+urllib3.exceptions.ReadTimeoutError: HTTPSConnectionPool(host='api.telegram.org', port=443): Read timed out. (read timeout=30)
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\lathe\sepa-signals\sepa\alerter.py", line 148, in process
+    ok = send(C.TELEGRAM_TOKEN, C.TELEGRAM_CHAT_ID, build_card(sig), img)
+  File "C:\Users\lathe\sepa-signals\sepa\alerter.py", line 110, in send
+    r = requests.post(f"https://api.telegram.org/bot{token}/sendMessage",
+                      data={"chat_id": chat_id, "text": text, "parse_mode": "Markdown"},
+                      timeout=30)
+  File "C:\Users\lathe\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\requests\api.py", line 115, in post
+    return request("post", url, data=data, json=json, **kwargs)
+  File "C:\Users\lathe\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\requests\api.py", line 59, in request
+    return session.request(method=method, url=url, **kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\lathe\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\requests\sessions.py", line 589, in request
+    resp = self.send(prep, **send_kwargs)
+  File "C:\Users\lathe\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\requests\sessions.py", line 703, in send
+    r = adapter.send(request, **kwargs)
+  File "C:\Users\lathe\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\requests\adapters.py", line 690, in send
+    raise ReadTimeout(e, request=request)
+requests.exceptions.ReadTimeout: HTTPSConnectionPool(host='api.telegram.org', port=443): Read timed out. (read timeout=30)
+2026-06-16 17:46:23 INFO    sepa.run  HEARTBEAT: SEPA scan 2026-06-16: 16 Buy Ready, 0 promotions, 14 alerts. Breadth 49.8% Stage2 -> Confirmed uptrend
+2026-06-16 17:46:24 INFO    sepa.run  DB maintenance complete
+2026-06-16 17:46:26 INFO    sepa.run  logs pushed to GitHub

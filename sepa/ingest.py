@@ -355,7 +355,8 @@ if __name__ == "__main__":
     ingest_us(con)
     # Push logs to GitHub so every run is auditable from any machine
     try:
-        repo_root = str(run_dir.parent.parent.parent)
+        from . import config as _C
+        repo_root = str(_C.ROOT)
         subprocess.run(["git", "-C", repo_root, "add", "data/logs/"], check=False)
         subprocess.run(["git", "-C", repo_root, "commit", "-m",
                         f"logs: ingest {run_dir.name}"], check=False)
