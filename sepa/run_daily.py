@@ -196,6 +196,42 @@ def run(con=None, market_tone=None):
     buyable = [sigs[t] for t, s in trans.items()
                if s in ("NEW", "PROMOTED") and curr.get(t, {}).get("tier") == "Buy Ready"]
 
+    # Resume guard: if this run follows a crash that happened after state was committed
+    # but before alerter.process() ran, trans shows "SAME" for those tickers and buyable
+    # is empty.  Cross-reference the transitions table (persisted) against alerts (also
+    # persisted) to find any ticker that transitioned to Buy Ready today but was never
+    # alerted, and re-queue it so this resume corrects the gap.
+    try:
+        missed = {r[0] for r in con.execute(
+            """SELECT tr.ticker FROM transitions tr
+               LEFT JOIN alerts al ON al.ticker=tr.ticker AND al.asof=tr.asof
+               WHERE tr.asof=? AND tr.status IN ('NEW','PROMOTED')
+                 AND tr.to_tier='Buy Ready' AND al.ticker IS NULL""",
+            (asof,)).fetchall()}
+        already_queued = {s["ticker"] for s in buyable}
+        for t in sorted(missed - already_queued):
+            if t in sigs:
+                log.warning("resume: re-queueing missed alert for %s", t)
+                buyable.append(sigs[t])
+            else:
+                # ticker was in the done-set; reconstruct a minimal sig from DB
+                row = con.execute(
+                    """SELECT stage,tt,rs,funda,setup,footprint,pivot,entry,stop
+                       FROM signals WHERE ticker=? AND asof=?""",
+                    (t, asof)).fetchone()
+                if row:
+                    log.warning("resume: re-queueing missed alert for %s (from DB)", t)
+                    buyable.append({
+                        "ticker": t, "stage": row[0], "tt": row[1], "rs": row[2],
+                        "funda": row[3], "setup": row[4], "footprint": row[5],
+                        "pivot": row[6], "entry": row[7], "stop": row[8],
+                        "tier": "Buy Ready", "meta": prov.meta(t).get("summary", t),
+                        "market_tone": market_tone, "ud_vol": 0,
+                        "ret_1y": None, "ext_200": 0, "climax_flag": False,
+                    })
+    except Exception as e:
+        log.warning("resume guard failed: %s", e)
+
     # Phase 7: run AI validator on each candidate; REJECT suppresses, CAUTION annotates
     # Cap nightly API calls to VALIDATOR_MAX_CALLS (sorted by RS, best first).
     if buyable:
@@ -266,7 +302,7 @@ if __name__ == "__main__":
     run()
     # Push logs to GitHub so every run is auditable from any machine
     try:
-        repo_root = str(run_dir.parent.parent.parent)
+        repo_root = str(C.ROOT)
         subprocess.run(["git", "-C", repo_root, "add", "data/logs/"], check=False)
         subprocess.run(["git", "-C", repo_root, "commit", "-m",
                         f"logs: scan {run_dir.name}"], check=False)

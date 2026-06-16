@@ -2,10 +2,13 @@ import matplotlib
 matplotlib.use("Agg")  # headless mini-PC
 """Turns a 'newly buyable' signal into the Telegram card: an annotated chart
 plus a plain-English 'why & what'. Dedupes so each setup alerts once."""
+import logging
 import time
 from datetime import date
 from . import config as C
 from . import db
+
+_log = logging.getLogger("sepa.alerter")
 
 
 def render_chart(df, sig, path):
@@ -101,8 +104,7 @@ def send(token, chat_id, text, image_path=None):
         print("[telegram not configured] would send:\n" + text +
               (f"\n[+image {image_path}]" if image_path else ""))
         return True   # still log + dedupe — treat stdout delivery as success
-    import logging, requests
-    _log = logging.getLogger("sepa.alerter")
+    import requests
 
     # Send the text card first
     r = requests.post(f"https://api.telegram.org/bot{token}/sendMessage",
@@ -135,15 +137,21 @@ def process(con, buyable_sigs, histories, asof):
         key = f"{sig['ticker']}|{sig['setup']}|{round(sig['pivot'], 2)}"
         if db.alert_seen(con, key):
             continue
-        img = str(C.CHART_DIR / f"{sig['ticker']}_{asof}.png")
         try:
-            render_chart(histories[sig["ticker"]], sig, img)
+            img = str(C.CHART_DIR / f"{sig['ticker']}_{asof}.png")
+            try:
+                render_chart(histories[sig["ticker"]], sig, img)
+            except Exception as e:
+                _log.warning("chart render failed %s: %s", sig["ticker"], e)
+                print(f"  chart render failed {sig['ticker']}: {e}")
+                img = None
+            ok = send(C.TELEGRAM_TOKEN, C.TELEGRAM_CHAT_ID, build_card(sig), img)
+            if ok:
+                db.log_alert(con, key, sig["ticker"], asof, sig["setup"], sig["pivot"])
+                sent.append((sig["ticker"], img))
         except Exception as e:
-            print(f"  chart render failed {sig['ticker']}: {e}"); img = None
-        ok = send(C.TELEGRAM_TOKEN, C.TELEGRAM_CHAT_ID, build_card(sig), img)
-        if ok:
-            db.log_alert(con, key, sig["ticker"], asof, sig["setup"], sig["pivot"])
-            sent.append((sig["ticker"], img))
+            _log.error("alert processing failed for %s: %s", sig["ticker"], e, exc_info=True)
+            print(f"  alert failed for {sig['ticker']}: {e}")
         time.sleep(1)   # Telegram rate limit: 1 msg/sec per chat
     con.commit()
     return sent
