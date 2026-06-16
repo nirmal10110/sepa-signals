@@ -1,0 +1,29 @@
+2026-06-16 22:00:01 INFO    sepa  log file: C:\Users\lathe\sepa-signals\data\logs\2026-06-16\22-00-01-scan\sepa.log
+2026-06-16 22:00:01 INFO    sepa.run  SEPA scan starting — 5039 tickers
+2026-06-16 22:00:22 INFO    sepa.run  breadth: 1410/2832 (49.8%) Stage 2 -> tone: Confirmed uptrend
+2026-06-16 22:00:22 WARNING sepa.run  resume: re-queueing missed alert for ARW
+2026-06-16 22:00:22 WARNING sepa.run  resume: re-queueing missed alert for STX
+2026-06-16 22:00:26 INFO    httpx  HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-06-16 22:00:26 INFO    sepa.validator  validator STX: ```json
+{
+  "verdict": "CAUTION",
+  "reason": "Exceptional 711% 1-year return combined with 150% extension above 200 SMA suggests late-stage momentum rather than early-stage breakout; climax run risk is material despite clean technicals.",
+  "summary": "Seagate is a global leader in data storage solutions (hard drives, SSDs) serving enterprise, cloud, and consumer markets.",
+  "thesis": "Stage 2 setup with 8/8 trend template and 98 RS shows technical strength, but the stock's extreme prior appreciation means this breakout is launching from an already-extended valuation plateau rather than a fresh base.",
+  "catalysts": "AI data-center demand tailwinds, enterprise storage cycle acceleration, or quarterly earnings beats could extend the move, but risk-reward is skewed to a pullback given the extended runway already achieved."
+}
+``` | in=503 out=210 tokens | 3.3s
+2026-06-16 22:00:29 INFO    httpx  HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-06-16 22:00:29 INFO    sepa.validator  validator ARW: ```json
+{
+  "verdict": "CONFIRM",
+  "reason": "Perfect 8/8 trend template match with strong RS (88) and healthy fundamentals pass; cup-with-handle setup is textbook Stage 2 with reasonable depth.",
+  "summary": "Arrow Electronics is a global distributor of electronic components and computing products serving OEMs, resellers, and system integrators.",
+  "thesis": "Strong relative strength (88th percentile) combined with clean chart structure and 60% extension above 200 SMA suggests institutional accumulation; Stage 2 breakout from a shallow handle offers low-risk entry with defined stop.",
+  "catalysts": "Semiconductor/electronics demand cycles, quarterly earnings, and potential sector rotation toward tech hardware could provide volume catalyst above pivot."
+}
+``` | in=455 out=182 tokens | 2.9s
+2026-06-16 22:00:30 WARNING matplotlib.font_manager  findfont: Failed to find font weight semibold, now using 700.
+2026-06-16 22:00:56 INFO    sepa.run  HEARTBEAT: SEPA scan 2026-06-16: 16 Buy Ready, 3 promotions, 2 alerts. Breadth 49.8% Stage2 -> Confirmed uptrend
+2026-06-16 22:00:57 INFO    sepa.run  DB maintenance complete
+2026-06-16 22:00:59 INFO    sepa.run  logs pushed to GitHub
