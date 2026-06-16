@@ -154,6 +154,6 @@ def process(con, buyable_sigs, histories, asof):
         except Exception as e:
             _log.error("alert processing failed for %s: %s", sig["ticker"], e, exc_info=True)
             print(f"  alert failed for {sig['ticker']}: {e}")
-        time.sleep(30)  # pace between stocks: avoids rate limiting, readable feed
+        time.sleep(10)  # pace between stocks: avoids rate limiting, readable feed
     con.commit()
     return sent
