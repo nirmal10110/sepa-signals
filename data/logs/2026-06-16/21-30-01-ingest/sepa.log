@@ -3069,3 +3069,13 @@
 2026-06-16 21:59:37 INFO    sepa.ingest  fundamentals: 3900/5000 done
 2026-06-16 22:00:07 INFO    sepa.ingest  fundamentals: 4000/5000 done
 2026-06-16 22:00:40 INFO    sepa.ingest  fundamentals: 4100/5000 done
+2026-06-16 22:01:08 INFO    sepa.ingest  fundamentals: 4200/5000 done
+2026-06-16 22:01:35 INFO    sepa.ingest  fundamentals: 4300/5000 done
+2026-06-16 22:02:12 INFO    sepa.ingest  fundamentals: 4400/5000 done
+2026-06-16 22:02:38 INFO    sepa.ingest  fundamentals: 4500/5000 done
+2026-06-16 22:03:08 INFO    sepa.ingest  fundamentals: 4600/5000 done
+2026-06-16 22:03:34 INFO    sepa.ingest  fundamentals: 4700/5000 done
+2026-06-16 22:04:07 INFO    sepa.ingest  fundamentals: 4800/5000 done
+2026-06-16 22:04:42 INFO    sepa.ingest  fundamentals: 4900/5000 done
+2026-06-16 22:05:26 INFO    sepa.ingest  ingest complete
+2026-06-16 22:05:28 INFO    sepa.ingest  logs pushed to GitHub
