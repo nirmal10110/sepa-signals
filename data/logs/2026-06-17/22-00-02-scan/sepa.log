@@ -1,0 +1,62 @@
+2026-06-17 22:00:02 INFO    sepa  log file: C:\Users\lathe\sepa-signals\data\logs\2026-06-17\22-00-02-scan\sepa.log
+2026-06-17 22:00:02 INFO    sepa.run  SEPA scan starting — 5051 tickers
+2026-06-17 22:00:23 INFO    sepa.run  breadth: 1418/2838 (50.0%) Stage 2 -> tone: Confirmed uptrend
+2026-06-17 22:00:27 INFO    httpx  HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-06-17 22:00:27 INFO    sepa.validator  validator VISN: ```json
+{
+  "verdict": "REJECT",
+  "reason": "Ticker symbol VISN does not correspond to any verifiable publicly traded company on NYSE/NASDAQ; unable to validate fundamentals, business model, or catalyst story.",
+  "summary": "Unable to confirm — no established public company with ticker VISN found in standard US equity databases.",
+  "thesis": "Setup metrics are strong on paper, but without a real, identifiable business behind the ticker, the quantitative signal is meaningless.",
+  "catalysts": "None identifiable without confirmed company identity and sector."
+}
+``` | in=451 out=137 tokens | 2.7s
+2026-06-17 22:00:31 INFO    httpx  HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-06-17 22:00:31 INFO    sepa.validator  validator FN: ```json
+{
+  "verdict": "CONFIRM",
+  "reason": "Strong quantitative setup (Stage 2, 7/8 trend template, RS 83) with fundamentals passing screen; 128% YTD return and 16% extension above 200 SMA show momentum persistence rather than exhaustion.",
+  "summary": "Fabrinet is a Singapore-based optical networking and infrastructure solutions provider serving hyperscalers and telecom OEMs.",
+  "thesis": "AI-driven datacenter capex and cloud infrastructure buildout remain structural tailwinds for optical connectivity suppliers; FN's position in the hyperscaler supply chain and recent momentum suggest institutional positioning into this secular trend.",
+  "catalysts": "Upcoming quarterly earnings, guidance on datacenter/AI-related bookings, and industry conference commentary on optical port density upgrades driven by LLM inference scaling."
+}
+``` | in=464 out=203 tokens | 3.6s
+2026-06-17 22:00:35 INFO    httpx  HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-06-17 22:00:35 INFO    sepa.validator  validator GIII: ```json
+{
+  "verdict": "CONFIRM",
+  "reason": "Clean Minervini Stage 2 setup with perfect trend template alignment (8/8), strong 1-year momentum (+64%), and 79 RS confirms relative strength; pivot at 35.67 is well-defined with tight stop at 32.82.",
+  "summary": "G-III is a publicly traded apparel and accessories manufacturer/marketer focused on licensed sportswear, outerwear, and fashion brands.",
+  "thesis": "Stock has cleared a 24-week consolidation near pivot support with strong breadth signals and relative outperformance; positioned for a breakout above the 35.67 pivot into new intermediate highs.",
+  "catalysts": "Earnings beats, positive guidance revisions, or strength in licensed brand partnerships (e.g., NFL, NBA, or fashion labels) could accelerate the move; retail/fashion sector rotation also a tailwind."
+}
+``` | in=473 out=221 tokens | 3.6s
+2026-06-17 22:00:39 INFO    httpx  HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-06-17 22:00:39 INFO    sepa.validator  validator HCC: ```json
+{
+  "verdict": "CAUTION",
+  "reason": "Strong technical setup and momentum, but thermal coal faces secular headwinds; verify demand catalysts before entry.",
+  "summary": "Warrior Met Coal is a U.S.-based metallurgical coal producer serving steel mills globally.",
+  "thesis": "Cup-with-handle breakout in a Stage 2 trend with 8/8 template fit and 77 RS suggests institutional accumulation; +100% YTD and 14% extension above 200 SMA confirm bullish structure.",
+  "catalysts": "Steel mill capacity expansion, coking coal contract renegotiations, or Chinese demand recovery could support higher prices; watch quarterly earnings for margin trends and cost controls."
+}
+```
+
+**Note:** HCC has already doubled YTD, so entry risk/reward depends on your stop discipline. The absence of recent headlines is a minor flag—confirm thesis independently before committing. | in=457 out=217 tokens | 3.8s
+2026-06-17 22:00:45 INFO    httpx  HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-06-17 22:00:45 INFO    sepa.validator  validator DCOM: ```json
+{
+  "verdict": "CAUTION",
+  "reason": "Strong technical setup undermined by absence of recent catalysts and sector headwinds facing regional banks; proceed with disciplined position sizing.",
+  "summary": "Dime Commercial Bancshares is a regional bank holding company focused on commercial lending and deposit gathering in the New York metropolitan area.",
+  "thesis": "The stock has rallied 56% over 12 months and shows clean Minervini structure (VCP, 8/8 trend, RS 71) with a fresh breakout 23% above the 200 SMA, suggesting institutional accumulation in a stage-2 consolidation.",
+  "catalysts": "Regional bank earnings season (Q1 results typically April–May) could drive positive surprise if net interest margins remain stable; any relief on commercial real estate credit concerns or dividend expansion would lift sentiment."
+}
+```
+
+**Context:** DCOM shows textbook technical merit, but regional bank stocks face persistent headwinds (rate-cut cycle uncertainty, CRE stress, deposit competition). The lack of recent news is notable—verify upcoming earnings date and management commentary before entry. Strong RS relative to financials is the green light; use the 36.87 stop rigorously. | in=457 out=284 tokens | 5.4s
+2026-06-17 22:00:46 WARNING sepa.run  AI REJECT VISN: Ticker symbol VISN does not correspond to any verifiable publicly traded company on NYSE/NASDAQ; unable to validate fundamentals, business model, or catalyst story.
+2026-06-17 22:00:46 WARNING matplotlib.font_manager  findfont: Failed to find font weight semibold, now using 700.
+2026-06-17 22:01:42 INFO    sepa.run  HEARTBEAT: SEPA scan 2026-06-17: 19 Buy Ready, 50 promotions, 4 alerts. Breadth 50.0% Stage2 -> Confirmed uptrend
+2026-06-17 22:01:43 INFO    sepa.run  DB maintenance complete
+2026-06-17 22:01:45 INFO    sepa.run  logs pushed to GitHub
