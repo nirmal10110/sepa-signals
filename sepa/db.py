@@ -81,6 +81,11 @@ def _migrate(con):
         con.execute("ALTER TABLE securities ADD COLUMN fund_fetched_at TEXT")
     except Exception:
         pass  # column already exists
+    for col in ("ai_verdict", "ai_note", "ai_summary", "ai_thesis", "ai_catalysts"):
+        try:
+            con.execute(f"ALTER TABLE signals ADD COLUMN {col} TEXT")
+        except Exception:
+            pass
 
 
 def connect(path=None):
@@ -158,6 +163,15 @@ def alert_seen(con, key):
 def log_alert(con, key, ticker, asof, setup, pivot):
     con.execute("INSERT OR IGNORE INTO alerts VALUES(?,?,?,?,?,datetime('now'))",
                 (key, ticker, asof, setup, pivot))
+
+
+def update_signal_ai(con, ticker, asof, verdict, note, summary, thesis, catalysts):
+    """Persist AI validator output back to the signals row for the daily report."""
+    con.execute(
+        """UPDATE signals SET ai_verdict=?, ai_note=?, ai_summary=?,
+           ai_thesis=?, ai_catalysts=? WHERE ticker=? AND asof=?""",
+        (verdict, note, summary, thesis, catalysts, ticker, asof)
+    )
 
 
 # ---- positions ----

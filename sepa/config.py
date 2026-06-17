@@ -68,6 +68,13 @@ ANTHROPIC_API_KEY  = _get("ANTHROPIC_API_KEY")
 TELEGRAM_TOKEN     = _get("TELEGRAM_TOKEN")
 TELEGRAM_CHAT_ID   = _get("TELEGRAM_CHAT_ID")
 
+# --- daily email report ---
+SMTP_HOST = _get("SMTP_HOST", "smtp.gmail.com")
+SMTP_PORT = int(_get("SMTP_PORT", "587"))
+SMTP_USER = _get("SMTP_USER")
+SMTP_PASS = _get("SMTP_PASS")
+REPORT_TO = _get("REPORT_TO")
+
 # --- AI validator ---
 VALIDATOR_MODEL    = _get("VALIDATOR_MODEL", "claude-haiku-4-5-20251001")
 # Max stocks validated per night. Candidates are sorted by RS first; extras

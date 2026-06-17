@@ -16,6 +16,7 @@ from .patterns import detect_setups
 from .classify import decide_tier
 from .state import transitions
 from . import alerter
+from . import reporter
 from . import validator as val
 
 log = logging.getLogger("sepa.run")
@@ -257,6 +258,9 @@ def run(con=None, market_tone=None):
             sig["ai_thesis"] = v.get("thesis", "")
             sig["ai_catalysts"] = v.get("catalysts", "")
             confirmed.append(sig)
+            db.update_signal_ai(con, sig["ticker"], asof, v["verdict"],
+                                sig["ai_note"], sig["ai_summary"],
+                                sig["ai_thesis"], sig["ai_catalysts"])
         # Stocks that exceeded the cap: alert without AI context
         for sig in skipped_ai:
             confirmed.append(dict(sig))
@@ -268,6 +272,9 @@ def run(con=None, market_tone=None):
     counts = {tier: sum(1 for v in curr.values() if v["tier"] == tier) for tier in C.TIER_ORDER}
     n2 = sum(1 for s in stages_now.values() if s == 2)
     pct2 = n2 / max(len(stages_now), 1) * 100
+
+    reporter.send_report(con, asof=asof, tone=market_tone,
+                         breadth=f"{pct2:.1f}% Stage 2")
     moves = {t: s for t, s in trans.items() if s != "SAME"}
     promotions = len([m for m in moves.values() if m in ("NEW", "PROMOTED")])
     hb = (f"SEPA scan {asof}: {counts.get('Buy Ready', 0)} Buy Ready, "
