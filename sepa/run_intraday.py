@@ -113,10 +113,17 @@ def run_intraday(con=None) -> list[str]:
 
             vol_ratio = vol_pace / avg_vol_50
 
-            if last_close >= pivot and vol_ratio >= C.BREAKOUT_VOL_MULT:
+            # Only alert when price is at or just above the pivot (within BUY_ZONE_WIDTH).
+            # Without the upper bound every stock that broke out months ago would
+            # re-fire every intraday scan — the pivot stored in DB is not updated
+            # unless a new nightly scan re-evaluates the base.
+            pct_above = (last_close - pivot) / pivot
+            near_pivot = 0 <= pct_above <= C.BUY_ZONE_WIDTH
+
+            if near_pivot and vol_ratio >= C.BREAKOUT_VOL_MULT:
                 msg = (f"📶 *{t}* crossing pivot intraday\n"
                        f"close `{last_close:.2f}` ≥ pivot `{pivot:.2f}` "
-                       f"— vol pace `{vol_ratio:.1f}×` avg")
+                       f"(+{pct_above:.1%}) — vol pace `{vol_ratio:.1f}×` avg")
                 alerter.send(C.TELEGRAM_TOKEN, C.TELEGRAM_CHAT_ID, msg)
                 log.info("intraday alert %s: close=%.2f pivot=%.2f vol_ratio=%.2f",
                          t, last_close, pivot, vol_ratio)
