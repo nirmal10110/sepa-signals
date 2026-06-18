@@ -1,0 +1,69 @@
+2026-06-18 22:00:02 INFO    sepa  log file: C:\Users\lathe\sepa-signals\data\logs\2026-06-18\22-00-02-scan\sepa.log
+2026-06-18 22:00:02 INFO    sepa.run  SEPA scan starting — 5051 tickers
+2026-06-18 22:00:23 INFO    sepa.run  breadth: 1388/2849 (48.7%) Stage 2 -> tone: Confirmed uptrend
+2026-06-18 22:00:24 INFO    sepa.run  momentum breakout alerts: ['NBIS', 'ARWR', 'ACMR', 'ENVA', 'BBAR', 'LION', 'ESTA', 'CHRN', 'AXGN', 'TRVI', 'ATLC', 'TRT']
+2026-06-18 22:00:24 WARNING matplotlib.font_manager  findfont: Failed to find font weight semibold, now using 700.
+2026-06-18 22:03:03 INFO    httpx  HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-06-18 22:03:03 INFO    sepa.validator  validator ALAB: ```json
+{
+  "verdict": "CAUTION",
+  "reason": "Exceptional 1-year return (+303%) and extreme 40-day extension (+197%) suggest late-stage momentum rather than early-stage breakout; climax risk is material despite passing quant filters.",
+  "summary": "Astera Labs designs high-performance connectivity and power management semiconductors for data center and AI infrastructure.",
+  "thesis": "Stock has demonstrated sustained strength in AI/data-center semiconductor tailwinds, and the 6/8 trend template with RS 98 confirms relative momentum; however, the setup's power comes from an already-parabolic base rather than a fresh accumulation pattern.",
+  "catalysts": "Data center AI adoption acceleration, customer design-win announcements, or quarterly earnings beats could extend the run, but any disappointment may trigger sharp profit-taking given the extended valuation."
+}
+```
+
+**Key note:** This is a *momentum trade*, not a value setup. The climax flag is real—position sizing and stop discipline (358.06) are critical. Consider whether you're entering early in a secular AI leg or chasing tail-end euphoria. | in=502 out=263 tokens | 4.4s
+2026-06-18 22:03:09 INFO    httpx  HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-06-18 22:03:09 INFO    sepa.validator  validator DELL: ```json
+{
+  "verdict": "CAUTION",
+  "reason": "Exceptional 1-year return (+267%) and extreme extension (+145% above 200-SMA) suggest late-stage momentum rather than early Stage 2 setup; climax risk is material despite strong quantitative metrics.",
+  "summary": "Dell Technologies is a global leader in computing infrastructure, PCs, servers, and storage solutions serving enterprise and consumer markets.",
+  "thesis": "Strong trend structure (8/8 Trend Template, RS 97) and recent 40-day flag consolidation could represent a legitimate continuation breakout, but the stock's already-parabolic trajectory raises distribution risk.",
+  "catalysts": "AI/data-center infrastructure demand tailwinds and enterprise IT spending recovery could sustain momentum, but no specific near-term catalyst is evident; lack of headline catalysts increases reliance on technical momentum alone."
+}
+```
+
+**Key observation:** This is a textbook climax-run scenario—the quant setup is clean, but the stock has *already run hard*. The 8/8 Trend Template and RS 97 are legitimate, but at +267% YTD and +145% extension, the risk/reward skews toward disappointment rather than surprise upside. Proceed only with tight risk management and conviction that institutional demand will sustain the move. | in=498 out=305 tokens | 5.1s
+2026-06-18 22:03:13 INFO    httpx  HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-06-18 22:03:13 INFO    sepa.validator  validator GTX: ```json
+{
+  "verdict": "CAUTION",
+  "reason": "Exceptional momentum metrics (236% YTD, +75% above 200-SMA, RS 95) are impressive but lack recent headline support; verify no hidden deterioration in turbo or competitive position before entry.",
+  "summary": "Garrett Motion is a turbocharger and electric boosting technology supplier to global automakers, spun from Honeywell in 2018.",
+  "thesis": "Stage 2 breakout with perfect trend template and extreme outperformance relative strength suggests institutional accumulation; supply-chain normalization or EV transition tailwinds could justify the momentum.",
+  "catalysts": "Q3/Q4 earnings beats, OEM adoption announcements for electric boosting tech, or positive commentary on automotive production recovery."
+}
+``` | in=465 out=193 tokens | 3.4s
+2026-06-18 22:03:16 INFO    httpx  HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-06-18 22:03:16 INFO    sepa.validator  validator GRC: ```json
+{
+  "verdict": "CONFIRM",
+  "reason": "Strong technical setup with 8/8 trend template alignment, exceptional 89 RS, and fundamentals passing; 149% YTD return and 51% extension above 200 SMA suggest robust momentum continuation.",
+  "summary": "Gorman-Rupp manufactures pumps and fluid-handling equipment for industrial, municipal, and commercial applications.",
+  "thesis": "Stage 2 VCP breakout with pristine trend structure and top-89th percentile relative strength indicates institutional accumulation; company's essential infrastructure end-markets provide tailwind.",
+  "catalysts": "Earnings announcements, infrastructure spending cycles, and margin expansion from operational leverage could provide near-term acceleration."
+}
+``` | in=449 out=177 tokens | 2.6s
+2026-06-18 22:03:32 INFO    httpx  HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-06-18 22:03:32 INFO    sepa.validator  validator FTAI: ```json
+{
+  "verdict": "CONFIRM",
+  "reason": "Strong technical setup (VCP, perfect trend template 8/8, RS 83) combined with fundamentals pass and significant momentum (+127% YTD) supports the quantitative signal.",
+  "summary": "FTAI Aviation Ltd. is a leasing and investment company focused on commercial aircraft and aviation assets.",
+  "thesis": "Stock is in a clean consolidation phase (13-week VCP with high relative strength) after a strong 127% run, positioning for continuation if it breaks above pivot 285.08 with institutional buying pressure.",
+  "catalysts": "Fleet expansion announcements, favorable lease rate environment, or operational updates on aircraft utilization could act as near-term accelerators."
+}
+``` | in=449 out=177 tokens | 15.4s
+2026-06-18 22:03:35 INFO    httpx  HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-06-18 22:03:35 INFO    sepa.validator  validator RYM: ```json
+{
+  "verdict": "CAUTION",
+  "reason": "Strong technical setup is undermined by modest 1-year return (+8%) and minimal extension above the 200-SMA (+4%), suggesting weak underlying momentum despite the 40-day flag breakout.",
+  "summary": "Rythm, Inc. is a cannabis cultivation and retail operator focused on the medical and adult-use markets across multiple U.S. states.",
+  "thesis": "The 106% flag breakout over 40 days with stage 2 structure and 80 RS shows institutional accumulation, but the stock's tepid annual performance and tight positioning above its 200-SMA indicate conviction has not yet broadened—entry here requires near-term confirmation of follow-through volume.",
+  "catalysts": "Quarterly earnings releases, state licensing approvals, M&A activity in the cannabis sector, or shifts in federal cannabis policy could act as near-term price drivers."
+}
+``` | in=446 out=221 tokens | 3.3s
