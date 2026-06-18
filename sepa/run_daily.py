@@ -13,7 +13,7 @@ from .indicators import add_mas, up_day_vol_ratio, ret_1y as _ret1y, ext_from_20
 from .screens import (trend_template, classify_stage, weighted_rs_return,
                       rank_rs, fundamental_screen)
 from .patterns import detect_setups
-from .classify import decide_tier
+from .classify import decide_tier, breakout_confirmed
 from .state import transitions
 from . import alerter
 from . import reporter
@@ -136,6 +136,7 @@ def run(con=None, market_tone=None):
                 "ext_200": e200,
                 "climax_flag": climax,
                 "_setup": setup,
+                "_funda_note": f_note,   # passed to decide_tier for Momentum reason
             }
         except Exception as e:
             log.warning("classify failed %s: %s", t, e)
@@ -156,10 +157,17 @@ def run(con=None, market_tone=None):
     for t, pre in pre_tier.items():
         try:
             setup = pre.pop("_setup")
+            funda_note = pre.pop("_funda_note", "")
             tier, reason = decide_tier(pre["stage"], pre["tt"], pre["rs"],
                                        bool(pre["funda"]), setup, market_tone,
-                                       df=hist.get(t))
+                                       df=hist.get(t), funda_note=funda_note)
             sig = {**pre, "tier": tier or "", "reason": reason, "market_tone": market_tone}
+            # For Momentum stocks, store the fundamental failure detail for the alert card.
+            if tier == "Momentum":
+                sig["momentum_reason"] = funda_note or f"funda score below {C.FUND_MIN_SCORE}"
+                # Flag whether the current bar is also a confirmed breakout so the alert
+                # loop can fire without re-running the heavy breakout check.
+                sig["momentum_breakout"] = breakout_confirmed(hist.get(t), setup)
             db.write_signal(con, asof, sig)
             db.checkpoint_done(con, asof, t)
             if tier:
@@ -198,6 +206,19 @@ def run(con=None, market_tone=None):
     # alerts: newly Buy Ready or Potential Buy (NEW or PROMOTED) -> AI validator -> Telegram, deduped
     buyable = [sigs[t] for t, s in trans.items()
                if s in ("NEW", "PROMOTED") and curr.get(t, {}).get("tier") in _ALERT_TIERS]
+
+    # Momentum alerts: confirmed breakout on a Momentum-tier stock (NEW or PROMOTED).
+    # These bypass the AI validator (fundamental context is already flagged in the card)
+    # and go straight to the alerter with a separate dedup key.
+    momentum_alerts = [
+        sigs[t] for t, s in trans.items()
+        if s in ("NEW", "PROMOTED")
+        and curr.get(t, {}).get("tier") == "Momentum"
+        and sigs.get(t, {}).get("momentum_breakout")
+    ]
+    if momentum_alerts:
+        log.info("momentum breakout alerts: %s", [s["ticker"] for s in momentum_alerts])
+        alerter.process(con, momentum_alerts, hist, asof)
 
     # Resume guard: if this run follows a crash that happened after state was committed
     # but before alerter.process() ran, trans shows "SAME" for those tickers and buyable
@@ -281,12 +302,13 @@ def run(con=None, market_tone=None):
     promotions = len([m for m in moves.values() if m in ("NEW", "PROMOTED")])
     hb = (f"SEPA scan {asof}: {counts.get('Buy Ready', 0)} Buy Ready, "
           f"{counts.get('Potential Buy', 0)} Potential Buy, "
+          f"{counts.get('Momentum', 0)} Momentum, "
           f"{promotions} promotions, {len(sent)} alerts. "
           f"Breadth {pct2:.1f}% Stage2 -> {market_tone}")
 
     print(f"\n=== SEPA {asof} | {market_tone} | {pct2:.1f}% Stage2 | universe {len(hist)} ===")
     for tier in C.TIER_ORDER:
-        print(f"  {tier:<10} {counts[tier]}")
+        print(f"  {tier:<14} {counts[tier]}")
     if stage_alerts:
         print(f"  stage alerts: {len(stage_alerts)}")
     print(f"  alerts sent: {len(sent)} -> {[t for t, _ in sent]}")

@@ -172,9 +172,15 @@ LPP_MIN_BARS = 40
 LPP_LOOKBACK = 120
 LPP_MIN_PRIOR_DECLINE = 0.15     # prior downtrend must be >= 15%
 
-TIER_ORDER = ["Watch", "Buy Alert", "Potential Buy", "Buy Ready"]
+TIER_ORDER = ["Watch", "Buy Alert", "Potential Buy", "Buy Ready", "Momentum"]
 # Volume multiple required for a confirmed breakout (close ≥ pivot + vol ≥ X × 50d avg)
 BREAKOUT_VOL_MULT = _getfloat("BREAKOUT_VOL_MULT", 1.3)
+
+# --- Momentum tier (technically strong, fundamentally disqualified) ---
+# Stocks passing ALL Minervini technical criteria but failing the fundamental screen
+# are placed here rather than discarded.  Alerts fire only on confirmed breakout.
+MOMENTUM_RS_MIN  = _getint("MOMENTUM_RS_MIN",  85)   # stricter RS gate than RS_MIN(70)
+MOMENTUM_TT_MIN  = _getint("MOMENTUM_TT_MIN",  7)    # full trend-template score required
 
 # --- storage / ops (mini-PC) ---
 DB_PATH = DATA_DIR / "sepa.db"

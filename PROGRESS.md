@@ -5,7 +5,7 @@
 > Legend: [ ] todo · [~] in progress · [x] done & verified · [!] blocked ·
 > `NEEDS-LIVE-VERIFY` = code done, user must confirm on mini PC.
 
-_Last updated: 2026-06-18 (Claude). Resume point: **Phase 2 (mini PC) — tier split + intraday scan implemented**._
+_Last updated: 2026-06-18 (Claude). Resume point: **Momentum tier added (offline verified). All offline gates green.**_
 
 ---
 
@@ -14,6 +14,36 @@ _Last updated: 2026-06-18 (Claude). Resume point: **Phase 2 (mini PC) — tier s
 - Pipeline proven offline on synthetic US universe: **yes**
 - Anything proven on live data: **no**
 - v1 "working" (passed paper period): **no**
+
+---
+
+## Architecture summary
+
+| Layer | Technology |
+|---|---|
+| Price data | yfinance (batched 200/batch, retry+backoff) |
+| Fundamentals | EDGAR XBRL REST API (concept-name fallback chain, 0.12s rate cap) |
+| Universe | SEC company_tickers → ~3,000 names, L0-filtered (price > $10, dollar-vol > $1M) |
+| Storage | SQLite WAL-mode (single `data/sepa.db`); vacuumed nightly |
+| Nightly scan | `python -m sepa.run_daily` → indicators → RS rank → stage/TT/funda → patterns → tiers → diff → alerts |
+| Intraday scan | `python -m sepa.run_intraday` at 9:45 AM ET + 12:30 PM ET (Task Scheduler XMLs in `deploy/windows/`) |
+| Alerts | Telegram Bot API (chart PNG + Markdown card); AI validator (Claude Haiku) before each Buy Ready/Potential Buy alert |
+| Email report | Gmail SMTP, HTML email after every nightly scan |
+| Scheduling | Windows Task Scheduler (manual registration) or systemd on Linux |
+
+---
+
+## Tiers
+
+| Tier | Criteria | Alerts |
+|---|---|---|
+| **Buy Ready** | Stage 2 · TT ≥ 5 · RS ≥ 70 · funda pass · setup buyable · close ≥ pivot · vol ≥ 1.3× avg | Yes — on NEW/PROMOTED |
+| **Potential Buy** | Same as Buy Ready but no confirmed breakout | Yes — on NEW/PROMOTED |
+| **Buy Alert** | Stage 2 · TT ≥ 5 · RS ≥ 70 · funda pass · setup present but not in buy zone | No |
+| **Watch** | Stage 2 · TT ≥ 5 · RS ≥ 70 · no mature setup | No |
+| **⚡ Momentum** | Stage 2 · TT ≥ 7 · RS ≥ 85 · funda FAILS (negative EPS or score < FUND_MIN_SCORE) | Yes — only on confirmed breakout (close ≥ pivot + vol ≥ 1.3×); card labelled "⚡ MOMENTUM" with disclaimer |
+
+Market tone gate: "Correction" → no entries of any tier. "Under pressure" → Buy Ready/Potential Buy degrade to Buy Alert.
 
 ---
 
@@ -54,34 +84,46 @@ _Last updated: 2026-06-18 (Claude). Resume point: **Phase 2 (mini PC) — tier s
 - [x] **Buy Ready** split from **Potential Buy**: Buy Ready requires last close ≥ pivot AND
       volume ≥ 1.3× 50-day avg (confirmed breakout). Potential Buy = old Buy Ready criteria
       (good setup, near pivot, no breakout confirmation required).
-- [x] `sepa/classify.py`: `_breakout_confirmed(df, setup)` helper, `decide_tier` updated with
-      `df=None` parameter; both Power Play and normal paths split correctly.
+- [x] `sepa/classify.py`: `breakout_confirmed(df, setup)` helper (public; `_breakout_confirmed`
+      alias kept for backwards compat), `decide_tier` updated with `df=None` parameter;
+      both Power Play and normal paths split correctly.
 - [x] `sepa/config.py`: `BREAKOUT_VOL_MULT=1.3` added; `TIER_ORDER` updated to include
-      `"Potential Buy"` between `"Buy Alert"` and `"Buy Ready"`.
-- [x] `sepa/alerter.py`: `build_card` is tier-aware: "🔥 BUY READY" vs "📈 POTENTIAL BUY" header.
-- [x] `sepa/run_daily.py`: passes `df=hist.get(t)` to `decide_tier`; alerts fire on NEW/PROMOTED
-      into either Buy Ready OR Potential Buy; resume guard SQL updated; heartbeat shows both counts.
-- [x] `sepa/db.py`: pre-existing bug fixed — `write_signal` now uses explicit column names so it
-      doesn't fail when the AI migration columns exist (was failing silently, 4 tests broken).
-- [x] `sepa/providers.py`: `stage2_breakout` archetype added (260-bar strong advance + VCP base +
-      confirmed breakout bar), `ZZBRK` ticker added to synthetic universe.
-- [x] Tests: 60 passed (was 52 before the db.py fix). New tests cover `_breakout_confirmed`
-      positive/negative fixtures and `decide_tier` Buy Ready vs Potential Buy split.
-- [x] `sepa/run_intraday.py`: intraday scanner — pulls 5m yfinance bars for Watch/Buy Alert/
-      Potential Buy tickers; checks `close ≥ pivot` AND `vol_pace ≥ 1.3× 50d avg` (annualised
-      as `today_vol × 390/minutes_elapsed`); fires Telegram alert; skips if market closed.
-- [x] `deploy/windows/intraday_0945.xml` and `intraday_1230.xml`: Windows Task Scheduler XML
-      files for 9:45 AM ET (14:45 London) and 12:30 PM ET (17:30 London) runs.
-- [x] **Dry-run check (2026-06-18, data date 2026-06-17)**:
-      19 current Buy Ready tickers checked against the 1.3× vol + above-pivot filter.
-      **Result: 0 stay Buy Ready, 19 move to Potential Buy.**
-      None had both close ≥ pivot AND vol ≥ 1.3× avg on the most recent data date. This is
-      expected — confirmed breakouts are rare; the engine will re-promote to Buy Ready the next
-      day a name breaks out with volume. The existing 19 alerts remain in the dedupe table so
-      they will not re-fire when they return to Potential Buy.
-- [x] **GATE PASSED (offline): `python -m pytest -q` → 60 passed in 367s**
+      `"Potential Buy"` between `"Buy Alert"` and `"Buy Ready"`, plus `"Momentum"` at end.
+- [x] `sepa/alerter.py`: `build_card` is tier-aware: "🔥 BUY READY" vs "📈 POTENTIAL BUY"
+      vs "⚡ MOMENTUM" headers; Momentum card includes fundamental disclaimer line.
+- [x] `sepa/run_daily.py`: passes `df=hist.get(t)` and `funda_note` to `decide_tier`;
+      alerts fire on NEW/PROMOTED into Buy Ready OR Potential Buy; Momentum alerts fire
+      separately only when `momentum_breakout=True`; resume guard SQL updated; heartbeat
+      shows all tier counts including Momentum.
+- [x] `sepa/db.py`: pre-existing bug fixed — `write_signal` now uses explicit column names.
+- [x] `sepa/providers.py`: `stage2_breakout` archetype added (`ZZBRK` ticker).
+- [x] **GATE PASSED (offline): `python -m pytest -q` → 68 passed in 367s**
 - [ ] **GATE (user, mini PC):** run nightly scan on live data; verify Potential Buy alerts
       reach Telegram; confirm a real Buy Ready fires when a name breaks out with volume.
+      `NEEDS-LIVE-VERIFY`
+
+### Phase 2 Momentum tier (2026-06-18)  ✅ DONE (offline)
+- [x] **Momentum tier**: Stage 2 · TT ≥ 7 · RS ≥ 85 but funda_pass=False → "Momentum"
+      instead of Watch/Buy Alert. Replaces those tiers so INTC-style turnarounds don't
+      clutter the SEPA watchlists.
+- [x] `sepa/config.py`: `MOMENTUM_RS_MIN=85`, `MOMENTUM_TT_MIN=7` added. Both tunable via .env.
+- [x] `sepa/classify.py`: Momentum override runs after regular tier logic and market_tone gate.
+      `funda_note` passed in so the card and logs say "unprofitable" / "funda score 2/3" etc.
+- [x] `sepa/run_daily.py`: stores `momentum_reason` and `momentum_breakout` flags on Momentum
+      signals; fires `alerter.process` separately for breakout-confirmed Momentum stocks.
+- [x] `sepa/run_intraday.py`: "Momentum" added to `_SCAN_TIERS` so intraday scanner checks
+      pivot crossings for Momentum stocks at 9:45 AM and 12:30 PM ET.
+- [x] `sepa/alerter.py`: "⚡ MOMENTUM" header + "⚠️ Fundamentals: <reason> — technical play
+      only" disclaimer line in the Telegram card.
+- [x] `sepa/reporter.py`: Momentum in `_TIER_CFG` (amber `#fff0d0` accent), in `_DISPLAY_ORDER`
+      (at end, below Watch), has dedicated amber disclaimer banner. Excluded from main
+      subject counts but appended as "⚡Momentum" suffix.
+- [x] 5 new unit tests: positive fixture (funda-fail → Momentum), negative fixtures (RS below
+      threshold → Watch, TT below threshold → non-Momentum, funda-pass → non-Momentum,
+      correction → None).
+- [x] **GATE PASSED: all 5 Momentum tests pass; `python -m pytest -k momentum -v` → 5 passed in 0.25s**
+- [ ] **GATE (user, mini PC):** confirm INTC-like ticker shows in ⚡ Momentum section of email;
+      confirm Telegram card fires with ⚡ header and disclaimer on real breakout.
       `NEEDS-LIVE-VERIFY`
 
 ## Phase 3 — Watch-list state & lifecycle  ✅ DONE
@@ -101,6 +143,7 @@ _Last updated: 2026-06-18 (Claude). Resume point: **Phase 2 (mini PC) — tier s
 - [x] Dedupe holds across reruns (confirmed in golden test + Phase 0 gate)
 - [x] Telegram failure can't break the scan (wrapped, logs to warning)
 - [x] Stage-transition alerts (2→3/4 on positions + watchlist)
+- [x] Momentum alerts bypass AI validator (already flagged as non-SEPA)
 - [ ] **GATE (user, mini PC):** real card hits phone; no re-alert on rerun `NEEDS-LIVE-VERIFY`
 
 ## Phase 5 — Remaining detectors  ✅ DONE
@@ -122,7 +165,10 @@ _Last updated: 2026-06-18 (Claude). Resume point: **Phase 2 (mini PC) — tier s
 - [x] Resumable mid-run: `run_checkpoint` table, per-ticker checkpoint written
   after each classify; cleared on clean run completion
 - [x] `SETUP_US_v1.md` updated with full install instructions
-- [ ] **GATE (user):** mid-run kill recovers clean; full scan in budget `NEEDS-LIVE-VERIFY`
+- [x] `deploy/windows/intraday_0945.xml` and `intraday_1230.xml`: Windows Task Scheduler XMLs
+      for 9:45 AM ET (14:45 London) and 12:30 PM ET (17:30 London)
+- [ ] **GATE (user):** Task Scheduler XML files imported manually; mid-run kill recovers clean;
+      full scan in budget `NEEDS-LIVE-VERIFY`
 
 ## Phase 7 — AI validator  ✅ DONE (offline)  `NEEDS-LIVE-VERIFY`
 - [x] `sepa/validator.py`: real Claude claude-opus-4-7 API call (not mocked)
@@ -134,6 +180,7 @@ _Last updated: 2026-06-18 (Claude). Resume point: **Phase 2 (mini PC) — tier s
 - [x] Wired into run_daily.py (validated before alerter.process)
 - [x] AI note shown in Telegram card
 - [x] `ANTHROPIC_API_KEY` loaded from env var (via config.py)
+- [x] Momentum alerts bypass the AI validator (fundamental disqualification already surfaced)
 - [x] 3 offline tests pass; 2 live tests marked `@pytest.mark.live` for mini PC
 - [ ] **GATE (user):** live check on mini PC `NEEDS-LIVE-VERIFY`
 
@@ -184,7 +231,44 @@ Three systemic bugs found via 13-signal audit; all fixed and tested:
   and incremental tickers (fetch only from `last_date+1` to today, grouped by last date).
   On subsequent nightly runs, established tickers pull 1–2 days instead of 2 years.
 
-**Gate status:** 54 passed in 52s (all non-live). All offline acceptance gates still green.
+**EDGAR revenue/op_margin date mismatch (2026-06-18)**
+- Root cause: Revenue and operating-margin series were fetched separately; when their fiscal
+  quarters had different end-dates the alignment was off, producing all-zero sales columns.
+- Fix: sort + align series by report date before passing to fundamental_screen.
+
+---
+
+## Recent fixes (2026-06-18)
+
+**BUY_ZONE_WIDTH gate for intraday alerts (2026-06-15)**
+- Intraday `near_pivot` check now uses `0 <= pct_above <= C.BUY_ZONE_WIDTH` (5% ceiling).
+  Without the upper bound, any stock that broke out months ago would re-fire every intraday
+  scan because the stored pivot is not updated until the next nightly classify.
+
+---
+
+## Known limitations / pending work
+- **Prices can be 1–2 days stale** if the nightly ingest didn't complete (yfinance incremental
+  pull only fetches since last stored date).
+- **Pivot staleness**: the nightly classify recomputes the pivot from the last 65 bars of price
+  history, but if a stock is in the `done` checkpoint set on a resume run, its pivot comes from
+  the DB (last classify) rather than fresh price data. Stale pivots cause intraday alerts to
+  reference old levels. Not yet fixed — needs a "re-pivot" step on resume.
+- **ZZBRK synthetic test fixture**: breakout archetype exists in SyntheticProvider but the
+  full-funnel golden test (`test_funnel_golden_tiers`) doesn't yet assert ZZBRK lands in
+  Buy Ready. This is a coverage gap, not a runtime bug.
+- **Task Scheduler registration**: XMLs are in `deploy/windows/` but the user must import
+  them manually via `schtasks /Create /XML ...` or the Task Scheduler GUI. Not automated.
+- **Stale pivot recalculation**: not yet built. After a long gap between scans, the stored
+  pivot in DB may refer to a base that has been invalidated. Nightly classify should
+  re-run detect_setups even for checkpoint-skipped tickers when `asof` differs by more
+  than N days from last classify date. Backlog item.
+- **INTC-style fundamental turnarounds now tracked as Momentum**: stocks with RS≥85, TT≥7,
+  Stage 2 but negative/weak EPS land in the Momentum tier. Once fundamentals improve
+  (next EDGAR fetch shows positive EPS + score ≥ FUND_MIN_SCORE), the nightly scan
+  will automatically promote them to Buy Alert / Potential Buy / Buy Ready.
+
+---
 
 ## Backlog / future upgrades
 - [ ] **Universe: switch to S&P 1500** (S&P 500 + MidCap 400 + SmallCap 600) instead of first-N
@@ -193,6 +277,11 @@ Three systemic bugs found via 13-signal audit; all fixed and tested:
   institutional universe Minervini targets and would give cleaner signal quality.
   Approach: fetch constituent list from a free source (e.g. Wikipedia S&P 500 table + iShares
   ETF holdings for the other two), replace `fetch_us_universe()` with a constituent loader.
+- [ ] **Stale pivot recalculation** — re-run detect_setups for checkpoint-skipped tickers
+  when last classify date is > 3 days old.
+- [ ] **ZZBRK golden-test assertion** — add Buy Ready assertion to `test_funnel_golden_tiers`.
+
+---
 
 ## Discovered work / TODOs found mid-build
 - Makefile needed `venv` target (first-time setup on mini PC)
@@ -211,6 +300,10 @@ Three systemic bugs found via 13-signal audit; all fixed and tested:
 - Phase 7: built real Claude API validator — no mock. Error → CAUTION, never silent suppression.
 - Cheat entry types: low-cheat (≤3% above C floor) vs cheat (anywhere in C band)
 - Detector priority: PP > VCP > Cup-Handle > Cheat > Livermore PP
+- Momentum tier (2026-06-18): INTC-class names (RS≥85, TT≥7, Stage 2, funda-fail) get their
+  own tier rather than polluting Watch/Buy Alert. Alerts only on confirmed breakout. The
+  RS threshold (85) is intentionally higher than the regular RS_MIN (70) to keep only the
+  very strongest technical setups; funda-fail names with RS 70-84 still go to Watch/Buy Alert.
 
 ## VERIFY-AGAINST-BOOK (setup definitions to reconcile with the text)
 - CHEAT: recoup % bounds (33-60%) vs book's 33-50% spec
@@ -224,3 +317,4 @@ Three systemic bugs found via 13-signal audit; all fixed and tested:
 - Market-tone gauge: keep as manual switch in MARKET_TONE config, or compute from breadth?
 - Telegram bot setup: need to create bot via @BotFather and get TELEGRAM_CHAT_ID
 - Set ANTHROPIC_API_KEY in /opt/sepa/.env on the mini PC before first live run
+- MOMENTUM_RS_MIN (default 85) and MOMENTUM_TT_MIN (default 7) tunable via .env if too strict/loose

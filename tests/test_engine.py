@@ -234,3 +234,48 @@ def test_decide_tier_buy_ready_vs_potential_buy(tmp_path):
     tier_without, _ = decide_tier(2, 7, 80, True, setup_vcp,
                                   "Confirmed uptrend", df=df_vcp)
     assert tier_without == "Potential Buy", f"expected Potential Buy, got {tier_without}"
+
+
+# ---------- Momentum tier ----------
+
+def test_momentum_tier_assigned_for_funda_fail():
+    """Stage-2, TT≥7, RS≥85, funda_fail → Momentum (not Watch or Buy Alert)."""
+    tier, reason = decide_tier(2, 7, 90, False, None,
+                               "Confirmed uptrend", funda_note="unprofitable")
+    assert tier == "Momentum", f"expected Momentum, got {tier}"
+    assert "MOMENTUM" in reason
+    assert "unprofitable" in reason
+
+
+def test_momentum_tier_not_assigned_below_rs_threshold():
+    """RS below MOMENTUM_RS_MIN → stays on regular watchlist (Watch), not Momentum."""
+    from sepa import config as C
+    rs_below = C.MOMENTUM_RS_MIN - 1
+    tier, reason = decide_tier(2, 7, rs_below, False, None,
+                               "Confirmed uptrend", funda_note="unprofitable")
+    # RS is still >= RS_MIN(70) so it enters the Stage-2 path, but RS < 85 → Watch, not Momentum
+    assert tier == "Watch", f"expected Watch for RS {rs_below}, got {tier}"
+    assert tier != "Momentum"
+
+
+def test_momentum_tier_not_assigned_below_tt_threshold():
+    """TT below MOMENTUM_TT_MIN (7) → Watch/Buy Alert, not Momentum even with RS≥85."""
+    from sepa import config as C
+    tt_below = C.MOMENTUM_TT_MIN - 1   # 6
+    tier, reason = decide_tier(2, tt_below, 90, False, None,
+                               "Confirmed uptrend", funda_note="unprofitable")
+    assert tier != "Momentum", f"TT={tt_below} should not reach Momentum, got {tier}"
+
+
+def test_momentum_not_assigned_when_funda_passes():
+    """Funda-pass stock must NOT be reclassified as Momentum."""
+    tier, reason = decide_tier(2, 7, 90, True, None,
+                               "Confirmed uptrend")
+    assert tier != "Momentum", f"funda-pass stock must not be Momentum, got {tier}"
+
+
+def test_momentum_blocked_in_correction():
+    """Market in Correction → Momentum (like all tiers) returns None."""
+    tier, reason = decide_tier(2, 7, 90, False, None,
+                               "Correction", funda_note="unprofitable")
+    assert tier is None, f"correction should block Momentum, got {tier}"

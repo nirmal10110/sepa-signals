@@ -80,16 +80,28 @@ def build_card(sig):
     ai_line = f"\n*AI*  {ai_note}" if ai_note else ""
 
     tier = sig.get("tier", "Buy Ready")
-    tier_label = "🔥 BUY READY" if tier == "Buy Ready" else "📈 POTENTIAL BUY"
+    if tier == "Buy Ready":
+        tier_label = "🔥 BUY READY"
+    elif tier == "Momentum":
+        tier_label = "⚡ MOMENTUM"
+    else:
+        tier_label = "📈 POTENTIAL BUY"
+
+    momentum_disclaimer = ""
+    if tier == "Momentum":
+        m_reason = sig.get("momentum_reason", "fundamentals not SEPA-qualified")
+        momentum_disclaimer = f"\n⚠️ *Fundamentals*: {m_reason} — technical play only"
+
     return (
         f"{tier_label} — *{sig['ticker']}*  ({sig['setup']})\n"
         f"_{sig['meta']}_\n\n"
         f"*Market*  {tone}\n"
         f"*Signal*  Stage {sig['stage']} ✓ · TT {sig['tt']}/8 · RS {sig['rs']} · "
-        f"Fund {'✓' if sig['funda'] else '?'} {ud_tag}"
+        f"Fund {'✓' if sig['funda'] else '✗'} {ud_tag}"
         f"{trend_line}\n"
         f"*Setup*  footprint `{sig['footprint']}` · pivot taken out -> in buy zone"
         f"{plan_line}"
+        f"{momentum_disclaimer}"
         f"{context_block}"
         f"{ai_line}\n\n"
         f"chart: tradingview.com/chart/?symbol={sig['ticker']}"

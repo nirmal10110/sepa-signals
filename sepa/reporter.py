@@ -21,9 +21,10 @@ _TIER_CFG = {
     "Potential Buy":("#004085", "#cce5ff", "🔵"),
     "Buy Alert":    ("#856404", "#fff3cd", "🟡"),
     "Watch":        ("#383d41", "#e2e3e5", "⚪"),
+    "Momentum":     ("#7d4400", "#fff0d0", "⚡"),
 }
 _FALLBACK_CFG = ("#495057", "#f8f9fa", "•")
-_DISPLAY_ORDER = ["Buy Ready", "Potential Buy", "Buy Alert", "Watch"]
+_DISPLAY_ORDER = ["Buy Ready", "Potential Buy", "Buy Alert", "Watch", "Momentum"]
 
 
 # ── HTML helpers ────────────────────────────────────────────────────────────
@@ -176,11 +177,23 @@ def _tier_section(tier: str, sigs: list) -> str:
     body = _watch_table(sigs) if tier == "Watch" else "".join(
         _stock_card(s, full=full) for s in sigs
     )
+    # Momentum section gets an amber disclaimer banner above the cards.
+    disclaimer = ""
+    if tier == "Momentum":
+        disclaimer = (
+            f'<div style="margin-bottom:8px;padding:6px 10px;border-radius:4px;'
+            f'background:#ffe8b0;color:#7d4400;font-size:11px;font-weight:600">'
+            f'⚠️ Momentum Plays — all Minervini technical criteria met, '
+            f'but fundamentals are NOT SEPA-qualified. '
+            f'Alerts fire only on confirmed pivot breakout with volume ≥ 1.3× avg. '
+            f'Not investment advice.</div>\n'
+        )
     return (
         f'<div style="margin-bottom:20px">'
         f'<h2 style="font-size:14px;font-weight:700;color:#222;margin:0 0 8px;'
         f'padding-bottom:5px;border-bottom:2px solid {bg}">'
         f'{icon}&nbsp;{tier} ({len(sigs)})</h2>'
+        f'{disclaimer}'
         f'{body}'
         f'</div>\n'
     )
@@ -189,15 +202,20 @@ def _tier_section(tier: str, sigs: list) -> str:
 # ── main render ─────────────────────────────────────────────────────────────
 
 def build_html(sigs: list, asof: str, tone: str = "—", breadth: str = "—") -> str:
-    by_tier = {t: [] for t in _DISPLAY_ORDER}
+    by_tier: dict[str, list] = {t: [] for t in _DISPLAY_ORDER}
     for s in sigs:
         t = s.get("tier", "")
         if t in by_tier:
             by_tier[t].append(s)
 
+    # Momentum count excluded from the main header line to avoid inflating the signal count;
+    # it appears in its own section below with a disclaimer.
+    main_tiers = [t for t in _DISPLAY_ORDER if t != "Momentum"]
     counts_str = " · ".join(
-        f'{len(by_tier[t])} {t}' for t in _DISPLAY_ORDER if by_tier[t]
+        f'{len(by_tier[t])} {t}' for t in main_tiers if by_tier[t]
     )
+    if by_tier.get("Momentum"):
+        counts_str += f' · {len(by_tier["Momentum"])} ⚡Momentum'
     sections = "".join(_tier_section(t, by_tier[t]) for t in _DISPLAY_ORDER)
 
     return f"""<!DOCTYPE html>
@@ -269,7 +287,8 @@ def _query(con) -> list:
                 WHEN 'Potential Buy' THEN 2
                 WHEN 'Buy Alert'     THEN 3
                 WHEN 'Watch'         THEN 4
-                ELSE 5
+                WHEN 'Momentum'      THEN 5
+                ELSE 6
             END,
             COALESCE(s.rs, 0) DESC
     """).fetchall()
@@ -299,14 +318,12 @@ def send_report(con, asof: str = None, tone: str = "", breadth: str = "") -> boo
     by_tier: dict[str, int] = {}
     for s in sigs:
         by_tier[s["tier"]] = by_tier.get(s["tier"], 0) + 1
-    subject = (
-        f"SEPA {asof} — "
-        + " · ".join(
-            f'{by_tier[t]} {t}'
-            for t in _DISPLAY_ORDER
-            if by_tier.get(t, 0) > 0
-        )
-    )
+    # Momentum excluded from the main subject tiers; appended separately if present.
+    main_display = [t for t in _DISPLAY_ORDER if t != "Momentum"]
+    subject_parts = [f'{by_tier[t]} {t}' for t in main_display if by_tier.get(t, 0) > 0]
+    if by_tier.get("Momentum", 0) > 0:
+        subject_parts.append(f'{by_tier["Momentum"]} ⚡Momentum')
+    subject = f"SEPA {asof} — " + " · ".join(subject_parts)
 
     msg = MIMEMultipart("alternative")
     msg["From"] = f"SEPA Signal Desk <{C.SMTP_USER}>"

@@ -25,8 +25,30 @@ log = logging.getLogger("sepa.intraday")
 
 _MARKET_OPEN = dtime(9, 30)
 _MARKET_CLOSE = dtime(16, 0)
-_SCAN_TIERS = {"Watch", "Buy Alert", "Potential Buy"}
+_SCAN_TIERS = {"Watch", "Buy Alert", "Potential Buy", "Momentum"}
 _SESSION_MINUTES = 390   # 9:30–16:00 ET = 390 minutes
+
+# Common corporate-suffix tokens stripped before name comparison
+_CORP_SUFFIXES = {"inc", "corp", "ltd", "llc", "plc", "co", "group",
+                  "holdings", "technologies", "technology", "international"}
+
+
+def _names_match(db_name: str, yf_name: str) -> bool:
+    """Return True if the significant tokens in both names overlap enough.
+
+    Protects against ticker reassignment: when a company goes bankrupt and the
+    ticker is later assigned to an unrelated company, yfinance will return
+    price data but the company name will differ entirely from what is in our DB.
+    """
+    def tokens(s: str) -> set[str]:
+        return {w.lower().rstrip(".,") for w in s.split()
+                if w.lower().rstrip(".,") not in _CORP_SUFFIXES and len(w) > 1}
+
+    db_tok = tokens(db_name)
+    yf_tok = tokens(yf_name)
+    if not db_tok or not yf_tok:
+        return True  # can't compare, allow through
+    return bool(db_tok & yf_tok)
 
 
 def _now_et() -> datetime:
@@ -121,6 +143,22 @@ def run_intraday(con=None) -> list[str]:
             near_pivot = 0 <= pct_above <= C.BUY_ZONE_WIDTH
 
             if near_pivot and vol_ratio >= C.BREAKOUT_VOL_MULT:
+                # Guard against ticker reassignment: verify yfinance still
+                # returns the same company we ingested.  A mismatch means the
+                # ticker was re-used after a delisting/bankruptcy.
+                db_name_row = con.execute(
+                    "SELECT name FROM securities WHERE ticker=?", (t,)
+                ).fetchone()
+                if db_name_row:
+                    yf_info = yf.Ticker(t).info
+                    yf_name = yf_info.get("longName") or yf_info.get("shortName") or ""
+                    if yf_name and not _names_match(db_name_row[0], yf_name):
+                        log.warning(
+                            "intraday %s: name mismatch (DB=%r yfinance=%r) "
+                            "— possible ticker reassignment, alert skipped",
+                            t, db_name_row[0], yf_name)
+                        continue
+
                 msg = (f"📶 *{t}* crossing pivot intraday\n"
                        f"close `{last_close:.2f}` ≥ pivot `{pivot:.2f}` "
                        f"(+{pct_above:.1%}) — vol pace `{vol_ratio:.1f}×` avg")
