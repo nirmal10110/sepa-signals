@@ -1,0 +1,16 @@
+2026-06-18 19:53:21 INFO    sepa  log file: C:\Users\lathe\sepa-signals\data\logs\2026-06-18\19-53-21-intraday\sepa.log
+2026-06-18 19:53:21 INFO    sepa.intraday  intraday scan: 715 tickers in ['Buy Alert', 'Potential Buy', 'Watch']
+2026-06-18 19:54:02 ERROR   yfinance  $ESTA: possibly delisted; no price data found  (period=1d)
+2026-06-18 19:54:02 ERROR   yfinance  
+1 Failed download:
+2026-06-18 19:54:02 ERROR   yfinance  ['ESTA']: possibly delisted; no price data found  (period=1d)
+2026-06-18 19:54:18 INFO    sepa.intraday  intraday alert CRNC: close=10.95 pivot=10.54 vol_ratio=1.44
+2026-06-18 19:54:18 ERROR   yfinance  $ELVA: possibly delisted; no price data found  (period=1d)
+2026-06-18 19:54:18 ERROR   yfinance  
+1 Failed download:
+2026-06-18 19:54:18 ERROR   yfinance  ['ELVA']: possibly delisted; no price data found  (period=1d)
+2026-06-18 19:54:23 ERROR   yfinance  $KALV: possibly delisted; no price data found  (period=1d)
+2026-06-18 19:54:23 ERROR   yfinance  
+1 Failed download:
+2026-06-18 19:54:23 ERROR   yfinance  ['KALV']: possibly delisted; no price data found  (period=1d)
+2026-06-18 19:54:26 INFO    sepa.intraday  intraday complete: 1 alerts sent

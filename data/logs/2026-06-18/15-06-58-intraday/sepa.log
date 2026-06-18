@@ -1,0 +1,102 @@
+2026-06-18 15:06:58 INFO    sepa  log file: C:\Users\lathe\sepa-signals\data\logs\2026-06-18\15-06-58-intraday\sepa.log
+2026-06-18 15:06:58 INFO    sepa.intraday  intraday scan: 715 tickers in ['Buy Alert', 'Potential Buy', 'Watch']
+2026-06-18 15:07:03 INFO    sepa.intraday  intraday alert MU: close=1112.22 pivot=1079.57 vol_ratio=2.53
+2026-06-18 15:07:04 INFO    sepa.intraday  intraday alert INTC: close=130.68 pivot=127.86 vol_ratio=4.68
+2026-06-18 15:07:06 INFO    sepa.intraday  intraday alert APH: close=164.65 pivot=136.53 vol_ratio=1.62
+2026-06-18 15:07:36 WARNING sepa.intraday  intraday SAN: HTTPSConnectionPool(host='api.telegram.org', port=443): Read timed out. (read timeout=30)
+2026-06-18 15:07:38 INFO    sepa.intraday  intraday alert NXPI: close=313.39 pivot=305.99 vol_ratio=1.78
+2026-06-18 15:07:38 INFO    sepa.intraday  intraday alert URI: close=1081.73 pivot=907.24 vol_ratio=1.73
+2026-06-18 15:07:40 INFO    sepa.intraday  intraday alert HPE: close=47.51 pivot=28.76 vol_ratio=1.91
+2026-06-18 15:07:40 INFO    sepa.intraday  intraday alert NBIS: close=289.11 pivot=219.93 vol_ratio=2.53
+2026-06-18 15:07:41 INFO    sepa.intraday  intraday alert ARGX: close=878.30 pivot=849.04 vol_ratio=1.57
+2026-06-18 15:07:42 INFO    sepa.intraday  intraday alert DAL: close=84.97 pivot=82.49 vol_ratio=2.09
+2026-06-18 15:07:45 INFO    sepa.intraday  intraday alert UAL: close=120.11 pivot=119.97 vol_ratio=1.47
+2026-06-18 15:07:46 INFO    sepa.intraday  intraday alert CNC: close=60.45 pivot=37.55 vol_ratio=1.51
+2026-06-18 15:07:47 INFO    sepa.intraday  intraday alert FSLR: close=249.66 pivot=199.42 vol_ratio=1.92
+2026-06-18 15:07:48 INFO    sepa.intraday  intraday alert MDB: close=316.67 pivot=272.27 vol_ratio=1.75
+2026-06-18 15:08:21 WARNING sepa.intraday  intraday TTMI: HTTPSConnectionPool(host='api.telegram.org', port=443): Read timed out. (read timeout=30)
+2026-06-18 15:08:22 INFO    sepa.intraday  intraday alert SITM: close=698.50 pivot=570.26 vol_ratio=1.59
+2026-06-18 15:08:23 INFO    sepa.intraday  intraday alert H: close=205.95 pivot=185.31 vol_ratio=1.31
+2026-06-18 15:08:24 INFO    sepa.intraday  intraday alert ROKU: close=137.38 pivot=90.21 vol_ratio=3.54
+2026-06-18 15:08:25 INFO    sepa.intraday  intraday alert GH: close=131.99 pivot=131.62 vol_ratio=1.72
+2026-06-18 15:08:26 INFO    sepa.intraday  intraday alert BEN: close=33.76 pivot=33.18 vol_ratio=2.06
+2026-06-18 15:08:57 WARNING sepa.intraday  intraday MLI: HTTPSConnectionPool(host='api.telegram.org', port=443): Read timed out. (read timeout=30)
+2026-06-18 15:08:59 INFO    sepa.intraday  intraday alert GLXY: close=34.11 pivot=32.04 vol_ratio=1.32
+2026-06-18 15:09:00 INFO    sepa.intraday  intraday alert PL: close=27.04 pivot=26.36 vol_ratio=2.83
+2026-06-18 15:09:01 INFO    sepa.intraday  intraday alert ARWR: close=81.13 pivot=77.15 vol_ratio=3.11
+2026-06-18 15:09:02 INFO    sepa.intraday  intraday alert RIOT: close=27.98 pivot=27.65 vol_ratio=1.44
+2026-06-18 15:09:04 INFO    sepa.intraday  intraday alert SIMO: close=318.08 pivot=306.57 vol_ratio=4.16
+2026-06-18 15:09:05 INFO    sepa.intraday  intraday alert CIFR: close=27.36 pivot=25.16 vol_ratio=1.77
+2026-06-18 15:09:06 INFO    sepa.intraday  intraday alert SSL: close=10.69 pivot=8.92 vol_ratio=5.33
+2026-06-18 15:09:07 INFO    sepa.intraday  intraday alert CLF: close=12.31 pivot=11.24 vol_ratio=1.76
+2026-06-18 15:09:08 INFO    sepa.intraday  intraday alert PLXS: close=298.52 pivot=295.02 vol_ratio=2.17
+2026-06-18 15:09:10 INFO    sepa.intraday  intraday alert NPO: close=376.10 pivot=358.19 vol_ratio=2.40
+2026-06-18 15:09:11 INFO    sepa.intraday  intraday alert KYMR: close=90.80 pivot=87.44 vol_ratio=4.44
+2026-06-18 15:09:12 INFO    sepa.intraday  intraday alert RSI: close=28.17 pivot=20.88 vol_ratio=2.91
+2026-06-18 15:09:14 INFO    sepa.intraday  intraday alert LQDA: close=68.77 pivot=62.03 vol_ratio=1.65
+2026-06-18 15:09:14 INFO    sepa.intraday  intraday alert ACMR: close=105.58 pivot=64.75 vol_ratio=2.51
+2026-06-18 15:09:16 INFO    sepa.intraday  intraday alert PRM: close=36.06 pivot=34.00 vol_ratio=1.63
+2026-06-18 15:09:18 INFO    sepa.intraday  intraday alert AIR: close=133.93 pivot=131.18 vol_ratio=1.72
+2026-06-18 15:09:49 WARNING sepa.intraday  intraday HRI: HTTPSConnectionPool(host='api.telegram.org', port=443): Read timed out. (read timeout=30)
+2026-06-18 15:10:20 WARNING sepa.intraday  intraday ENVA: HTTPSConnectionPool(host='api.telegram.org', port=443): Read timed out. (read timeout=30)
+2026-06-18 15:10:51 WARNING sepa.intraday  intraday TVTX: HTTPSConnectionPool(host='api.telegram.org', port=443): Read timed out. (read timeout=30)
+2026-06-18 15:11:21 WARNING sepa.intraday  intraday COCO: HTTPSConnectionPool(host='api.telegram.org', port=443): Read timed out. (read timeout=30)
+2026-06-18 15:11:23 INFO    sepa.intraday  intraday alert GFF: close=91.73 pivot=72.18 vol_ratio=1.69
+2026-06-18 15:11:53 WARNING sepa.intraday  intraday VECO: HTTPSConnectionPool(host='api.telegram.org', port=443): Read timed out. (read timeout=30)
+2026-06-18 15:11:54 INFO    sepa.intraday  intraday alert SEZL: close=158.77 pivot=84.70 vol_ratio=2.71
+2026-06-18 15:11:55 INFO    sepa.intraday  intraday alert BBAR: close=21.97 pivot=14.53 vol_ratio=2.29
+2026-06-18 15:11:56 INFO    sepa.intraday  intraday alert ORKA: close=71.20 pivot=69.89 vol_ratio=1.59
+2026-06-18 15:11:56 INFO    sepa.intraday  intraday alert BFH: close=102.64 pivot=79.09 vol_ratio=1.38
+2026-06-18 15:11:57 INFO    sepa.intraday  intraday alert LION: close=15.20 pivot=14.95 vol_ratio=2.21
+2026-06-18 15:11:59 INFO    sepa.intraday  intraday alert APLE: close=16.58 pivot=16.37 vol_ratio=1.38
+2026-06-18 15:11:59 INFO    sepa.intraday  intraday alert GEO: close=28.83 pivot=15.29 vol_ratio=1.31
+2026-06-18 15:12:00 INFO    sepa.intraday  intraday alert VCYT: close=53.12 pivot=33.54 vol_ratio=2.22
+2026-06-18 15:12:01 INFO    sepa.intraday  intraday alert DAVE: close=301.11 pivot=282.56 vol_ratio=2.03
+2026-06-18 15:12:02 INFO    sepa.intraday  intraday alert VAC: close=97.15 pivot=95.32 vol_ratio=1.35
+2026-06-18 15:12:03 INFO    sepa.intraday  intraday alert ARQT: close=25.70 pivot=24.10 vol_ratio=2.12
+2026-06-18 15:12:04 INFO    sepa.intraday  intraday alert BEAM: close=33.29 pivot=32.84 vol_ratio=2.13
+2026-06-18 15:12:05 INFO    sepa.intraday  intraday alert ADPT: close=17.39 pivot=14.84 vol_ratio=3.38
+2026-06-18 15:12:08 INFO    sepa.intraday  intraday alert PDFS: close=64.56 pivot=55.09 vol_ratio=1.30
+2026-06-18 15:12:09 INFO    sepa.intraday  intraday alert TSAT: close=45.67 pivot=42.34 vol_ratio=1.52
+2026-06-18 15:12:10 INFO    sepa.intraday  intraday alert CHRN: close=22.80 pivot=8.71 vol_ratio=4.89
+2026-06-18 15:12:12 INFO    sepa.intraday  intraday alert AXGN: close=44.18 pivot=42.69 vol_ratio=1.68
+2026-06-18 15:12:13 INFO    sepa.intraday  intraday alert GRC: close=87.11 pivot=85.40 vol_ratio=2.19
+2026-06-18 15:12:14 INFO    sepa.intraday  intraday alert PGNY: close=26.28 pivot=18.18 vol_ratio=1.42
+2026-06-18 15:12:15 INFO    sepa.intraday  intraday alert TRVI: close=16.84 pivot=15.40 vol_ratio=2.99
+2026-06-18 15:12:16 INFO    sepa.intraday  intraday alert TILE: close=31.60 pivot=29.87 vol_ratio=1.52
+2026-06-18 15:12:16 INFO    sepa.intraday  intraday alert MBX: close=42.03 pivot=28.96 vol_ratio=2.57
+2026-06-18 15:12:19 INFO    sepa.intraday  intraday alert TTI: close=9.85 pivot=8.62 vol_ratio=1.95
+2026-06-18 15:12:21 INFO    sepa.intraday  intraday alert CAPR: close=27.98 pivot=25.19 vol_ratio=2.18
+2026-06-18 15:12:22 INFO    sepa.intraday  intraday alert URGN: close=33.47 pivot=18.94 vol_ratio=1.89
+2026-06-18 15:12:23 INFO    sepa.intraday  intraday alert BCAX: close=22.86 pivot=21.95 vol_ratio=3.73
+2026-06-18 15:12:24 INFO    sepa.intraday  intraday alert ATLC: close=97.10 pivot=90.00 vol_ratio=4.00
+2026-06-18 15:12:25 INFO    sepa.intraday  intraday alert CEVA: close=48.15 pivot=19.42 vol_ratio=2.63
+2026-06-18 15:12:26 INFO    sepa.intraday  intraday alert UMAC: close=23.50 pivot=16.93 vol_ratio=2.19
+2026-06-18 15:12:42 INFO    sepa.intraday  intraday alert FCEL: close=20.83 pivot=7.10 vol_ratio=2.68
+2026-06-18 15:12:43 INFO    sepa.intraday  intraday alert BJRI: close=56.05 pivot=37.17 vol_ratio=2.27
+2026-06-18 15:12:44 INFO    sepa.intraday  intraday alert VELO: close=27.05 pivot=25.80 vol_ratio=3.89
+2026-06-18 15:12:46 INFO    sepa.intraday  intraday alert ALOY: close=16.36 pivot=14.17 vol_ratio=2.06
+2026-06-18 15:12:49 INFO    sepa.intraday  intraday alert ADUR: close=14.62 pivot=14.27 vol_ratio=1.39
+2026-06-18 15:12:50 INFO    sepa.intraday  intraday alert LXFR: close=18.62 pivot=17.56 vol_ratio=3.54
+2026-06-18 15:12:53 INFO    sepa.intraday  intraday alert SVCO: close=12.16 pivot=7.26 vol_ratio=2.96
+2026-06-18 15:12:54 ERROR   yfinance  $QTTB: possibly delisted; no price data found  (period=1d)
+2026-06-18 15:12:54 ERROR   yfinance  
+1 Failed download:
+2026-06-18 15:12:54 ERROR   yfinance  ['QTTB']: possibly delisted; no price data found  (period=1d)
+2026-06-18 15:13:25 WARNING sepa.intraday  intraday QMCO: HTTPSConnectionPool(host='api.telegram.org', port=443): Read timed out. (read timeout=30)
+2026-06-18 15:13:26 INFO    sepa.intraday  intraday alert TRT: close=17.35 pivot=12.67 vol_ratio=5.35
+2026-06-18 15:13:26 INFO    sepa.intraday  intraday alert TZOO: close=11.14 pivot=10.76 vol_ratio=2.13
+2026-06-18 15:13:27 ERROR   yfinance  $RYM: possibly delisted; no price data found  (period=1d)
+2026-06-18 15:13:27 ERROR   yfinance  
+1 Failed download:
+2026-06-18 15:13:27 ERROR   yfinance  ['RYM']: possibly delisted; no price data found  (period=1d)
+2026-06-18 15:13:27 INFO    sepa.intraday  intraday alert VATE: close=20.46 pivot=19.10 vol_ratio=3.43
+2026-06-18 15:13:28 ERROR   yfinance  $KALV: possibly delisted; no price data found  (period=1d)
+2026-06-18 15:13:28 ERROR   yfinance  
+1 Failed download:
+2026-06-18 15:13:28 ERROR   yfinance  ['KALV']: possibly delisted; no price data found  (period=1d)
+2026-06-18 15:13:29 INFO    sepa.intraday  intraday alert CVCO: close=600.54 pivot=595.80 vol_ratio=5.00
+2026-06-18 15:13:31 INFO    sepa.intraday  intraday alert FLYW: close=15.47 pivot=12.86 vol_ratio=1.95
+2026-06-18 15:13:32 INFO    sepa.intraday  intraday alert TBPH: close=16.68 pivot=16.55 vol_ratio=2.47
+2026-06-18 15:13:34 INFO    sepa.intraday  intraday alert SLP: close=18.25 pivot=15.31 vol_ratio=6.04
+2026-06-18 15:13:34 INFO    sepa.intraday  intraday complete: 78 alerts sent
