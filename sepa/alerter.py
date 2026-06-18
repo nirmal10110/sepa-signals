@@ -79,8 +79,10 @@ def build_card(sig):
 
     ai_line = f"\n*AI*  {ai_note}" if ai_note else ""
 
+    tier = sig.get("tier", "Buy Ready")
+    tier_label = "🔥 BUY READY" if tier == "Buy Ready" else "📈 POTENTIAL BUY"
     return (
-        f"🟢 *{sig['ticker']} -> BUY READY*  ({sig['setup']})\n"
+        f"{tier_label} — *{sig['ticker']}*  ({sig['setup']})\n"
         f"_{sig['meta']}_\n\n"
         f"*Market*  {tone}\n"
         f"*Signal*  Stage {sig['stage']} ✓ · TT {sig['tt']}/8 · RS {sig['rs']} · "

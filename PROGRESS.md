@@ -5,7 +5,7 @@
 > Legend: [ ] todo · [~] in progress · [x] done & verified · [!] blocked ·
 > `NEEDS-LIVE-VERIFY` = code done, user must confirm on mini PC.
 
-_Last updated: 2026-06-15 (Claude). Resume point: **Phase 2 (mini PC)**._
+_Last updated: 2026-06-18 (Claude). Resume point: **Phase 2 (mini PC) — tier split + intraday scan implemented**._
 
 ---
 
@@ -49,6 +49,40 @@ _Last updated: 2026-06-15 (Claude). Resume point: **Phase 2 (mini PC)**._
 - [ ] Tune thresholds in config.py to reach agreement
 - [ ] Document each threshold change + rationale here
 - [ ] **GATE (user):** ~90% agreement engine vs chart `NEEDS-LIVE-VERIFY`
+
+### Phase 2 tier-split + intraday scan (2026-06-18)  ✅ DONE (offline)
+- [x] **Buy Ready** split from **Potential Buy**: Buy Ready requires last close ≥ pivot AND
+      volume ≥ 1.3× 50-day avg (confirmed breakout). Potential Buy = old Buy Ready criteria
+      (good setup, near pivot, no breakout confirmation required).
+- [x] `sepa/classify.py`: `_breakout_confirmed(df, setup)` helper, `decide_tier` updated with
+      `df=None` parameter; both Power Play and normal paths split correctly.
+- [x] `sepa/config.py`: `BREAKOUT_VOL_MULT=1.3` added; `TIER_ORDER` updated to include
+      `"Potential Buy"` between `"Buy Alert"` and `"Buy Ready"`.
+- [x] `sepa/alerter.py`: `build_card` is tier-aware: "🔥 BUY READY" vs "📈 POTENTIAL BUY" header.
+- [x] `sepa/run_daily.py`: passes `df=hist.get(t)` to `decide_tier`; alerts fire on NEW/PROMOTED
+      into either Buy Ready OR Potential Buy; resume guard SQL updated; heartbeat shows both counts.
+- [x] `sepa/db.py`: pre-existing bug fixed — `write_signal` now uses explicit column names so it
+      doesn't fail when the AI migration columns exist (was failing silently, 4 tests broken).
+- [x] `sepa/providers.py`: `stage2_breakout` archetype added (260-bar strong advance + VCP base +
+      confirmed breakout bar), `ZZBRK` ticker added to synthetic universe.
+- [x] Tests: 60 passed (was 52 before the db.py fix). New tests cover `_breakout_confirmed`
+      positive/negative fixtures and `decide_tier` Buy Ready vs Potential Buy split.
+- [x] `sepa/run_intraday.py`: intraday scanner — pulls 5m yfinance bars for Watch/Buy Alert/
+      Potential Buy tickers; checks `close ≥ pivot` AND `vol_pace ≥ 1.3× 50d avg` (annualised
+      as `today_vol × 390/minutes_elapsed`); fires Telegram alert; skips if market closed.
+- [x] `deploy/windows/intraday_0945.xml` and `intraday_1230.xml`: Windows Task Scheduler XML
+      files for 9:45 AM ET (14:45 London) and 12:30 PM ET (17:30 London) runs.
+- [x] **Dry-run check (2026-06-18, data date 2026-06-17)**:
+      19 current Buy Ready tickers checked against the 1.3× vol + above-pivot filter.
+      **Result: 0 stay Buy Ready, 19 move to Potential Buy.**
+      None had both close ≥ pivot AND vol ≥ 1.3× avg on the most recent data date. This is
+      expected — confirmed breakouts are rare; the engine will re-promote to Buy Ready the next
+      day a name breaks out with volume. The existing 19 alerts remain in the dedupe table so
+      they will not re-fire when they return to Potential Buy.
+- [x] **GATE PASSED (offline): `python -m pytest -q` → 60 passed in 367s**
+- [ ] **GATE (user, mini PC):** run nightly scan on live data; verify Potential Buy alerts
+      reach Telegram; confirm a real Buy Ready fires when a name breaks out with volume.
+      `NEEDS-LIVE-VERIFY`
 
 ## Phase 3 — Watch-list state & lifecycle  ✅ DONE
 - [x] Persist 5 lists; move-in/out diff verified

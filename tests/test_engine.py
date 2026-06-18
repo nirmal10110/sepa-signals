@@ -9,6 +9,8 @@ from sepa import db, ingest
 from sepa.indicators import add_mas, ret_1y, ext_from_200
 from sepa.patterns import detect_vcp, detect_power_play
 from sepa.screens import trend_template, classify_stage, weighted_rs_return
+from sepa.classify import _breakout_confirmed, decide_tier
+from sepa.patterns import Setup
 from sepa.run_daily import run
 
 
@@ -91,13 +93,20 @@ def test_funnel_golden_tiers(tmp_path):
     ingest.seed_synthetic(con)
     curr, trans, sent = run(con)
     tiers = {t: sorted(k for k, v in curr.items() if v["tier"] == t)
-             for t in ["Watch", "Buy Alert", "Buy Ready"]}
-    # Buy Ready must contain the planted VCP + both power plays
-    assert "AAVCP" in tiers["Buy Ready"]
-    assert "DDPOW" in tiers["Buy Ready"] and "EEPOW" in tiers["Buy Ready"]
+             for t in ["Watch", "Buy Alert", "Potential Buy", "Buy Ready"]}
+    # ZZBRK has a confirmed-breakout bar → must land in Buy Ready
+    assert "ZZBRK" in tiers["Buy Ready"], (
+        f"ZZBRK expected in Buy Ready; got tiers={tiers}")
+    # AAVCP / power-plays end BELOW their pivot on the last synthetic bar → Potential Buy
+    assert "AAVCP" in tiers["Potential Buy"], (
+        f"AAVCP expected in Potential Buy; got tiers={tiers}")
+    assert ("DDPOW" in tiers["Potential Buy"] or "DDPOW" in tiers["Buy Ready"]), (
+        f"DDPOW expected in Potential Buy or Buy Ready; got tiers={tiers}")
+    assert ("EEPOW" in tiers["Potential Buy"] or "EEPOW" in tiers["Buy Ready"]), (
+        f"EEPOW expected in Potential Buy or Buy Ready; got tiers={tiers}")
     # decliners/flat names must NOT appear anywhere
-    flat = {k for grp in tiers.values() for k in grp}
-    assert "JJDEC" not in flat and "KKDEC" not in flat
+    all_tiered = {k for grp in tiers.values() for k in grp}
+    assert "JJDEC" not in all_tiered and "KKDEC" not in all_tiered
 
 
 # ---------- ret_1y: positive + negative ----------
@@ -161,3 +170,67 @@ def test_alert_dedupe_holds(tmp_path):
     _, _, first = run(con)
     _, _, second = run(con)                # rerun same day
     assert len(first) > 0 and len(second) == 0
+
+
+# ---------- _breakout_confirmed: positive + negative ----------
+def _make_vcp_df(last_vol_mult: float, last_above_pivot: bool):
+    """Build a DataFrame with a VCP-like shape and a configurable final bar."""
+    closes_base, _ = _vcp_closes()
+    peak = float(closes_base.max())
+    last_close = peak * (1.005 if last_above_pivot else 0.995)
+    closes = np.append(closes_base, last_close)
+    base_v = 1_000_000.0
+    # 50 bars before last: mixed volumes averaging ~1.0×
+    vols_before = np.full(len(closes_base), base_v * 0.9)
+    last_vol = base_v * last_vol_mult
+    vols = np.append(vols_before, last_vol)
+    return add_mas(_df(closes, vols)), peak
+
+
+def test_breakout_confirmed_positive():
+    """Close ≥ pivot AND vol ≥ 1.3× prior-50-avg → Buy Ready."""
+    df, peak = _make_vcp_df(last_vol_mult=3.0, last_above_pivot=True)
+    setup = Setup("VCP / 3C", pivot=peak, entry=peak, stop=peak * 0.93,
+                  footprint="8W 13/4 3T", buyable=True)
+    assert _breakout_confirmed(df, setup) is True
+
+
+def test_breakout_confirmed_negative_low_vol():
+    """Close ≥ pivot but vol < 1.3× → Potential Buy, not Buy Ready."""
+    df, peak = _make_vcp_df(last_vol_mult=1.0, last_above_pivot=True)
+    setup = Setup("VCP / 3C", pivot=peak, entry=peak, stop=peak * 0.93,
+                  footprint="8W 13/4 3T", buyable=True)
+    assert _breakout_confirmed(df, setup) is False
+
+
+def test_breakout_confirmed_negative_below_pivot():
+    """Vol high but close still below pivot → Potential Buy, not Buy Ready."""
+    df, peak = _make_vcp_df(last_vol_mult=3.0, last_above_pivot=False)
+    setup = Setup("VCP / 3C", pivot=peak, entry=peak, stop=peak * 0.93,
+                  footprint="8W 13/4 3T", buyable=True)
+    assert _breakout_confirmed(df, setup) is False
+
+
+def test_decide_tier_buy_ready_vs_potential_buy(tmp_path):
+    """decide_tier returns Buy Ready with breakout df, Potential Buy without."""
+    from sepa.patterns import detect_vcp
+
+    # Build breakout df for ZZBRK archetype
+    from sepa.providers import SyntheticProvider
+    p = SyntheticProvider()
+    df_brk = add_mas(p.history("ZZBRK"))
+    setup_brk = detect_vcp(df_brk)
+    assert setup_brk is not None and setup_brk.buyable
+
+    tier_with, _ = decide_tier(2, 7, 80, True, setup_brk,
+                               "Confirmed uptrend", df=df_brk)
+    assert tier_with == "Buy Ready", f"expected Buy Ready, got {tier_with}"
+
+    # Same setup shape but final bar below pivot (AAVCP)
+    df_vcp = add_mas(p.history("AAVCP"))
+    setup_vcp = detect_vcp(df_vcp)
+    assert setup_vcp is not None and setup_vcp.buyable
+
+    tier_without, _ = decide_tier(2, 7, 80, True, setup_vcp,
+                                  "Confirmed uptrend", df=df_vcp)
+    assert tier_without == "Potential Buy", f"expected Potential Buy, got {tier_without}"

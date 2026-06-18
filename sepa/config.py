@@ -172,7 +172,9 @@ LPP_MIN_BARS = 40
 LPP_LOOKBACK = 120
 LPP_MIN_PRIOR_DECLINE = 0.15     # prior downtrend must be >= 15%
 
-TIER_ORDER = ["Watch", "Buy Alert", "Buy Ready"]
+TIER_ORDER = ["Watch", "Buy Alert", "Potential Buy", "Buy Ready"]
+# Volume multiple required for a confirmed breakout (close ≥ pivot + vol ≥ X × 50d avg)
+BREAKOUT_VOL_MULT = _getfloat("BREAKOUT_VOL_MULT", 1.3)
 
 # --- storage / ops (mini-PC) ---
 DB_PATH = DATA_DIR / "sepa.db"

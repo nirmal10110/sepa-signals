@@ -129,7 +129,8 @@ def upsert_fundamental(con, ticker, period_end, eps, sales, op_margin, roe):
 
 
 def write_signal(con, asof, s):
-    con.execute("""INSERT INTO signals VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?)
+    con.execute("""INSERT INTO signals(ticker,asof,stage,tt,rs,funda,setup,footprint,
+        pivot,entry,stop,buyable,tier,reason) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?)
         ON CONFLICT(ticker,asof) DO UPDATE SET stage=excluded.stage,
         tt=excluded.tt, rs=excluded.rs, funda=excluded.funda, setup=excluded.setup,
         footprint=excluded.footprint, pivot=excluded.pivot, entry=excluded.entry,

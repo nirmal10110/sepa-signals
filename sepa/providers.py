@@ -82,6 +82,28 @@ def _gen(archetype, seed):
         closes = np.concatenate([up] + legs)
         vols = list(base_vol * (1 + np.random.uniform(0, .4, len(up)))) + vols
 
+    elif archetype == "stage2_breakout":
+        # 260-bar advance at drift=0.007 (stronger than a plain VCP) so that
+        # the 252-bar weighted RS return ranks comfortably above the RS_MIN=70
+        # threshold even with 38 bars of flat VCP consolidation in the window.
+        # The breakout close exceeds the true 65-bar window max by 3% so the
+        # VCP pivot always points to the breakout bar, not an earlier intra-advance peak.
+        up = _walk(260, 0.007, 0.018, 10)
+        peak = up[-1]
+        legs, vols_list, p = [], [], peak
+        for depth, length, vmul in [(0.13, 16, 1.3), (0.07, 12, 1.0), (0.035, 10, 0.6)]:
+            down = np.linspace(p, p * (1 - depth), length // 2)
+            back = np.linspace(p * (1 - depth), p * 0.995, length - length // 2)
+            seg = np.concatenate([down, back]); legs.append(seg)
+            vols_list += [base_vol * vmul] * len(seg); p = seg[-1]
+        base_closes = np.concatenate([up] + legs)
+        # True 65-bar window max (same window detect_vcp scans)
+        window_max = float(np.max(base_closes[-65:]))
+        breakout_close = window_max * 1.03   # 3% above — unambiguously a new high
+        closes = np.concatenate([base_closes, [breakout_close]])
+        vols = (list(base_vol * (1 + np.random.uniform(0, .4, len(up)))) +
+                vols_list + [base_vol * 3.0])
+
     elif archetype == "stage2_extended":
         closes = _walk(280, 0.005, 0.02, 12)         # strong but no tight base
         vols = base_vol * (1 + np.random.uniform(0, .5, len(closes)))
@@ -128,6 +150,7 @@ _UNIVERSE = [
     ("P4FLAT", "stage1_flat",    "ok",   "Solace Foods",            "Staples"),
     ("P5DEC", "stage4_decline",  "weak", "Tundra Air",              "Airlines"),
     ("P6DEC", "stage4_decline",  "weak", "Umbra Steel",             "Steel"),
+    ("ZZBRK", "stage2_breakout", "good", "Zenith Breakout Inc",     "Technology"),
 ]
 
 

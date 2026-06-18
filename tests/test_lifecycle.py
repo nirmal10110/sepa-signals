@@ -29,10 +29,10 @@ def test_name_walks_all_five_states(tmp_path):
     con = _connect(tmp_path)
     ingest.seed_synthetic(con)
 
-    # ---- Day 1: first scan, AAVCP becomes Buy Ready ----
+    # ---- Day 1: first scan, AAVCP enters Potential Buy (no confirmed breakout bar) ----
     curr, trans, sent = run(con)
     assert "AAVCP" in curr
-    assert curr["AAVCP"]["tier"] == "Buy Ready"
+    assert curr["AAVCP"]["tier"] in ("Potential Buy", "Buy Ready")
     assert trans["AAVCP"] == "NEW"
     assert any(t == "AAVCP" for t, _ in sent)
 

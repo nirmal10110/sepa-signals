@@ -157,7 +157,8 @@ def run(con=None, market_tone=None):
         try:
             setup = pre.pop("_setup")
             tier, reason = decide_tier(pre["stage"], pre["tt"], pre["rs"],
-                                       bool(pre["funda"]), setup, market_tone)
+                                       bool(pre["funda"]), setup, market_tone,
+                                       df=hist.get(t))
             sig = {**pre, "tier": tier or "", "reason": reason, "market_tone": market_tone}
             db.write_signal(con, asof, sig)
             db.checkpoint_done(con, asof, t)
@@ -193,9 +194,10 @@ def run(con=None, market_tone=None):
             db.mark_stage_transition_alerted(con, asof, sa["ticker"])
     con.commit()
 
-    # alerts: newly Buy Ready (NEW or PROMOTED) -> AI validator -> Telegram, deduped
+    _ALERT_TIERS = {"Buy Ready", "Potential Buy"}
+    # alerts: newly Buy Ready or Potential Buy (NEW or PROMOTED) -> AI validator -> Telegram, deduped
     buyable = [sigs[t] for t, s in trans.items()
-               if s in ("NEW", "PROMOTED") and curr.get(t, {}).get("tier") == "Buy Ready"]
+               if s in ("NEW", "PROMOTED") and curr.get(t, {}).get("tier") in _ALERT_TIERS]
 
     # Resume guard: if this run follows a crash that happened after state was committed
     # but before alerter.process() ran, trans shows "SAME" for those tickers and buyable
@@ -207,7 +209,7 @@ def run(con=None, market_tone=None):
             """SELECT tr.ticker FROM transitions tr
                LEFT JOIN alerts al ON al.ticker=tr.ticker AND al.asof=tr.asof
                WHERE tr.asof=? AND tr.status IN ('NEW','PROMOTED')
-                 AND tr.to_tier='Buy Ready' AND al.ticker IS NULL""",
+                 AND tr.to_tier IN ('Buy Ready', 'Potential Buy') AND al.ticker IS NULL""",
             (asof,)).fetchall()}
         already_queued = {s["ticker"] for s in buyable}
         for t in sorted(missed - already_queued):
@@ -278,6 +280,7 @@ def run(con=None, market_tone=None):
     moves = {t: s for t, s in trans.items() if s != "SAME"}
     promotions = len([m for m in moves.values() if m in ("NEW", "PROMOTED")])
     hb = (f"SEPA scan {asof}: {counts.get('Buy Ready', 0)} Buy Ready, "
+          f"{counts.get('Potential Buy', 0)} Potential Buy, "
           f"{promotions} promotions, {len(sent)} alerts. "
           f"Breadth {pct2:.1f}% Stage2 -> {market_tone}")
 
