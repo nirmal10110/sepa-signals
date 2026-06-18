@@ -240,8 +240,15 @@ _EQ_CONCEPTS = [
 
 
 def _quarterly(facts, concepts):
-    """Try each concept in order; return quarterly (end, val) pairs, newest last."""
+    """Return quarterly (end, val) pairs for the best matching concept, newest last.
+
+    Tries all concepts in the priority list, then picks the one whose most-recent
+    period-end date is latest.  This handles companies that switch XBRL concepts
+    mid-history (e.g. MU stopped filing under 'Revenues' ~2020 and moved to
+    'RevenueFromContractWithCustomerExcludingAssessedTax').
+    """
     gaap = facts.get("facts", {}).get("us-gaap", {})
+    candidates = []
     for concept in concepts:
         if concept not in gaap:
             continue
@@ -256,10 +263,44 @@ def _quarterly(facts, concepts):
                     seen.add(end)
                     out.append((end, val))
             if out:
-                return out
+                candidates.append(out)
         except (KeyError, StopIteration):
             continue
-    return []
+    if not candidates:
+        return []
+    # Pick the candidate whose most-recent period-end is the latest
+    return max(candidates, key=lambda rows: rows[-1][0])
+
+
+def _fuzzy_get(d: dict, date_str: str, ticker: str, field: str,
+               max_delta_days: int = 7):
+    """Return d[date_str] if exact match, else nearest key within max_delta_days.
+
+    EDGAR XBRL period-end dates for revenue/op_income often differ from EPS
+    period-end dates by 1-3 days due to filing conventions.  This prevents
+    silent all-zero lookups without masking genuine missing data.
+    """
+    if date_str in d:
+        return d[date_str]
+    import datetime
+    try:
+        target = datetime.date.fromisoformat(date_str)
+    except ValueError:
+        return 0
+    best_key, best_delta = None, None
+    for k in d:
+        try:
+            delta = abs((datetime.date.fromisoformat(k) - target).days)
+        except ValueError:
+            continue
+        if best_delta is None or delta < best_delta:
+            best_delta = delta
+            best_key = k
+    if best_key is not None and best_delta <= max_delta_days:
+        log.warning("%s %s date fuzzy matched %s → %s (%d day delta)",
+                    ticker, field, date_str, best_key, best_delta)
+        return d[best_key]
+    return 0
 
 
 def _fundamentals_fresh(con, ticker) -> bool:
@@ -303,13 +344,22 @@ def load_fundamentals(con, ticker, cik):
     eq = _quarterly(facts, _EQ_CONCEPTS)
     rev_d, op_d, ni_d, eq_d = (dict(rev), dict(opinc), dict(ni), dict(eq))
     rows_written = 0
+    all_sales: list[float] = []
     for end, eps_v in eps[-8:]:
-        sales_v = rev_d.get(end, 0)
-        op_margin = (op_d.get(end, 0) / sales_v) if sales_v else 0
-        roe = (ni_d.get(end, 0) / eq_d.get(end, 1)) if eq_d.get(end) else 0
+        sales_v = _fuzzy_get(rev_d, end, ticker, "revenue")
+        op_v    = _fuzzy_get(op_d,  end, ticker, "op_income")
+        op_margin = (op_v / sales_v) if sales_v else 0
+        ni_v  = _fuzzy_get(ni_d, end, ticker, "net_income")
+        eq_v  = _fuzzy_get(eq_d, end, ticker, "equity")
+        roe   = (ni_v / eq_v) if eq_v else 0
         db.upsert_fundamental(con, ticker, end, eps_v, sales_v, op_margin, roe)
+        all_sales.append(sales_v)
         rows_written += 1
     if rows_written:
+        eps_vals = [v for _, v in eps[-8:]]
+        if all(s == 0.0 for s in all_sales) and any(v != 0.0 for v in eps_vals):
+            log.warning("%s: sales all-zero despite eps data present"
+                        " — possible EDGAR date mismatch", ticker)
         db.mark_fundamentals_fetched(con, ticker)
         con.commit()
 

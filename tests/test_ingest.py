@@ -1,10 +1,11 @@
 """Offline tests for ingest layer. No network — uses fixture JSON shapes
 that match real EDGAR/yfinance responses."""
+import logging
 import numpy as np
 import pandas as pd
 import pytest
 
-from sepa.ingest import hygiene_filter, _quarterly, _is_etf_or_shell
+from sepa.ingest import hygiene_filter, _quarterly, _is_etf_or_shell, _fuzzy_get
 from sepa.ingest import _EPS_CONCEPTS, _REV_CONCEPTS, _OP_CONCEPTS, _NI_CONCEPTS, _EQ_CONCEPTS
 from sepa import config as C
 
@@ -105,3 +106,130 @@ def test_quarterly_revenue_fallback_chain():
     result = _quarterly(facts, _REV_CONCEPTS)
     assert len(result) == 3
     assert result[0][1] == 100
+
+
+def test_quarterly_prefers_most_recent_concept():
+    """When Revenues has only old data and the fallback concept has newer data,
+    _quarterly must pick the fallback (MU-style concept switch).
+
+    Revenues:   2019-03-31 and 2019-06-30 (stale)
+    RevenueFromContract...: 2024-03-31 and 2024-06-30 (current)
+    Expected: the 2024 series wins.
+    """
+    old_series = [
+        {"end": "2019-03-31", "val": 1_000, "form": "10-Q", "fp": "Q1", "filed": "2019-05-01"},
+        {"end": "2019-06-30", "val": 1_100, "form": "10-Q", "fp": "Q2", "filed": "2019-08-01"},
+    ]
+    new_series = [
+        {"end": "2024-03-31", "val": 5_000, "form": "10-Q", "fp": "Q1", "filed": "2024-05-01"},
+        {"end": "2024-06-30", "val": 6_000, "form": "10-Q", "fp": "Q2", "filed": "2024-08-01"},
+    ]
+    facts = {
+        "facts": {
+            "us-gaap": {
+                "Revenues": {"units": {"USD": old_series}},
+                "RevenueFromContractWithCustomerExcludingAssessedTax": {"units": {"USD": new_series}},
+            }
+        }
+    }
+    result = _quarterly(facts, _REV_CONCEPTS)
+    assert len(result) == 2
+    assert result[-1][0] == "2024-06-30"
+    assert result[-1][1] == 6_000
+
+
+# ---------------------------------------------------------------- _fuzzy_get
+def test_fuzzy_get_exact_match_no_warning(caplog):
+    """Exact date match returns value without any warning."""
+    d = {"2024-03-31": 5_000_000}
+    with caplog.at_level(logging.WARNING, logger="sepa.ingest"):
+        result = _fuzzy_get(d, "2024-03-31", "TEST", "revenue")
+    assert result == 5_000_000
+    assert "fuzzy matched" not in caplog.text
+
+
+def test_fuzzy_get_resolves_3_day_offset(caplog):
+    """Revenue date 3 days before EPS date should still be found."""
+    d = {"2024-03-28": 9_000_000}
+    with caplog.at_level(logging.WARNING, logger="sepa.ingest"):
+        result = _fuzzy_get(d, "2024-03-31", "MU", "revenue")
+    assert result == 9_000_000
+    assert "fuzzy matched" in caplog.text
+    assert "MU revenue" in caplog.text
+    assert "3 day delta" in caplog.text
+
+
+def test_fuzzy_get_resolves_positive_offset(caplog):
+    """Revenue date 3 days *after* EPS date should also be found."""
+    d = {"2024-04-03": 7_500_000}
+    with caplog.at_level(logging.WARNING, logger="sepa.ingest"):
+        result = _fuzzy_get(d, "2024-03-31", "NVDA", "revenue")
+    assert result == 7_500_000
+    assert "fuzzy matched" in caplog.text
+
+
+def test_fuzzy_get_returns_zero_beyond_7_days():
+    """Dates more than 7 days apart must not fuzzy-match (genuine missing data)."""
+    d = {"2024-03-23": 1_000_000}   # 8 days before 2024-03-31
+    result = _fuzzy_get(d, "2024-03-31", "TEST", "revenue")
+    assert result == 0
+
+
+def test_fuzzy_get_returns_zero_on_empty_dict():
+    assert _fuzzy_get({}, "2024-03-31", "TEST", "revenue") == 0
+
+
+def test_fuzzy_get_picks_nearest_when_multiple_candidates():
+    """When two keys are within 7 days, the closer one wins."""
+    d = {"2024-03-26": 111, "2024-03-30": 999}  # 5 days and 1 day from 2024-03-31
+    result = _fuzzy_get(d, "2024-03-31", "TEST", "revenue")
+    assert result == 999
+
+
+# ---------------------------------------------------------------- all-zero sales quality check
+def test_all_zero_sales_warning_when_eps_present(caplog, tmp_path):
+    """load_fundamentals must warn when sales are all 0 but EPS is non-zero."""
+    from unittest.mock import patch, MagicMock
+    from sepa import db as sepa_db
+    from sepa.ingest import load_fundamentals
+
+    # Minimal real-shaped EDGAR response: EPS present, revenue dates off by 10 days
+    # (beyond fuzzy window) so all lookups return 0.
+    facts_json = {
+        "facts": {
+            "us-gaap": {
+                "EarningsPerShareDiluted": {
+                    "units": {
+                        "USD/shares": [
+                            {"end": "2024-03-31", "val": 1.20, "form": "10-Q", "fp": "Q1", "filed": "2024-05-01"},
+                            {"end": "2024-06-30", "val": 1.50, "form": "10-Q", "fp": "Q2", "filed": "2024-08-01"},
+                        ]
+                    }
+                },
+                "Revenues": {
+                    "units": {
+                        "USD": [
+                            # dates are 10 days off — beyond the 7-day fuzzy window
+                            {"end": "2024-03-21", "val": 5_000_000, "form": "10-Q", "fp": "Q1", "filed": "2024-05-01"},
+                            {"end": "2024-06-20", "val": 6_000_000, "form": "10-Q", "fp": "Q2", "filed": "2024-08-01"},
+                        ]
+                    }
+                },
+            }
+        }
+    }
+
+    con = sepa_db.connect(tmp_path / "test.db")
+    sepa_db.upsert_security(con, "FAKE", "Fake Corp", "NASDAQ", "Tech")
+
+    mock_resp = MagicMock()
+    mock_resp.status_code = 200
+    mock_resp.json.return_value = facts_json
+
+    with patch("sepa.ingest._fundamentals_fresh", return_value=False), \
+         patch("sepa.ingest._retry", return_value=mock_resp):
+        with caplog.at_level(logging.WARNING, logger="sepa.ingest"):
+            load_fundamentals(con, "FAKE", 12345)
+
+    assert "sales all-zero despite eps data present" in caplog.text
+    assert "FAKE" in caplog.text
