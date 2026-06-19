@@ -1,0 +1,451 @@
+2026-06-19 22:00:02 INFO    sepa  log file: C:\Users\lathe\sepa-signals\data\logs\2026-06-19\22-00-02-scan\sepa.log
+2026-06-19 22:00:02 INFO    sepa.run  SEPA scan starting — 5051 tickers
+2026-06-19 22:00:23 INFO    sepa.run  breadth: 1385/2849 (48.6%) Stage 2 -> tone: Confirmed uptrend
+2026-06-19 22:00:23 INFO    sepa.run  momentum breakout alerts: ['INTC', 'RKLB', 'ON', 'SITM', 'SANM', 'GHRS', 'ALOY']
+2026-06-19 22:00:24 WARNING matplotlib.font_manager  findfont: Failed to find font weight semibold, now using 700.
+2026-06-19 22:01:45 ERROR   sepa.alerter  alert processing failed for SANM: HTTPSConnectionPool(host='api.telegram.org', port=443): Read timed out. (read timeout=30)
+Traceback (most recent call last):
+  File "C:\Users\lathe\sepa-signals\.venv\Lib\site-packages\urllib3\connectionpool.py", line 464, in _make_request
+    self._validate_conn(conn)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Users\lathe\sepa-signals\.venv\Lib\site-packages\urllib3\connectionpool.py", line 1106, in _validate_conn
+    conn.connect()
+    ~~~~~~~~~~~~^^
+  File "C:\Users\lathe\sepa-signals\.venv\Lib\site-packages\urllib3\connection.py", line 796, in connect
+    sock_and_verified = _ssl_wrap_socket_and_match_hostname(
+        sock=sock,
+    ...<14 lines>...
+        assert_fingerprint=self.assert_fingerprint,
+    )
+  File "C:\Users\lathe\sepa-signals\.venv\Lib\site-packages\urllib3\connection.py", line 975, in _ssl_wrap_socket_and_match_hostname
+    ssl_sock = ssl_wrap_socket(
+        sock=sock,
+    ...<8 lines>...
+        tls_in_tls=tls_in_tls,
+    )
+  File "C:\Users\lathe\sepa-signals\.venv\Lib\site-packages\urllib3\util\ssl_.py", line 433, in ssl_wrap_socket
+    ssl_sock = _ssl_wrap_socket_impl(sock, context, tls_in_tls, server_hostname)
+  File "C:\Users\lathe\sepa-signals\.venv\Lib\site-packages\urllib3\util\ssl_.py", line 477, in _ssl_wrap_socket_impl
+    return ssl_context.wrap_socket(sock, server_hostname=server_hostname)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\lathe\AppData\Local\Python\pythoncore-3.14-64\Lib\ssl.py", line 455, in wrap_socket
+    return self.sslsocket_class._create(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        sock=sock,
+        ^^^^^^^^^^
+    ...<5 lines>...
+        session=session
+        ^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\lathe\AppData\Local\Python\pythoncore-3.14-64\Lib\ssl.py", line 1076, in _create
+    self.do_handshake()
+    ~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\lathe\AppData\Local\Python\pythoncore-3.14-64\Lib\ssl.py", line 1372, in do_handshake
+    self._sslobj.do_handshake()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~^^
+TimeoutError: _ssl.c:1063: The handshake operation timed out
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\lathe\sepa-signals\.venv\Lib\site-packages\requests\adapters.py", line 696, in send
+    resp = conn.urlopen(
+        method=request.method,
+    ...<9 lines>...
+        chunked=chunked,
+    )
+  File "C:\Users\lathe\sepa-signals\.venv\Lib\site-packages\urllib3\connectionpool.py", line 842, in urlopen
+    retries = retries.increment(
+        method, url, error=new_e, _pool=self, _stacktrace=sys.exc_info()[2]
+    )
+  File "C:\Users\lathe\sepa-signals\.venv\Lib\site-packages\urllib3\util\retry.py", line 498, in increment
+    raise reraise(type(error), error, _stacktrace)
+          ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\lathe\sepa-signals\.venv\Lib\site-packages\urllib3\util\util.py", line 39, in reraise
+    raise value
+  File "C:\Users\lathe\sepa-signals\.venv\Lib\site-packages\urllib3\connectionpool.py", line 788, in urlopen
+    response = self._make_request(
+        conn,
+    ...<10 lines>...
+        **response_kw,
+    )
+  File "C:\Users\lathe\sepa-signals\.venv\Lib\site-packages\urllib3\connectionpool.py", line 488, in _make_request
+    raise new_e
+  File "C:\Users\lathe\sepa-signals\.venv\Lib\site-packages\urllib3\connectionpool.py", line 466, in _make_request
+    self._raise_timeout(err=e, url=url, timeout_value=conn.timeout)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\lathe\sepa-signals\.venv\Lib\site-packages\urllib3\connectionpool.py", line 367, in _raise_timeout
+    raise ReadTimeoutError(
+        self, url, f"Read timed out. (read timeout={timeout_value})"
+    ) from err
+urllib3.exceptions.ReadTimeoutError: HTTPSConnectionPool(host='api.telegram.org', port=443): Read timed out. (read timeout=30)
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\lathe\sepa-signals\sepa\alerter.py", line 164, in process
+    ok = send(C.TELEGRAM_TOKEN, C.TELEGRAM_CHAT_ID, build_card(sig), img)
+  File "C:\Users\lathe\sepa-signals\sepa\alerter.py", line 128, in send
+    r1 = requests.post(f"https://api.telegram.org/bot{token}/sendPhoto",
+                       data={"chat_id": chat_id},
+                       files={"photo": f}, timeout=30)
+  File "C:\Users\lathe\sepa-signals\.venv\Lib\site-packages\requests\api.py", line 134, in post
+    return request("post", url, data=data, json=json, **kwargs)
+  File "C:\Users\lathe\sepa-signals\.venv\Lib\site-packages\requests\api.py", line 71, in request
+    return session.request(method=method, url=url, **kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\lathe\sepa-signals\.venv\Lib\site-packages\requests\sessions.py", line 651, in request
+    resp = self.send(prep, **send_kwargs)
+  File "C:\Users\lathe\sepa-signals\.venv\Lib\site-packages\requests\sessions.py", line 784, in send
+    r = adapter.send(request, **kwargs)
+  File "C:\Users\lathe\sepa-signals\.venv\Lib\site-packages\requests\adapters.py", line 742, in send
+    raise ReadTimeout(e, request=request)
+requests.exceptions.ReadTimeout: HTTPSConnectionPool(host='api.telegram.org', port=443): Read timed out. (read timeout=30)
+2026-06-19 22:02:38 ERROR   sepa.alerter  alert processing failed for ALOY: HTTPSConnectionPool(host='api.telegram.org', port=443): Read timed out. (read timeout=30)
+Traceback (most recent call last):
+  File "C:\Users\lathe\sepa-signals\.venv\Lib\site-packages\urllib3\connectionpool.py", line 464, in _make_request
+    self._validate_conn(conn)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Users\lathe\sepa-signals\.venv\Lib\site-packages\urllib3\connectionpool.py", line 1106, in _validate_conn
+    conn.connect()
+    ~~~~~~~~~~~~^^
+  File "C:\Users\lathe\sepa-signals\.venv\Lib\site-packages\urllib3\connection.py", line 796, in connect
+    sock_and_verified = _ssl_wrap_socket_and_match_hostname(
+        sock=sock,
+    ...<14 lines>...
+        assert_fingerprint=self.assert_fingerprint,
+    )
+  File "C:\Users\lathe\sepa-signals\.venv\Lib\site-packages\urllib3\connection.py", line 975, in _ssl_wrap_socket_and_match_hostname
+    ssl_sock = ssl_wrap_socket(
+        sock=sock,
+    ...<8 lines>...
+        tls_in_tls=tls_in_tls,
+    )
+  File "C:\Users\lathe\sepa-signals\.venv\Lib\site-packages\urllib3\util\ssl_.py", line 433, in ssl_wrap_socket
+    ssl_sock = _ssl_wrap_socket_impl(sock, context, tls_in_tls, server_hostname)
+  File "C:\Users\lathe\sepa-signals\.venv\Lib\site-packages\urllib3\util\ssl_.py", line 477, in _ssl_wrap_socket_impl
+    return ssl_context.wrap_socket(sock, server_hostname=server_hostname)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\lathe\AppData\Local\Python\pythoncore-3.14-64\Lib\ssl.py", line 455, in wrap_socket
+    return self.sslsocket_class._create(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        sock=sock,
+        ^^^^^^^^^^
+    ...<5 lines>...
+        session=session
+        ^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\lathe\AppData\Local\Python\pythoncore-3.14-64\Lib\ssl.py", line 1076, in _create
+    self.do_handshake()
+    ~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\lathe\AppData\Local\Python\pythoncore-3.14-64\Lib\ssl.py", line 1372, in do_handshake
+    self._sslobj.do_handshake()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~^^
+TimeoutError: _ssl.c:1063: The handshake operation timed out
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\lathe\sepa-signals\.venv\Lib\site-packages\requests\adapters.py", line 696, in send
+    resp = conn.urlopen(
+        method=request.method,
+    ...<9 lines>...
+        chunked=chunked,
+    )
+  File "C:\Users\lathe\sepa-signals\.venv\Lib\site-packages\urllib3\connectionpool.py", line 842, in urlopen
+    retries = retries.increment(
+        method, url, error=new_e, _pool=self, _stacktrace=sys.exc_info()[2]
+    )
+  File "C:\Users\lathe\sepa-signals\.venv\Lib\site-packages\urllib3\util\retry.py", line 498, in increment
+    raise reraise(type(error), error, _stacktrace)
+          ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\lathe\sepa-signals\.venv\Lib\site-packages\urllib3\util\util.py", line 39, in reraise
+    raise value
+  File "C:\Users\lathe\sepa-signals\.venv\Lib\site-packages\urllib3\connectionpool.py", line 788, in urlopen
+    response = self._make_request(
+        conn,
+    ...<10 lines>...
+        **response_kw,
+    )
+  File "C:\Users\lathe\sepa-signals\.venv\Lib\site-packages\urllib3\connectionpool.py", line 488, in _make_request
+    raise new_e
+  File "C:\Users\lathe\sepa-signals\.venv\Lib\site-packages\urllib3\connectionpool.py", line 466, in _make_request
+    self._raise_timeout(err=e, url=url, timeout_value=conn.timeout)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\lathe\sepa-signals\.venv\Lib\site-packages\urllib3\connectionpool.py", line 367, in _raise_timeout
+    raise ReadTimeoutError(
+        self, url, f"Read timed out. (read timeout={timeout_value})"
+    ) from err
+urllib3.exceptions.ReadTimeoutError: HTTPSConnectionPool(host='api.telegram.org', port=443): Read timed out. (read timeout=30)
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\lathe\sepa-signals\sepa\alerter.py", line 164, in process
+    ok = send(C.TELEGRAM_TOKEN, C.TELEGRAM_CHAT_ID, build_card(sig), img)
+  File "C:\Users\lathe\sepa-signals\sepa\alerter.py", line 128, in send
+    r1 = requests.post(f"https://api.telegram.org/bot{token}/sendPhoto",
+                       data={"chat_id": chat_id},
+                       files={"photo": f}, timeout=30)
+  File "C:\Users\lathe\sepa-signals\.venv\Lib\site-packages\requests\api.py", line 134, in post
+    return request("post", url, data=data, json=json, **kwargs)
+  File "C:\Users\lathe\sepa-signals\.venv\Lib\site-packages\requests\api.py", line 71, in request
+    return session.request(method=method, url=url, **kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\lathe\sepa-signals\.venv\Lib\site-packages\requests\sessions.py", line 651, in request
+    resp = self.send(prep, **send_kwargs)
+  File "C:\Users\lathe\sepa-signals\.venv\Lib\site-packages\requests\sessions.py", line 784, in send
+    r = adapter.send(request, **kwargs)
+  File "C:\Users\lathe\sepa-signals\.venv\Lib\site-packages\requests\adapters.py", line 742, in send
+    raise ReadTimeout(e, request=request)
+requests.exceptions.ReadTimeout: HTTPSConnectionPool(host='api.telegram.org', port=443): Read timed out. (read timeout=30)
+2026-06-19 22:02:52 INFO    httpx  HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-06-19 22:02:52 INFO    sepa.validator  validator STX: ```json
+{
+  "verdict": "CAUTION",
+  "reason": "Exceptional 1-year return (+726%) and extreme extension (+154% above 200 SMA) suggest late-stage momentum rather than a fresh institutional accumulation base; climax-run risk is material despite strong technicals.",
+  "summary": "Seagate Technology is a global leader in data storage solutions, manufacturing hard disk drives and solid-state drives for enterprise, consumer, and surveillance markets.",
+  "thesis": "Stage 2 setup with 8/8 trend template and RS 98 indicates strong relative strength, but the +103% 40-day flag on an already parabolic stock raises concerns about whether this is continuation or exhaustion.",
+  "catalysts": "Earnings results, data-center spending trends, and AI-driven storage demand could validate the move, but absence of near-term headline catalysts combined with extreme valuation extension increases mean-reversion risk."
+}
+``` | in=503 out=221 tokens | 3.4s
+2026-06-19 22:02:56 INFO    httpx  HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-06-19 22:02:56 INFO    sepa.validator  validator CRDO: ```json
+{
+  "verdict": "CONFIRM",
+  "reason": "Perfect trend template (8/8), exceptional relative strength (97), and fundamentals pass; 24-week base with clean pivot structure and high extension above 200 SMA suggests institutional accumulation phase.",
+  "summary": "Credo Technology designs high-speed semiconductor interconnect and interface IP solutions for data center, AI, and networking applications.",
+  "thesis": "Strong stage-2 setup with +218% YTD return and 77% extension above 200 SMA indicates a leading chip-stack play riding the AI/data-center cycle; clean pivot at 264.76 provides entry discipline.",
+  "catalysts": "Design wins announcements, quarterly revenue growth from AI/GPU customers, and potential strategic partnerships in high-speed signaling IP could reignite momentum."
+}
+``` | in=469 out=197 tokens | 3.4s
+2026-06-19 22:03:00 INFO    httpx  HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-06-19 22:03:00 INFO    sepa.validator  validator LQDA: ```json
+{
+  "verdict": "CAUTION",
+  "reason": "Exceptional momentum metrics (421% YTD, RS=96) warrant confirmation, but extreme extension (+93% above 200 SMA) and lack of recent news create asymmetric risk; position sizing critical.",
+  "summary": "Liquidia Corp is a biopharmaceutical company focused on inhaled therapies and drug delivery technology platforms.",
+  "thesis": "Strong technical setup with textbook Livermore PP structure and perfect trend template alignment suggests institutional accumulation; if the company has achieved regulatory or commercial milestones, further upside is plausible within the 2-stage breakout framework.",
+  "catalysts": "FDA approval or commercial uptake of lead inhaled therapy candidates; partnership announcements; or positive Phase 2/3 data in respiratory/cardiovascular programs would reignite buying pressure."
+}
+``` | in=466 out=205 tokens | 3.3s
+2026-06-19 22:03:04 INFO    httpx  HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-06-19 22:03:04 INFO    sepa.validator  validator NXPI: ```json
+{
+  "verdict": "CONFIRM",
+  "reason": "Strong quantitative setup with perfect trend template score (8/8), excellent relative strength (84), and fundamentals passing; 24-week pullback to R1 support with 35% extension above 200-SMA indicates healthy consolidation into breakout structure.",
+  "summary": "NXP Semiconductors designs and manufactures semiconductor solutions for automotive, industrial, IoT, and mobile markets.",
+  "thesis": "Stage 2 breakout candidate with a clear pivot at 305.99 and tight stop at 288.21 offers favorable risk/reward; the 51% YTD gain paired with sustained 200-SMA separation suggests institutional accumulation ahead of a potential leg higher.",
+  "catalysts": "Automotive and industrial semiconductor demand recovery, new product launches, and earnings beats could reignite momentum; watch for autonomous vehicle and EV adoption tailwinds."
+}
+``` | in=472 out=218 tokens | 2.8s
+2026-06-19 22:03:07 INFO    httpx  HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-06-19 22:03:07 INFO    sepa.validator  validator CRWD: ```json
+{
+  "verdict": "CAUTION",
+  "reason": "Strong technicals and relative strength, but CrowdStrike faces significant reputational and operational risks following its July 2024 global IT outage; recovery trajectory warrants monitoring before confirmation.",
+  "summary": "CrowdStrike is a leading cloud-native cybersecurity platform provider, delivering endpoint protection, threat intelligence, and security operations solutions to enterprises globally.",
+  "thesis": "The setup shows textbook Stage 2 momentum with robust relative strength (RS 83) and a clean pivot structure; if the company successfully rebuilds customer trust post-outage, the strong technicals position this for sustained recovery.",
+  "catalysts": "Earnings beats, customer retention metrics, new product adoption announcements, or completion of IT infrastructure hardening initiatives could validate the recovery narrative and drive the stock higher."
+}
+``` | in=448 out=200 tokens | 3.1s
+2026-06-19 22:03:40 ERROR   sepa.alerter  alert processing failed for STX: HTTPSConnectionPool(host='api.telegram.org', port=443): Read timed out. (read timeout=30)
+Traceback (most recent call last):
+  File "C:\Users\lathe\sepa-signals\.venv\Lib\site-packages\urllib3\connectionpool.py", line 464, in _make_request
+    self._validate_conn(conn)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Users\lathe\sepa-signals\.venv\Lib\site-packages\urllib3\connectionpool.py", line 1106, in _validate_conn
+    conn.connect()
+    ~~~~~~~~~~~~^^
+  File "C:\Users\lathe\sepa-signals\.venv\Lib\site-packages\urllib3\connection.py", line 796, in connect
+    sock_and_verified = _ssl_wrap_socket_and_match_hostname(
+        sock=sock,
+    ...<14 lines>...
+        assert_fingerprint=self.assert_fingerprint,
+    )
+  File "C:\Users\lathe\sepa-signals\.venv\Lib\site-packages\urllib3\connection.py", line 975, in _ssl_wrap_socket_and_match_hostname
+    ssl_sock = ssl_wrap_socket(
+        sock=sock,
+    ...<8 lines>...
+        tls_in_tls=tls_in_tls,
+    )
+  File "C:\Users\lathe\sepa-signals\.venv\Lib\site-packages\urllib3\util\ssl_.py", line 433, in ssl_wrap_socket
+    ssl_sock = _ssl_wrap_socket_impl(sock, context, tls_in_tls, server_hostname)
+  File "C:\Users\lathe\sepa-signals\.venv\Lib\site-packages\urllib3\util\ssl_.py", line 477, in _ssl_wrap_socket_impl
+    return ssl_context.wrap_socket(sock, server_hostname=server_hostname)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\lathe\AppData\Local\Python\pythoncore-3.14-64\Lib\ssl.py", line 455, in wrap_socket
+    return self.sslsocket_class._create(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        sock=sock,
+        ^^^^^^^^^^
+    ...<5 lines>...
+        session=session
+        ^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\lathe\AppData\Local\Python\pythoncore-3.14-64\Lib\ssl.py", line 1076, in _create
+    self.do_handshake()
+    ~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\lathe\AppData\Local\Python\pythoncore-3.14-64\Lib\ssl.py", line 1372, in do_handshake
+    self._sslobj.do_handshake()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~^^
+TimeoutError: _ssl.c:1063: The handshake operation timed out
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\lathe\sepa-signals\.venv\Lib\site-packages\requests\adapters.py", line 696, in send
+    resp = conn.urlopen(
+        method=request.method,
+    ...<9 lines>...
+        chunked=chunked,
+    )
+  File "C:\Users\lathe\sepa-signals\.venv\Lib\site-packages\urllib3\connectionpool.py", line 842, in urlopen
+    retries = retries.increment(
+        method, url, error=new_e, _pool=self, _stacktrace=sys.exc_info()[2]
+    )
+  File "C:\Users\lathe\sepa-signals\.venv\Lib\site-packages\urllib3\util\retry.py", line 498, in increment
+    raise reraise(type(error), error, _stacktrace)
+          ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\lathe\sepa-signals\.venv\Lib\site-packages\urllib3\util\util.py", line 39, in reraise
+    raise value
+  File "C:\Users\lathe\sepa-signals\.venv\Lib\site-packages\urllib3\connectionpool.py", line 788, in urlopen
+    response = self._make_request(
+        conn,
+    ...<10 lines>...
+        **response_kw,
+    )
+  File "C:\Users\lathe\sepa-signals\.venv\Lib\site-packages\urllib3\connectionpool.py", line 488, in _make_request
+    raise new_e
+  File "C:\Users\lathe\sepa-signals\.venv\Lib\site-packages\urllib3\connectionpool.py", line 466, in _make_request
+    self._raise_timeout(err=e, url=url, timeout_value=conn.timeout)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\lathe\sepa-signals\.venv\Lib\site-packages\urllib3\connectionpool.py", line 367, in _raise_timeout
+    raise ReadTimeoutError(
+        self, url, f"Read timed out. (read timeout={timeout_value})"
+    ) from err
+urllib3.exceptions.ReadTimeoutError: HTTPSConnectionPool(host='api.telegram.org', port=443): Read timed out. (read timeout=30)
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\lathe\sepa-signals\sepa\alerter.py", line 164, in process
+    ok = send(C.TELEGRAM_TOKEN, C.TELEGRAM_CHAT_ID, build_card(sig), img)
+  File "C:\Users\lathe\sepa-signals\sepa\alerter.py", line 136, in send
+    r = requests.post(f"https://api.telegram.org/bot{token}/sendMessage",
+                      data={"chat_id": chat_id, "text": text, "parse_mode": "Markdown"},
+                      timeout=30)
+  File "C:\Users\lathe\sepa-signals\.venv\Lib\site-packages\requests\api.py", line 134, in post
+    return request("post", url, data=data, json=json, **kwargs)
+  File "C:\Users\lathe\sepa-signals\.venv\Lib\site-packages\requests\api.py", line 71, in request
+    return session.request(method=method, url=url, **kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\lathe\sepa-signals\.venv\Lib\site-packages\requests\sessions.py", line 651, in request
+    resp = self.send(prep, **send_kwargs)
+  File "C:\Users\lathe\sepa-signals\.venv\Lib\site-packages\requests\sessions.py", line 784, in send
+    r = adapter.send(request, **kwargs)
+  File "C:\Users\lathe\sepa-signals\.venv\Lib\site-packages\requests\adapters.py", line 742, in send
+    raise ReadTimeout(e, request=request)
+requests.exceptions.ReadTimeout: HTTPSConnectionPool(host='api.telegram.org', port=443): Read timed out. (read timeout=30)
+2026-06-19 22:04:21 ERROR   sepa.alerter  alert processing failed for CRWD: HTTPSConnectionPool(host='api.telegram.org', port=443): Read timed out. (read timeout=30)
+Traceback (most recent call last):
+  File "C:\Users\lathe\sepa-signals\.venv\Lib\site-packages\urllib3\connectionpool.py", line 464, in _make_request
+    self._validate_conn(conn)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Users\lathe\sepa-signals\.venv\Lib\site-packages\urllib3\connectionpool.py", line 1106, in _validate_conn
+    conn.connect()
+    ~~~~~~~~~~~~^^
+  File "C:\Users\lathe\sepa-signals\.venv\Lib\site-packages\urllib3\connection.py", line 796, in connect
+    sock_and_verified = _ssl_wrap_socket_and_match_hostname(
+        sock=sock,
+    ...<14 lines>...
+        assert_fingerprint=self.assert_fingerprint,
+    )
+  File "C:\Users\lathe\sepa-signals\.venv\Lib\site-packages\urllib3\connection.py", line 975, in _ssl_wrap_socket_and_match_hostname
+    ssl_sock = ssl_wrap_socket(
+        sock=sock,
+    ...<8 lines>...
+        tls_in_tls=tls_in_tls,
+    )
+  File "C:\Users\lathe\sepa-signals\.venv\Lib\site-packages\urllib3\util\ssl_.py", line 433, in ssl_wrap_socket
+    ssl_sock = _ssl_wrap_socket_impl(sock, context, tls_in_tls, server_hostname)
+  File "C:\Users\lathe\sepa-signals\.venv\Lib\site-packages\urllib3\util\ssl_.py", line 477, in _ssl_wrap_socket_impl
+    return ssl_context.wrap_socket(sock, server_hostname=server_hostname)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\lathe\AppData\Local\Python\pythoncore-3.14-64\Lib\ssl.py", line 455, in wrap_socket
+    return self.sslsocket_class._create(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        sock=sock,
+        ^^^^^^^^^^
+    ...<5 lines>...
+        session=session
+        ^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\lathe\AppData\Local\Python\pythoncore-3.14-64\Lib\ssl.py", line 1076, in _create
+    self.do_handshake()
+    ~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\lathe\AppData\Local\Python\pythoncore-3.14-64\Lib\ssl.py", line 1372, in do_handshake
+    self._sslobj.do_handshake()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~^^
+TimeoutError: _ssl.c:1063: The handshake operation timed out
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\lathe\sepa-signals\.venv\Lib\site-packages\requests\adapters.py", line 696, in send
+    resp = conn.urlopen(
+        method=request.method,
+    ...<9 lines>...
+        chunked=chunked,
+    )
+  File "C:\Users\lathe\sepa-signals\.venv\Lib\site-packages\urllib3\connectionpool.py", line 842, in urlopen
+    retries = retries.increment(
+        method, url, error=new_e, _pool=self, _stacktrace=sys.exc_info()[2]
+    )
+  File "C:\Users\lathe\sepa-signals\.venv\Lib\site-packages\urllib3\util\retry.py", line 498, in increment
+    raise reraise(type(error), error, _stacktrace)
+          ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\lathe\sepa-signals\.venv\Lib\site-packages\urllib3\util\util.py", line 39, in reraise
+    raise value
+  File "C:\Users\lathe\sepa-signals\.venv\Lib\site-packages\urllib3\connectionpool.py", line 788, in urlopen
+    response = self._make_request(
+        conn,
+    ...<10 lines>...
+        **response_kw,
+    )
+  File "C:\Users\lathe\sepa-signals\.venv\Lib\site-packages\urllib3\connectionpool.py", line 488, in _make_request
+    raise new_e
+  File "C:\Users\lathe\sepa-signals\.venv\Lib\site-packages\urllib3\connectionpool.py", line 466, in _make_request
+    self._raise_timeout(err=e, url=url, timeout_value=conn.timeout)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\lathe\sepa-signals\.venv\Lib\site-packages\urllib3\connectionpool.py", line 367, in _raise_timeout
+    raise ReadTimeoutError(
+        self, url, f"Read timed out. (read timeout={timeout_value})"
+    ) from err
+urllib3.exceptions.ReadTimeoutError: HTTPSConnectionPool(host='api.telegram.org', port=443): Read timed out. (read timeout=30)
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\lathe\sepa-signals\sepa\alerter.py", line 164, in process
+    ok = send(C.TELEGRAM_TOKEN, C.TELEGRAM_CHAT_ID, build_card(sig), img)
+  File "C:\Users\lathe\sepa-signals\sepa\alerter.py", line 128, in send
+    r1 = requests.post(f"https://api.telegram.org/bot{token}/sendPhoto",
+                       data={"chat_id": chat_id},
+                       files={"photo": f}, timeout=30)
+  File "C:\Users\lathe\sepa-signals\.venv\Lib\site-packages\requests\api.py", line 134, in post
+    return request("post", url, data=data, json=json, **kwargs)
+  File "C:\Users\lathe\sepa-signals\.venv\Lib\site-packages\requests\api.py", line 71, in request
+    return session.request(method=method, url=url, **kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\lathe\sepa-signals\.venv\Lib\site-packages\requests\sessions.py", line 651, in request
+    resp = self.send(prep, **send_kwargs)
+  File "C:\Users\lathe\sepa-signals\.venv\Lib\site-packages\requests\sessions.py", line 784, in send
+    r = adapter.send(request, **kwargs)
+  File "C:\Users\lathe\sepa-signals\.venv\Lib\site-packages\requests\adapters.py", line 742, in send
+    raise ReadTimeout(e, request=request)
+requests.exceptions.ReadTimeout: HTTPSConnectionPool(host='api.telegram.org', port=443): Read timed out. (read timeout=30)
