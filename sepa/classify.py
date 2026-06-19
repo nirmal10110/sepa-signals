@@ -64,6 +64,12 @@ def decide_tier(stage: int, tt_score: int, rs: int | None,
             tier = "Buy Alert"
         if market_tone == "Under pressure" and tier in ("Buy Ready", "Potential Buy"):
             tier = "Buy Alert"
+        # TT gates apply even to Power Plays — extension filter is bypassed but
+        # institutional conviction (TT score) must still meet the tier minimum.
+        if tier == "Buy Ready" and tt_score < C.BUY_READY_TT_MIN:
+            tier = "Potential Buy"
+        if tier == "Potential Buy" and tt_score < C.POTENTIAL_BUY_TT_MIN:
+            tier = "Buy Alert"
         return tier, f"POWER PLAY RS{rs} {'fund✓' if funda_pass else 'fund?'} {setup.footprint}"
 
     # Hard technical gate for everything else: only Stage 2 names.
@@ -89,11 +95,18 @@ def decide_tier(stage: int, tt_score: int, rs: int | None,
     if market_tone == "Under pressure" and tier in ("Buy Ready", "Potential Buy"):
         tier = "Buy Alert"
 
+    # TT minimum gates for tier promotion.
+    if tier == "Buy Ready" and tt_score < C.BUY_READY_TT_MIN:
+        tier = "Potential Buy"
+    if tier == "Potential Buy" and tt_score < C.POTENTIAL_BUY_TT_MIN:
+        tier = "Buy Alert"
+
     # Momentum override: technically strong (TT≥MOMENTUM_TT_MIN, RS≥MOMENTUM_RS_MIN)
     # but fundamentally disqualified.  Replaces Watch/Buy Alert so these names appear
     # in their own report section rather than cluttering the SEPA watchlists.
     # Alerts fire separately (only when a confirmed breakout is detected in run_daily).
-    if not funda_pass and tt_score >= C.MOMENTUM_TT_MIN and rs >= C.MOMENTUM_RS_MIN:
+    if (not funda_pass and tt_score >= C.MOMENTUM_TT_MIN and rs >= C.MOMENTUM_RS_MIN
+            and tt_score >= C.POTENTIAL_BUY_TT_MIN):
         fund_detail = funda_note or f"funda score below {C.FUND_MIN_SCORE}"
         reason = (f"MOMENTUM stage2 TT{tt_score}/8 RS{rs} fund✗({fund_detail}) "
                   + (f"{setup.type}{'(buyable)' if setup.buyable else ''}" if setup

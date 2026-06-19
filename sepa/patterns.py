@@ -358,6 +358,11 @@ def detect_setups(df: pd.DataFrame) -> Setup | None:
     floor = round(s.entry * (1 - C.MAX_STOP_PCT), 2)
     if s.stop < floor:
         s = replace(s, stop=floor)
+    # Minimum gap: stop must be at least STOP_MIN_PCT below entry.
+    # Tight flags can produce stops only 1-3% below entry — too close to survive
+    # intraday noise. min() lowers the stop to the floor if it's too tight.
+    from .plans import apply_stop_floor
+    s = replace(s, stop=apply_stop_floor(s.entry, s.stop)["stop"])
     # Extension gate: if price has run more than BUY_ZONE_WIDTH past the pivot,
     # this is a chase — mark not-buyable regardless of what the detector said.
     # Power Play explicitly bypasses extension (PP by design looks "extended"

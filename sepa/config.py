@@ -113,6 +113,11 @@ FUND_CACHE_DAYS_EARNINGS = _getfloat("FUND_CACHE_DAYS_EARNINGS", 0.25)  # 6 h
 
 BUY_ZONE_WIDTH = 0.05            # price is "buyable" within 5% of pivot
 MAX_STOP_PCT   = _getfloat("MAX_STOP_PCT", 0.08)  # hard cap: stop never > 8% below entry
+STOP_MIN_PCT   = _getfloat("STOP_MIN_PCT", 0.08)  # minimum gap: stop always >= 8% below entry
+
+# --- Tier promotion TT minimums ---
+POTENTIAL_BUY_TT_MIN: int = _getint("POTENTIAL_BUY_TT_MIN", 6)
+BUY_READY_TT_MIN: int     = _getint("BUY_READY_TT_MIN", 7)
 # Up-day/down-day volume ratio threshold for confirmed institutional accumulation.
 # Minervini: breakout day volume should be >= 40% above average; here we use
 # the 60-day up/down ratio as the running proxy — flag anything below 1.40x.
