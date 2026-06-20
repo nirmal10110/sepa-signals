@@ -449,3 +449,7 @@ Traceback (most recent call last):
   File "C:\Users\lathe\sepa-signals\.venv\Lib\site-packages\requests\adapters.py", line 742, in send
     raise ReadTimeout(e, request=request)
 requests.exceptions.ReadTimeout: HTTPSConnectionPool(host='api.telegram.org', port=443): Read timed out. (read timeout=30)
+2026-06-19 22:04:59 INFO    sepa.reporter  daily report → nirmal.lather3@gmail.com  (703 stocks)
+2026-06-19 22:04:59 INFO    sepa.run  HEARTBEAT: SEPA scan 2026-06-19: 2 Buy Ready, 16 Potential Buy, 231 Momentum, 58 promotions, 2 alerts. Breadth 48.6% Stage2 -> Confirmed uptrend
+2026-06-19 22:05:00 INFO    sepa.run  DB maintenance complete
+2026-06-19 22:05:02 INFO    sepa.run  logs pushed to GitHub
