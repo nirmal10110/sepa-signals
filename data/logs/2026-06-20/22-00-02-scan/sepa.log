@@ -1,0 +1,7 @@
+2026-06-20 22:00:02 INFO    sepa  log file: C:\Users\lathe\sepa-signals\data\logs\2026-06-20\22-00-02-scan\sepa.log
+2026-06-20 22:00:02 INFO    sepa.run  SEPA scan starting — 5064 tickers
+2026-06-20 22:00:23 INFO    sepa.run  breadth: 1387/2852 (48.6%) Stage 2 -> tone: Confirmed uptrend
+2026-06-20 22:00:25 INFO    sepa.reporter  daily report → nirmal.lather3@gmail.com  (704 stocks)
+2026-06-20 22:00:25 INFO    sepa.run  HEARTBEAT: SEPA scan 2026-06-20: 2 Buy Ready, 16 Potential Buy, 231 Momentum, 1 promotions, 0 alerts. Breadth 48.6% Stage2 -> Confirmed uptrend
+2026-06-20 22:00:26 INFO    sepa.run  DB maintenance complete
+2026-06-20 22:00:28 INFO    sepa.run  logs pushed to GitHub

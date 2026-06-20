@@ -1,0 +1,161 @@
+2026-06-20 21:30:02 INFO    sepa  log file: C:\Users\lathe\sepa-signals\data\logs\2026-06-20\21-30-02-ingest\sepa.log
+2026-06-20 21:30:03 INFO    sepa.ingest  universe: 5000 US tickers (after ETF/shell filter)
+2026-06-20 21:30:06 ERROR   yfinance  $CONE: possibly delisted; no price data found  (period=2y) (Yahoo error = "No data found, symbol may be delisted")
+2026-06-20 21:30:15 ERROR   yfinance  
+1 Failed download:
+2026-06-20 21:30:15 ERROR   yfinance  ['CONE']: possibly delisted; no price data found  (period=2y) (Yahoo error = "No data found, symbol may be delisted")
+2026-06-20 21:30:15 INFO    sepa.ingest  prices new-ticker batch 1: loaded=0 skipped=100 failed=0
+2026-06-20 21:30:24 ERROR   yfinance  $AYR: possibly delisted; no price data found  (period=2y) (Yahoo error = "No data found, symbol may be delisted")
+2026-06-20 21:30:28 ERROR   yfinance  
+1 Failed download:
+2026-06-20 21:30:28 ERROR   yfinance  ['AYR']: possibly delisted; no price data found  (period=2y) (Yahoo error = "No data found, symbol may be delisted")
+2026-06-20 21:30:29 INFO    sepa.ingest  prices new-ticker batch 2: loaded=1 skipped=199 failed=0
+2026-06-20 21:30:41 INFO    sepa.ingest  prices new-ticker batch 3: loaded=1 skipped=299 failed=0
+2026-06-20 21:30:51 ERROR   yfinance  $NANO: possibly delisted; no price data found  (period=2y) (Yahoo error = "No data found, symbol may be delisted")
+2026-06-20 21:30:53 ERROR   yfinance  $OBOCY: possibly delisted; no price data found  (period=2y)
+2026-06-20 21:30:54 ERROR   yfinance  
+2 Failed downloads:
+2026-06-20 21:30:54 ERROR   yfinance  ['NANO']: possibly delisted; no price data found  (period=2y) (Yahoo error = "No data found, symbol may be delisted")
+2026-06-20 21:30:54 ERROR   yfinance  ['OBOCY']: possibly delisted; no price data found  (period=2y)
+2026-06-20 21:30:54 INFO    sepa.ingest  prices new-ticker batch 4: loaded=1 skipped=399 failed=0
+2026-06-20 21:31:07 INFO    sepa.ingest  prices new-ticker batch 5: loaded=1 skipped=499 failed=0
+2026-06-20 21:31:19 INFO    sepa.ingest  prices new-ticker batch 6: loaded=2 skipped=598 failed=0
+2026-06-20 21:31:30 ERROR   yfinance  $SEAH: possibly delisted; no price data found  (period=2y) (Yahoo error = "No data found, symbol may be delisted")
+2026-06-20 21:31:32 ERROR   yfinance  
+1 Failed download:
+2026-06-20 21:31:32 ERROR   yfinance  ['SEAH']: possibly delisted; no price data found  (period=2y) (Yahoo error = "No data found, symbol may be delisted")
+2026-06-20 21:31:32 INFO    sepa.ingest  prices new-ticker batch 7: loaded=2 skipped=698 failed=0
+2026-06-20 21:31:44 INFO    sepa.ingest  prices new-ticker batch 8: loaded=2 skipped=798 failed=0
+2026-06-20 21:31:48 ERROR   yfinance  $PTAC: possibly delisted; no price data found  (period=2y) (Yahoo error = "No data found, symbol may be delisted")
+2026-06-20 21:31:57 ERROR   yfinance  
+1 Failed download:
+2026-06-20 21:31:57 ERROR   yfinance  ['PTAC']: possibly delisted; no price data found  (period=2y) (Yahoo error = "No data found, symbol may be delisted")
+2026-06-20 21:31:57 INFO    sepa.ingest  prices new-ticker batch 9: loaded=2 skipped=898 failed=0
+2026-06-20 21:32:06 ERROR   yfinance  $BIOT: possibly delisted; no price data found  (period=2y) (Yahoo error = "No data found, symbol may be delisted")
+2026-06-20 21:32:10 ERROR   yfinance  
+1 Failed download:
+2026-06-20 21:32:10 ERROR   yfinance  ['BIOT']: possibly delisted; no price data found  (period=2y) (Yahoo error = "No data found, symbol may be delisted")
+2026-06-20 21:32:10 INFO    sepa.ingest  prices new-ticker batch 10: loaded=2 skipped=998 failed=0
+2026-06-20 21:32:23 INFO    sepa.ingest  prices new-ticker batch 11: loaded=2 skipped=1098 failed=0
+2026-06-20 21:32:35 INFO    sepa.ingest  prices new-ticker batch 12: loaded=2 skipped=1198 failed=0
+2026-06-20 21:32:43 ERROR   yfinance  $BRKH: possibly delisted; no price data found  (period=2y) (Yahoo error = "No data found, symbol may be delisted")
+2026-06-20 21:32:48 ERROR   yfinance  
+1 Failed download:
+2026-06-20 21:32:48 ERROR   yfinance  ['BRKH']: possibly delisted; no price data found  (period=2y) (Yahoo error = "No data found, symbol may be delisted")
+2026-06-20 21:32:48 INFO    sepa.ingest  prices new-ticker batch 13: loaded=2 skipped=1298 failed=0
+2026-06-20 21:33:00 INFO    sepa.ingest  prices new-ticker batch 14: loaded=2 skipped=1398 failed=0
+2026-06-20 21:33:12 ERROR   yfinance  $JMG: possibly delisted; no price data found  (period=2y) (Yahoo error = "No data found, symbol may be delisted")
+2026-06-20 21:33:13 ERROR   yfinance  
+1 Failed download:
+2026-06-20 21:33:13 ERROR   yfinance  ['JMG']: possibly delisted; no price data found  (period=2y) (Yahoo error = "No data found, symbol may be delisted")
+2026-06-20 21:33:13 INFO    sepa.ingest  prices new-ticker batch 15: loaded=2 skipped=1498 failed=0
+2026-06-20 21:33:23 ERROR   yfinance  $PHD: possibly delisted; no price data found  (period=2y) (Yahoo error = "No data found, symbol may be delisted")
+2026-06-20 21:33:26 ERROR   yfinance  
+1 Failed download:
+2026-06-20 21:33:26 ERROR   yfinance  ['PHD']: possibly delisted; no price data found  (period=2y) (Yahoo error = "No data found, symbol may be delisted")
+2026-06-20 21:33:26 INFO    sepa.ingest  prices new-ticker batch 16: loaded=2 skipped=1598 failed=0
+2026-06-20 21:33:32 ERROR   yfinance  $OPTN: possibly delisted; no price data found  (period=2y) (Yahoo error = "No data found, symbol may be delisted")
+2026-06-20 21:33:39 ERROR   yfinance  
+1 Failed download:
+2026-06-20 21:33:39 ERROR   yfinance  ['OPTN']: possibly delisted; no price data found  (period=2y) (Yahoo error = "No data found, symbol may be delisted")
+2026-06-20 21:33:39 INFO    sepa.ingest  prices new-ticker batch 17: loaded=2 skipped=1698 failed=0
+2026-06-20 21:33:52 INFO    sepa.ingest  prices new-ticker batch 18: loaded=2 skipped=1798 failed=0
+2026-06-20 21:34:05 INFO    sepa.ingest  prices new-ticker batch 19: loaded=2 skipped=1898 failed=0
+2026-06-20 21:34:17 ERROR   yfinance  $PMVC: possibly delisted; no price data found  (period=2y) (Yahoo error = "No data found, symbol may be delisted")
+2026-06-20 21:34:18 ERROR   yfinance  
+1 Failed download:
+2026-06-20 21:34:18 ERROR   yfinance  ['PMVC']: possibly delisted; no price data found  (period=2y) (Yahoo error = "No data found, symbol may be delisted")
+2026-06-20 21:34:18 INFO    sepa.ingest  prices new-ticker batch 20: loaded=2 skipped=1998 failed=0
+2026-06-20 21:34:24 ERROR   yfinance  $LVPA: possibly delisted; no price data found  (period=2y) (Yahoo error = "No data found, symbol may be delisted")
+2026-06-20 21:34:31 ERROR   yfinance  
+1 Failed download:
+2026-06-20 21:34:31 ERROR   yfinance  ['LVPA']: possibly delisted; no price data found  (period=2y) (Yahoo error = "No data found, symbol may be delisted")
+2026-06-20 21:34:31 INFO    sepa.ingest  prices new-ticker batch 21: loaded=2 skipped=2098 failed=0
+2026-06-20 21:34:36 ERROR   yfinance  $FWAC: possibly delisted; no price data found  (period=2y) (Yahoo error = "No data found, symbol may be delisted")
+2026-06-20 21:34:37 ERROR   yfinance  
+1 Failed download:
+2026-06-20 21:34:37 ERROR   yfinance  ['FWAC']: possibly delisted; no price data found  (period=2y) (Yahoo error = "No data found, symbol may be delisted")
+2026-06-20 21:34:37 INFO    sepa.ingest  prices new-ticker batch 22: loaded=3 skipped=2115 failed=0
+2026-06-20 21:34:40 ERROR   yfinance  $KALV: possibly delisted; no price data found  (1d 2026-06-13 -> 2026-06-20)
+2026-06-20 21:34:40 ERROR   yfinance  $MASI: possibly delisted; no price data found  (1d 2026-06-13 -> 2026-06-20)
+2026-06-20 21:34:41 ERROR   yfinance  $TCGL: possibly delisted; no price data found  (1d 2026-06-13 -> 2026-06-20) (Yahoo error = "No data found, symbol may be delisted")
+2026-06-20 21:34:41 ERROR   yfinance  
+3 Failed downloads:
+2026-06-20 21:34:41 ERROR   yfinance  ['KALV', 'MASI']: possibly delisted; no price data found  (1d 2026-06-13 -> 2026-06-20)
+2026-06-20 21:34:41 ERROR   yfinance  ['TCGL']: possibly delisted; no price data found  (1d 2026-06-13 -> 2026-06-20) (Yahoo error = "No data found, symbol may be delisted")
+2026-06-20 21:34:41 INFO    sepa.ingest  prices incr batch 23 (start=2026-06-13): loaded=3 skipped=2127 failed=0
+2026-06-20 21:34:49 INFO    sepa.ingest  prices incr batch 24 (start=2026-06-16): loaded=6 skipped=2181 failed=0
+2026-06-20 21:34:55 INFO    sepa.ingest  prices incr batch 25 (start=2026-06-17): loaded=6 skipped=2212 failed=0
+2026-06-20 21:35:00 INFO    sepa.ingest  prices incr batch 26 (start=2026-06-18): loaded=6 skipped=2236 failed=0
+2026-06-20 21:35:15 INFO    sepa.ingest  prices incr batch 27 (start=2026-06-19): loaded=106 skipped=2236 failed=0
+2026-06-20 21:35:29 INFO    sepa.ingest  prices incr batch 28 (start=2026-06-19): loaded=206 skipped=2236 failed=0
+2026-06-20 21:35:43 INFO    sepa.ingest  prices incr batch 29 (start=2026-06-19): loaded=306 skipped=2236 failed=0
+2026-06-20 21:35:57 INFO    sepa.ingest  prices incr batch 30 (start=2026-06-19): loaded=405 skipped=2237 failed=0
+2026-06-20 21:36:10 INFO    sepa.ingest  prices incr batch 31 (start=2026-06-19): loaded=504 skipped=2238 failed=0
+2026-06-20 21:36:24 INFO    sepa.ingest  prices incr batch 32 (start=2026-06-19): loaded=604 skipped=2238 failed=0
+2026-06-20 21:36:37 INFO    sepa.ingest  prices incr batch 33 (start=2026-06-19): loaded=704 skipped=2238 failed=0
+2026-06-20 21:36:49 INFO    sepa.ingest  prices incr batch 34 (start=2026-06-19): loaded=804 skipped=2238 failed=0
+2026-06-20 21:37:02 INFO    sepa.ingest  prices incr batch 35 (start=2026-06-19): loaded=903 skipped=2239 failed=0
+2026-06-20 21:37:15 INFO    sepa.ingest  prices incr batch 36 (start=2026-06-19): loaded=1003 skipped=2239 failed=0
+2026-06-20 21:37:28 INFO    sepa.ingest  prices incr batch 37 (start=2026-06-19): loaded=1103 skipped=2239 failed=0
+2026-06-20 21:37:41 INFO    sepa.ingest  prices incr batch 38 (start=2026-06-19): loaded=1203 skipped=2239 failed=0
+2026-06-20 21:37:53 INFO    sepa.ingest  prices incr batch 39 (start=2026-06-19): loaded=1303 skipped=2239 failed=0
+2026-06-20 21:38:06 INFO    sepa.ingest  prices incr batch 40 (start=2026-06-19): loaded=1403 skipped=2239 failed=0
+2026-06-20 21:38:19 INFO    sepa.ingest  prices incr batch 41 (start=2026-06-19): loaded=1503 skipped=2239 failed=0
+2026-06-20 21:38:31 INFO    sepa.ingest  prices incr batch 42 (start=2026-06-19): loaded=1603 skipped=2239 failed=0
+2026-06-20 21:38:44 INFO    sepa.ingest  prices incr batch 43 (start=2026-06-19): loaded=1702 skipped=2240 failed=0
+2026-06-20 21:38:56 INFO    sepa.ingest  prices incr batch 44 (start=2026-06-19): loaded=1802 skipped=2240 failed=0
+2026-06-20 21:39:08 INFO    sepa.ingest  prices incr batch 45 (start=2026-06-19): loaded=1902 skipped=2240 failed=0
+2026-06-20 21:39:20 INFO    sepa.ingest  prices incr batch 46 (start=2026-06-19): loaded=2002 skipped=2240 failed=0
+2026-06-20 21:39:33 INFO    sepa.ingest  prices incr batch 47 (start=2026-06-19): loaded=2102 skipped=2240 failed=0
+2026-06-20 21:39:45 INFO    sepa.ingest  prices incr batch 48 (start=2026-06-19): loaded=2202 skipped=2240 failed=0
+2026-06-20 21:39:57 INFO    sepa.ingest  prices incr batch 49 (start=2026-06-19): loaded=2302 skipped=2240 failed=0
+2026-06-20 21:40:09 INFO    sepa.ingest  prices incr batch 50 (start=2026-06-19): loaded=2402 skipped=2240 failed=0
+2026-06-20 21:40:21 INFO    sepa.ingest  prices incr batch 51 (start=2026-06-19): loaded=2502 skipped=2240 failed=0
+2026-06-20 21:40:33 INFO    sepa.ingest  prices incr batch 52 (start=2026-06-19): loaded=2602 skipped=2240 failed=0
+2026-06-20 21:40:45 INFO    sepa.ingest  prices incr batch 53 (start=2026-06-19): loaded=2701 skipped=2241 failed=0
+2026-06-20 21:40:53 INFO    sepa.ingest  prices incr batch 54 (start=2026-06-19): loaded=2756 skipped=2244 failed=0
+2026-06-20 21:40:56 INFO    sepa.ingest  prices total: loaded=2756 skipped=2244 failed=0
+2026-06-20 21:40:56 INFO    sepa.ingest  fundamentals: 0/5000 done
+2026-06-20 21:41:22 INFO    sepa.ingest  fundamentals: 100/5000 done
+2026-06-20 21:41:54 INFO    sepa.ingest  fundamentals: 200/5000 done
+2026-06-20 21:42:22 INFO    sepa.ingest  fundamentals: 300/5000 done
+2026-06-20 21:42:57 INFO    sepa.ingest  fundamentals: 400/5000 done
+2026-06-20 21:43:38 INFO    sepa.ingest  fundamentals: 500/5000 done
+2026-06-20 21:44:02 INFO    sepa.ingest  fundamentals: 600/5000 done
+2026-06-20 21:44:29 INFO    sepa.ingest  fundamentals: 700/5000 done
+2026-06-20 21:45:02 INFO    sepa.ingest  fundamentals: 800/5000 done
+2026-06-20 21:45:30 INFO    sepa.ingest  fundamentals: 900/5000 done
+2026-06-20 21:45:54 INFO    sepa.ingest  fundamentals: 1000/5000 done
+2026-06-20 21:46:19 INFO    sepa.ingest  fundamentals: 1100/5000 done
+2026-06-20 21:46:47 INFO    sepa.ingest  fundamentals: 1200/5000 done
+2026-06-20 21:47:10 INFO    sepa.ingest  fundamentals: 1300/5000 done
+2026-06-20 21:47:34 INFO    sepa.ingest  fundamentals: 1400/5000 done
+2026-06-20 21:47:59 INFO    sepa.ingest  fundamentals: 1500/5000 done
+2026-06-20 21:48:25 INFO    sepa.ingest  fundamentals: 1600/5000 done
+2026-06-20 21:48:48 INFO    sepa.ingest  fundamentals: 1700/5000 done
+2026-06-20 21:49:12 INFO    sepa.ingest  fundamentals: 1800/5000 done
+2026-06-20 21:49:39 INFO    sepa.ingest  fundamentals: 1900/5000 done
+2026-06-20 21:50:03 INFO    sepa.ingest  fundamentals: 2000/5000 done
+2026-06-20 21:50:29 INFO    sepa.ingest  fundamentals: 2100/5000 done
+2026-06-20 21:50:55 INFO    sepa.ingest  fundamentals: 2200/5000 done
+2026-06-20 21:51:19 INFO    sepa.ingest  fundamentals: 2300/5000 done
+2026-06-20 21:51:42 INFO    sepa.ingest  fundamentals: 2400/5000 done
+2026-06-20 21:52:09 INFO    sepa.ingest  fundamentals: 2500/5000 done
+2026-06-20 21:52:33 INFO    sepa.ingest  fundamentals: 2600/5000 done
+2026-06-20 21:52:57 INFO    sepa.ingest  fundamentals: 2700/5000 done
+2026-06-20 21:53:25 INFO    sepa.ingest  fundamentals: 2800/5000 done
+2026-06-20 21:53:51 INFO    sepa.ingest  fundamentals: 2900/5000 done
+2026-06-20 21:54:22 INFO    sepa.ingest  fundamentals: 3000/5000 done
+2026-06-20 21:54:51 INFO    sepa.ingest  fundamentals: 3100/5000 done
+2026-06-20 21:55:17 INFO    sepa.ingest  fundamentals: 3200/5000 done
+2026-06-20 21:55:42 INFO    sepa.ingest  fundamentals: 3300/5000 done
+2026-06-20 21:56:06 INFO    sepa.ingest  fundamentals: 3400/5000 done
+2026-06-20 21:56:40 INFO    sepa.ingest  fundamentals: 3500/5000 done
+2026-06-20 21:57:13 INFO    sepa.ingest  fundamentals: 3600/5000 done
+2026-06-20 21:57:50 INFO    sepa.ingest  fundamentals: 3700/5000 done
+2026-06-20 21:58:21 INFO    sepa.ingest  fundamentals: 3800/5000 done
+2026-06-20 21:58:51 INFO    sepa.ingest  fundamentals: 3900/5000 done
+2026-06-20 21:59:20 INFO    sepa.ingest  fundamentals: 4000/5000 done
+2026-06-20 21:59:53 INFO    sepa.ingest  fundamentals: 4100/5000 done
+2026-06-20 22:00:21 INFO    sepa.ingest  fundamentals: 4200/5000 done
