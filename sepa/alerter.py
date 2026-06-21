@@ -63,6 +63,13 @@ def build_card(sig):
             f"{climax_warn}"
         )
 
+    # Climax-extension warning (>CLIMAX_EXTENSION_CAP above 200SMA) — distinct
+    # from the Power-Play-specific climax_flag above: this fires for ANY
+    # tier the extension cap demoted (or tagged, for Momentum).
+    climax_risk_line = ""
+    if sig.get("climax_risk"):
+        climax_risk_line = f"\n⚠️ *CLIMAX RISK*: +{ext_200:.0f}% above 200SMA"
+
     # AI context block (populated by the Claude validator)
     ai_summary   = sig.get("ai_summary", "")
     ai_thesis    = sig.get("ai_thesis", "")
@@ -101,6 +108,7 @@ def build_card(sig):
         f"{trend_line}\n"
         f"*Setup*  footprint `{sig['footprint']}` · pivot taken out -> in buy zone"
         f"{plan_line}"
+        f"{climax_risk_line}"
         f"{momentum_disclaimer}"
         f"{context_block}"
         f"{ai_line}\n\n"

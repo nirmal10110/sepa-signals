@@ -67,20 +67,43 @@ def rank_rs(returns: dict[str, float]) -> dict[str, int]:
     return {t: int(round(v)) for t, v in pct.items()}
 
 
+def is_merger_arb(df: pd.DataFrame) -> tuple[bool, float]:
+    """Detect acquisition price-pinning. While a deal is pending, the target's
+    price barely moves day to day (it's anchored to the deal price, not making
+    a genuine breakout) — e.g. OGN pinned near $14 by the Sun Pharma deal.
+
+    Uses the coefficient of variation (stdev/mean) of the last 20 closes.
+    Returns (flagged, cv).
+    """
+    closes = df["close"].tail(20)
+    if len(closes) < 20:
+        return False, 0.0
+    mean = float(closes.mean())
+    if mean <= 0:
+        return False, 0.0
+    cv = float(closes.std()) / mean
+    return cv < C.MERGER_ARB_CV_THRESHOLD, cv
+
+
 def fundamental_screen(f: dict):
     """Full SEPA fundamental check. Returns (passes, score, note).
 
-    Checks (in order of Minervini's priority):
-    1. EPS positive (must be profitable — hard gate)
-    2. EPS sequential acceleration (direction)
-    3. EPS YoY growth >= FUND_EPS_GROWTH_MIN (magnitude, when 5+ quarters available)
-    4. Sales sequential acceleration
-    5. Sales YoY growth >= FUND_SALES_GROWTH_MIN (when 5+ quarters available)
-    6. Operating margin >= floor (FUND_OP_MARGIN_MIN)
-    7. Expanding margins (current > 4 quarters ago, when available)
-    8. ROE >= FUND_ROE_MIN
+    Hard gates (pre-conditions, not scored — fail immediately):
+    0a. Trailing-twelve-month net income positive (sum of last 4 quarters' EPS)
+    0b. Latest-quarter EPS positive
+    0c. ROE non-negative
 
-    Pass = score >= FUND_MIN_SCORE. YoY checks are skipped (not penalised) when
+    Scored checks (in order of Minervini's priority), all trailing GAAP only —
+    no forward estimates or non-GAAP adjustments:
+    1. EPS sequential acceleration (direction)
+    2. EPS YoY growth >= FUND_EPS_GROWTH_MIN (last Q vs same Q last year, when 5+ quarters available)
+    3. Sales sequential acceleration
+    4. Sales growth >= FUND_SALES_GROWTH_MIN (TTM vs prior TTM, when 8+ quarters available)
+    5. Operating margin >= floor (FUND_OP_MARGIN_MIN)
+    6. Expanding margins (current > 4 quarters ago, when available)
+    7. ROE >= FUND_ROE_MIN
+
+    Pass = score >= FUND_MIN_SCORE. YoY/TTM checks are skipped (not penalised) when
     fewer than 5 quarters of data are available — common early in a live run.
     """
     eps     = f.get("eps", [])
@@ -89,9 +112,21 @@ def fundamental_screen(f: dict):
     op_margin = f.get("op_margin", 0)
     roe     = f.get("roe", 0)
 
-    # Hard gate: company must be profitable. A money-loser never qualifies.
+    # Hard gate: trailing-twelve-month net income must be positive. A single
+    # profitable quarter can mask an otherwise loss-making trailing year —
+    # this is a pre-condition, not a scored check, and runs before the
+    # latest-quarter check below.
+    if C.FUND_REQUIRE_POSITIVE_TTM_EPS and len(eps) >= 4 and sum(eps[-4:]) < 0:
+        return False, 0, "negative TTM net income"
+
+    # Hard gate: company must be profitable in the latest reported quarter.
     if not eps or eps[-1] <= 0:
         return False, 0, "unprofitable"
+
+    # Hard gate: ROE must be non-negative. A negative return on equity
+    # disqualifies regardless of how the other checks score.
+    if roe < 0:
+        return False, 0, "negative ROE"
 
     score = 0
     tags  = []
@@ -100,7 +135,8 @@ def fundamental_screen(f: dict):
     if len(eps) >= 3 and eps[-1] > eps[-2] > eps[-3]:
         score += 1; tags.append("EPS↑")
 
-    # 2. EPS YoY growth >= threshold (compare Q to same Q previous year)
+    # 2. EPS YoY growth >= threshold — trailing GAAP only: last reported
+    #    quarter vs the same quarter one year ago, no forward estimates.
     if len(eps) >= 5 and eps[-5] > 0:
         eps_yoy = eps[-1] / eps[-5] - 1
         if eps_yoy >= C.FUND_EPS_GROWTH_MIN:
@@ -110,11 +146,16 @@ def fundamental_screen(f: dict):
     if len(sales) >= 3 and sales[-1] > sales[-2] > sales[-3]:
         score += 1; tags.append("Sales↑")
 
-    # 4. Sales YoY growth >= threshold
-    if len(sales) >= 5 and sales[-5] > 0:
-        sales_yoy = sales[-1] / sales[-5] - 1
-        if sales_yoy >= C.FUND_SALES_GROWTH_MIN:
-            score += 1; tags.append(f"Sales+{sales_yoy*100:.0f}%yr")
+    # 4. Sales growth >= threshold — trailing GAAP only: trailing-twelve-month
+    #    (last 4 quarters) vs the prior trailing-twelve-month (quarters -8..-4).
+    #    A single noisy quarter-over-quarter comp can pass on a soft compare;
+    #    the full TTM window is what catches seasonal/lumpy revenue.
+    if len(sales) >= 8:
+        ttm, prior_ttm = sum(sales[-4:]), sum(sales[-8:-4])
+        if prior_ttm > 0:
+            sales_yoy = ttm / prior_ttm - 1
+            if sales_yoy >= C.FUND_SALES_GROWTH_MIN:
+                score += 1; tags.append(f"Sales+{sales_yoy*100:.0f}%ttm")
 
     # 5. Operating margin floor
     if op_margin >= C.FUND_OP_MARGIN_MIN:

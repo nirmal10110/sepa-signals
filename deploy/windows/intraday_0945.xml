@@ -40,9 +40,9 @@
   </Settings>
   <Actions Context="Author">
     <Exec>
-      <Command>C:\sepa-signals\.venv\Scripts\python.exe</Command>
+      <Command>C:\Users\lathe\sepa-signals\.venv\Scripts\python.exe</Command>
       <Arguments>-m sepa.run_intraday --mode intraday</Arguments>
-      <WorkingDirectory>C:\sepa-signals</WorkingDirectory>
+      <WorkingDirectory>C:\Users\lathe\sepa-signals</WorkingDirectory>
     </Exec>
   </Actions>
 </Task>

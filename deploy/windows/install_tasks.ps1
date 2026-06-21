@@ -78,11 +78,51 @@ Register-ScheduledTask `
     -Force
 
 Write-Host "OK SEPA-Daily task registered (runs at 22:00 London / 17:00 ET)"
+
+# ── Task 4: Intraday scan at 14:45 (09:45 ET) ────────────────────────────────
+# 15 minutes after the open: first 5-minute bars settled, catches opening breakouts.
+$intraday0945Action  = New-ScheduledTaskAction `
+    -Execute "$sepaDir\.venv\Scripts\python.exe" `
+    -Argument "-m sepa.run_intraday --mode intraday" `
+    -WorkingDirectory $sepaDir
+
+$intraday0945Trigger = New-ScheduledTaskTrigger -Daily -At "14:45"
+
+Register-ScheduledTask `
+    -TaskName   "SEPA-Intraday-0945" `
+    -Action     $intraday0945Action `
+    -Trigger    $intraday0945Trigger `
+    -Settings   $settings `
+    -RunLevel   Highest `
+    -Force
+
+Write-Host "OK SEPA-Intraday-0945 task registered (runs at 14:45 London / 09:45 ET)"
+
+# ── Task 5: Intraday scan at 17:30 (12:30 ET) ────────────────────────────────
+# Mid-session check: catches setups that develop after the morning.
+$intraday1230Action  = New-ScheduledTaskAction `
+    -Execute "$sepaDir\.venv\Scripts\python.exe" `
+    -Argument "-m sepa.run_intraday --mode intraday" `
+    -WorkingDirectory $sepaDir
+
+$intraday1230Trigger = New-ScheduledTaskTrigger -Daily -At "17:30"
+
+Register-ScheduledTask `
+    -TaskName   "SEPA-Intraday-1230" `
+    -Action     $intraday1230Action `
+    -Trigger    $intraday1230Trigger `
+    -Settings   $settings `
+    -RunLevel   Highest `
+    -Force
+
+Write-Host "OK SEPA-Intraday-1230 task registered (runs at 17:30 London / 12:30 ET)"
 Write-Host ""
 Write-Host "Tasks registered:"
-Write-Host "  SEPA-PreMarket  14:00 London  - pre-market signal review"
-Write-Host "  SEPA-Ingest     21:30 London  - download today's prices"
-Write-Host "  SEPA-Daily      22:00 London  - fresh scan + Telegram alerts"
+Write-Host "  SEPA-PreMarket      14:00 London  - pre-market signal review"
+Write-Host "  SEPA-Intraday-0945  14:45 London  - intraday scan (09:45 ET open)"
+Write-Host "  SEPA-Ingest         21:30 London  - download today's prices"
+Write-Host "  SEPA-Daily          22:00 London  - fresh scan + Telegram alerts"
+Write-Host "  SEPA-Intraday-1230  17:30 London  - intraday scan (12:30 ET mid-session)"
 Write-Host ""
-Write-Host "To verify: open Task Scheduler and look for SEPA-PreMarket, SEPA-Ingest, SEPA-Daily."
+Write-Host "To verify: open Task Scheduler and look for the five SEPA-* tasks."
 Write-Host "Logs will appear in: $sepaDir\data\logs\"

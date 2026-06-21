@@ -26,6 +26,26 @@ def test_verdict_all_values_accepted():
 
 
 # ---------------------------------------------------------------- offline: error fallback
+# ---------------------------------------------------------------- Bug 5: AI CAUTION auto-downgrade
+def test_ai_caution_demotes_tier():
+    """The AI can demote an alert, never create one (CLAUDE.md prime directive):
+    a CAUTION verdict on a Buy Ready signal must step it down to Potential Buy."""
+    from sepa.run_daily import apply_ai_caution_demotion
+
+    sig = {"ticker": "NVDA", "tier": "Buy Ready"}
+    demoted = apply_ai_caution_demotion(sig, "CAUTION")
+    assert demoted["tier"] == "Potential Buy"
+    assert sig["tier"] == "Buy Ready"   # original dict must not be mutated
+
+    sig2 = {"ticker": "AAPL", "tier": "Potential Buy"}
+    demoted2 = apply_ai_caution_demotion(sig2, "CAUTION")
+    assert demoted2["tier"] == "Buy Alert"
+
+    # CONFIRM must never change the tier.
+    sig3 = {"ticker": "MSFT", "tier": "Buy Ready"}
+    assert apply_ai_caution_demotion(sig3, "CONFIRM")["tier"] == "Buy Ready"
+
+
 def test_validator_returns_caution_on_api_error(monkeypatch):
     """If the API call fails for any reason, the validator must return CAUTION
     so the alert is NOT silently suppressed."""

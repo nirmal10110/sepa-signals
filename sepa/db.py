@@ -23,7 +23,7 @@ CREATE TABLE IF NOT EXISTS fundamentals(
 CREATE TABLE IF NOT EXISTS signals(
   ticker TEXT, asof TEXT, stage INTEGER, tt INTEGER, rs INTEGER, funda INTEGER,
   setup TEXT, footprint TEXT, pivot REAL, entry REAL, stop REAL, buyable INTEGER,
-  tier TEXT, reason TEXT, PRIMARY KEY(ticker, asof));
+  tier TEXT, reason TEXT, ext_200 REAL, climax_risk INTEGER, PRIMARY KEY(ticker, asof));
 
 CREATE TABLE IF NOT EXISTS watchlist_state(
   ticker TEXT PRIMARY KEY, tier TEXT, added TEXT, updated TEXT);
@@ -86,6 +86,14 @@ def _migrate(con):
             con.execute(f"ALTER TABLE signals ADD COLUMN {col} TEXT")
         except Exception:
             pass
+    try:
+        con.execute("ALTER TABLE signals ADD COLUMN ext_200 REAL")
+    except Exception:
+        pass
+    try:
+        con.execute("ALTER TABLE signals ADD COLUMN climax_risk INTEGER")
+    except Exception:
+        pass
 
 
 def connect(path=None):
@@ -130,15 +138,18 @@ def upsert_fundamental(con, ticker, period_end, eps, sales, op_margin, roe):
 
 def write_signal(con, asof, s):
     con.execute("""INSERT INTO signals(ticker,asof,stage,tt,rs,funda,setup,footprint,
-        pivot,entry,stop,buyable,tier,reason) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?)
+        pivot,entry,stop,buyable,tier,reason,ext_200,climax_risk)
+        VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
         ON CONFLICT(ticker,asof) DO UPDATE SET stage=excluded.stage,
         tt=excluded.tt, rs=excluded.rs, funda=excluded.funda, setup=excluded.setup,
         footprint=excluded.footprint, pivot=excluded.pivot, entry=excluded.entry,
         stop=excluded.stop, buyable=excluded.buyable, tier=excluded.tier,
-        reason=excluded.reason""",
+        reason=excluded.reason, ext_200=excluded.ext_200,
+        climax_risk=excluded.climax_risk""",
         (s["ticker"], asof, int(s["stage"]), int(s["tt"]), int(s["rs"]), int(s["funda"]),
          s["setup"], s["footprint"], float(s["pivot"]), float(s["entry"]),
-         float(s["stop"]), int(s["buyable"]), s["tier"], s["reason"]))
+         float(s["stop"]), int(s["buyable"]), s["tier"], s["reason"],
+         float(s.get("ext_200") or 0), int(bool(s.get("climax_risk")))))
 
 
 def set_state(con, ticker, tier, added, asof):

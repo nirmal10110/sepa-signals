@@ -23,6 +23,23 @@ log = logging.getLogger("sepa.run")
 
 STAGE_NAME = {1: "Base", 2: "Advance", 3: "Top", 4: "Decline"}
 
+# AI CAUTION auto-downgrade: the validator can demote an alert, never create
+# one (CLAUDE.md prime directive). Buy Ready/Potential Buy step down one tier
+# on CAUTION rather than just annotating the card.
+_AI_CAUTION_DEMOTE = {"Buy Ready": "Potential Buy", "Potential Buy": "Buy Alert"}
+
+
+def apply_ai_caution_demotion(sig: dict, verdict: str) -> dict:
+    """If the AI validator returns CAUTION on a Buy Ready/Potential Buy
+    signal, demote it one tier. Returns a (possibly) new dict; never mutates."""
+    if verdict == "CAUTION" and sig.get("tier") in _AI_CAUTION_DEMOTE:
+        old_tier = sig["tier"]
+        sig = dict(sig)
+        sig["tier"] = _AI_CAUTION_DEMOTE[old_tier]
+        log.warning("%s: AI CAUTION → demoted from %s to %s",
+                    sig.get("ticker", "?"), old_tier, sig["tier"])
+    return sig
+
 # Stage transitions worth alerting when a name is in Positions or watchlist
 _DANGER_TRANSITIONS = {(2, 3), (2, 4), (3, 4)}   # advance->topping/decline
 
@@ -160,8 +177,15 @@ def run(con=None, market_tone=None):
             funda_note = pre.pop("_funda_note", "")
             tier, reason = decide_tier(pre["stage"], pre["tt"], pre["rs"],
                                        bool(pre["funda"]), setup, market_tone,
-                                       df=hist.get(t), funda_note=funda_note)
-            sig = {**pre, "tier": tier or "", "reason": reason, "market_tone": market_tone}
+                                       df=hist.get(t), funda_note=funda_note, ticker=t)
+            # Climax-risk tag for the card/report: independent of the demotion
+            # decide_tier already applied internally, this just flags any
+            # Buy/Momentum tier that's still extended >CLIMAX_EXTENSION_CAP
+            # above its 200SMA so the alert carries the warning either way.
+            climax_risk = (tier in ("Buy Ready", "Potential Buy", "Momentum")
+                           and pre["ext_200"] / 100 > C.CLIMAX_EXTENSION_CAP)
+            sig = {**pre, "tier": tier or "", "reason": reason, "market_tone": market_tone,
+                  "climax_risk": climax_risk}
             # For Momentum stocks, store the fundamental failure detail for the alert card.
             if tier == "Momentum":
                 sig["momentum_reason"] = funda_note or f"funda score below {C.FUND_MIN_SCORE}"
@@ -280,6 +304,7 @@ def run(con=None, market_tone=None):
             sig["ai_summary"] = v.get("summary", "")
             sig["ai_thesis"] = v.get("thesis", "")
             sig["ai_catalysts"] = v.get("catalysts", "")
+            sig = apply_ai_caution_demotion(sig, v["verdict"])
             confirmed.append(sig)
             db.update_signal_ai(con, sig["ticker"], asof, v["verdict"],
                                 sig["ai_note"], sig["ai_summary"],

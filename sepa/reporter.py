@@ -109,6 +109,12 @@ def _stock_card(sig: dict, full: bool = True) -> str:
         ps = _position_line(sig)
         if ps:
             rows.append(ps)
+    if sig.get("climax_risk"):
+        ext = sig.get("ext_200") or 0
+        rows.append(
+            f'<span style="color:#b30000;font-weight:700;font-size:11px">'
+            f'⚠️ CLIMAX RISK: +{ext:.0f}% above 200SMA</span>'
+        )
     if ai_note:
         icon = "⚠️" if "CAUTION" in ai_note else "✅"
         rows.append(f'{icon} <i style="color:#444">{ai_note}</i>')
@@ -274,7 +280,7 @@ def _query(con) -> list:
                s.stage, s.tt, s.rs, s.funda, s.setup, s.footprint,
                s.pivot, s.entry, s.stop, s.asof,
                sec.name, sec.sector,
-               s.ai_note, s.ai_summary
+               s.ai_note, s.ai_summary, s.ext_200, s.climax_risk
         FROM watchlist_state ws
         LEFT JOIN signals s
             ON  s.ticker = ws.ticker
@@ -295,7 +301,7 @@ def _query(con) -> list:
 
     keys = ["ticker", "tier", "added", "stage", "tt", "rs", "funda",
             "setup", "footprint", "pivot", "entry", "stop", "asof",
-            "name", "sector", "ai_note", "ai_summary"]
+            "name", "sector", "ai_note", "ai_summary", "ext_200", "climax_risk"]
     return [dict(zip(keys, r)) for r in rows]
 
 

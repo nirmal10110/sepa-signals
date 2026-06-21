@@ -59,6 +59,13 @@ def _getint(key: str, default) -> int | None:
         return default
 
 
+def _getbool(key: str, default: bool) -> bool:
+    val = os.environ.get(key)
+    if val is None:
+        return default
+    return val.strip().lower() in ("1", "true", "yes", "on")
+
+
 # ===========================================================================
 # USER-FACING SETTINGS  (set these in .env — see .env.example)
 # ===========================================================================
@@ -128,12 +135,35 @@ VOL_CONFIRM_RATIO = _getfloat("VOL_CONFIRM_RATIO", 1.40)
 # (late-stage blow-off, not a first-base breakout). Flagged in the card + AI prompt.
 CLIMAX_RET_1Y_MIN = _getfloat("CLIMAX_RET_1Y_MIN", 2.0)   # 200% = 3× from prior year
 
+# --- Climax extension cap (generic, not Power-Play specific) ---
+# A name already >100% above its 200SMA is blow-off/climax territory, not a
+# fresh breakout — demote Buy Ready/Potential Buy one tier and tag the card.
+CLIMAX_EXTENSION_CAP = _getfloat("CLIMAX_EXTENSION_CAP", 1.00)   # 100% above 200SMA
+
+# --- Pivot sanity check (data corruption guard) ---
+# A pivot computed from a bad price-data join can sit above the real 52-week
+# high (impossible — caught GRC fabricating a Buy Ready off an $86.74 pivot
+# when its true ATH was $72.16) or so far below the current price that the
+# base is stale and the stock has already run past it.
+PIVOT_SANITY_MAX_ABOVE_52WK = _getfloat("PIVOT_SANITY_MAX_ABOVE_52WK", 1.05)
+PIVOT_STALE_BELOW_PRICE     = _getfloat("PIVOT_STALE_BELOW_PRICE",     0.90)
+
+# --- M&A / merger-arb price-pinning detector ---
+# Acquisition targets trade in a tight band near the deal price while the
+# deal is pending — that's pinning, not a genuine breakout (e.g. OGN @ $14
+# pinned by the pending Sun Pharma acquisition).
+MERGER_ARB_CV_THRESHOLD = _getfloat("MERGER_ARB_CV_THRESHOLD", 0.015)   # CV of last 20 closes
+
 # --- Fundamentals (SEPA: Accelerating Growth) ---
 FUND_EPS_GROWTH_MIN  = _getfloat("FUND_EPS_GROWTH_MIN",  0.20)  # EPS YoY >= 20%
 FUND_SALES_GROWTH_MIN= _getfloat("FUND_SALES_GROWTH_MIN",0.20)  # Sales YoY >= 20%
 FUND_OP_MARGIN_MIN   = _getfloat("FUND_OP_MARGIN_MIN",   0.10)  # op margin floor 10%
 FUND_ROE_MIN         = _getfloat("FUND_ROE_MIN",          0.17)  # ROE >= 17%
 FUND_MIN_SCORE       = int(_getfloat("FUND_MIN_SCORE",    3))    # checks to pass (out of 7)
+# Hard gate: trailing-twelve-month net income must be positive. Catches a
+# single profitable quarter masking an otherwise loss-making trailing year
+# (the DDOG/FLEX/HNGE/CROX/ALGT/NUTX/NXPI/GIII false-positive class).
+FUND_REQUIRE_POSITIVE_TTM_EPS: bool = _getbool("FUND_REQUIRE_POSITIVE_TTM_EPS", True)
 
 # --- Trend Template / RS ---
 RS_MIN = 70                      # min RS percentile to qualify
