@@ -159,3 +159,13 @@
 2026-06-20 21:59:20 INFO    sepa.ingest  fundamentals: 4000/5000 done
 2026-06-20 21:59:53 INFO    sepa.ingest  fundamentals: 4100/5000 done
 2026-06-20 22:00:21 INFO    sepa.ingest  fundamentals: 4200/5000 done
+2026-06-20 22:00:53 INFO    sepa.ingest  fundamentals: 4300/5000 done
+2026-06-20 22:01:28 INFO    sepa.ingest  fundamentals: 4400/5000 done
+2026-06-20 22:01:52 INFO    sepa.ingest  fundamentals: 4500/5000 done
+2026-06-20 22:02:21 INFO    sepa.ingest  fundamentals: 4600/5000 done
+2026-06-20 22:02:49 INFO    sepa.ingest  fundamentals: 4700/5000 done
+2026-06-20 22:03:19 INFO    sepa.ingest  fundamentals: 4800/5000 done
+2026-06-20 22:03:54 INFO    sepa.ingest  fundamentals: 4900/5000 done
+2026-06-20 22:04:26 WARNING sepa.ingest  BEAT: sales all-zero despite eps data present — possible EDGAR date mismatch
+2026-06-20 22:04:37 INFO    sepa.ingest  ingest complete
+2026-06-20 22:04:38 INFO    sepa.ingest  logs pushed to GitHub
