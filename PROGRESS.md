@@ -5,7 +5,7 @@
 > Legend: [ ] todo · [~] in progress · [x] done & verified · [!] blocked ·
 > `NEEDS-LIVE-VERIFY` = code done, user must confirm on mini PC.
 
-_Last updated: 2026-06-18 (Claude). Resume point: **Momentum tier added (offline verified). All offline gates green.**_
+_Last updated: 2026-06-21 (Claude). Resume point: **External-audit bug fixes (pivot sanity, GAAP fund gates, M&A detection, climax cap, AI CAUTION demotion) — offline verified. All offline gates green.**_
 
 ---
 
@@ -247,6 +247,91 @@ Three systemic bugs found via 13-signal audit; all fixed and tested:
 
 ---
 
+## External audit fixes (2026-06-21) ✅ DONE (offline)
+
+Five bugs from an external audit of a real (non-synthetic) signal report; all fixed
+and unit-tested. **No live DB queries were run** — all tests use synthetic fixtures
+per the user's instruction; the live-data versions of these fixes are `NEEDS-LIVE-VERIFY`
+on the mini PC.
+
+**Bug 1 (CRITICAL) — pivot sanity check, corrupted-data guard**
+- Root cause: GRC's stored pivot ($86.74) exceeded its true ATH ($72.16) — a bad
+  price-data join fabricated a Buy Ready signal off an impossible pivot.
+- Fix: `sepa/classify.py:pivot_sanity_check()` compares the setup's pivot against the
+  52-week high computed from the same price history (`hi_lo_52w(df)` — no separate live
+  DB query needed, the engine already has the full series in `df`). If
+  `pivot > 52wk_high × PIVOT_SANITY_MAX_ABOVE_52WK (1.05)` → CRITICAL log, tier capped
+  at Watch. If `pivot < current_close × PIVOT_STALE_BELOW_PRICE (0.90)` (stock already
+  ran past the base) → WARNING log, also capped at Watch. Wired into `decide_tier()` via
+  `_apply_sanity_caps()`, applied in both the Power Play and main-ladder branches plus
+  the Momentum branch.
+- Config: `PIVOT_SANITY_MAX_ABOVE_52WK=1.05`, `PIVOT_STALE_BELOW_PRICE=0.90`.
+- Tests: `test_pivot_above_52wk_high_suppresses_signal`, `test_pivot_below_price_suppresses_promotion`,
+  `test_valid_pivot_passes_sanity` (tests/test_classify.py).
+
+**Bug 2 (HIGH) — Fund ✓ false positives (DDOG, FLEX, HNGE, CROX, ALGT, NUTX, NXPI, GIII)**
+- Root cause: `fundamental_screen()` only hard-gated on the latest quarter's EPS; a single
+  profitable quarter could mask an otherwise loss-making trailing year. Revenue growth used
+  a single quarter-over-same-quarter-last-year compare, noisy for seasonal/lumpy revenue.
+- Fix: two new hard gates before any scoring — TTM net income (sum of last 4 quarters' EPS)
+  must be positive, and ROE must be non-negative. Revenue growth check switched to strict
+  trailing GAAP TTM-vs-prior-TTM (last 4 quarters summed vs the prior 4), requiring 8 quarters
+  of history; EPS growth check (already trailing GAAP — last Q vs same Q last year) left as-is.
+- Config: `FUND_REQUIRE_POSITIVE_TTM_EPS=True` (env-overridable).
+- Tests: `test_negative_ttm_eps_fails_hard_gate`, `test_negative_roe_fails_hard_gate`,
+  `test_positive_ttm_eps_proceeds_to_scoring`, `test_sales_ttm_growth_uses_full_year_not_single_quarter`
+  (tests/test_screens.py).
+
+**Bug 3 (HIGH) — M&A acquisition targets flagged as buys (OGN @ $14, pinned by Sun Pharma deal)**
+- Fix: `sepa/screens.py:is_merger_arb(df)` — coefficient of variation (stdev/mean) of the
+  last 20 closes; CV < 1.5% flags price-pinning. Wired into `decide_tier()`'s
+  `_apply_sanity_caps()`, gated on `len(df) >= 252` (a full year of history) so the check
+  only fires on genuinely sustained, multi-month pinning — not on a short/synthetic fixture
+  or a legitimately tight pre-breakout base (VCP final leg, Power Play flag), which is also
+  low-volatility over 20 days but arises from a real prior advance, not a pinned deal price.
+- Config: `MERGER_ARB_CV_THRESHOLD=0.015`.
+- Tests: `test_merger_arb_detected_on_tight_range`, `test_normal_stock_not_flagged`
+  (tests/test_classify.py + tests/test_screens.py, both the direct `is_merger_arb()` unit
+  check and the `decide_tier()` integration).
+
+**Bug 4 (MEDIUM) — climax/extension cap (STX +700%/1yr, DELL, ALAB, MXL, REPL, CAR, MRAM)**
+- Fix: `sepa/classify.py:_apply_climax_cap()` — when extension above the 200SMA exceeds
+  `CLIMAX_EXTENSION_CAP (1.00 = 100%)`, demote Buy Ready → Potential Buy or Potential Buy →
+  Buy Alert. Momentum has no lower rung of its own (parallel category, not part of the main
+  ladder) so it's tagged but not remapped. A separate `climax_risk` boolean (independent of
+  the tier the demotion landed on) flows through `run_daily.py` → `signals.climax_risk`
+  (new DB column, migrated) → both the email report (`reporter.py`) and Telegram card
+  (`alerter.py`) now show "⚠️ CLIMAX RISK: +X% above 200SMA" when set.
+- Config: `CLIMAX_EXTENSION_CAP=1.00`.
+- Tests: `test_climax_extension_demotes_potential_buy`, `test_within_cap_not_demoted`,
+  `test_climax_tag_propagates_to_card` (tests/test_classify.py).
+
+**Bug 5 (MEDIUM) — AI CAUTION was annotation-only, never demoted the tier**
+- This was the literal gap behind CLAUDE.md's own prime directive ("The AI can demote an
+  alert, never create one") — until this fix, a CAUTION verdict only added a note to the
+  card; the tier (and thus the alert/report) stayed at Buy Ready/Potential Buy regardless.
+- Fix: `sepa/run_daily.py:apply_ai_caution_demotion(sig, verdict)` — pure, non-mutating
+  helper; demotes Buy Ready → Potential Buy or Potential Buy → Buy Alert on CAUTION, logs
+  `TICKER: AI CAUTION → demoted from X to Y`. Wired into the AI-verdict loop right after the
+  `ai_note`/`ai_summary` fields are set, before the signal is appended to `confirmed`.
+- Scope note: this demotes the sig used for the Telegram alert/card. It does **not**
+  retroactively rewrite `watchlist_state`/the email report's tier for that ticker, since
+  state is persisted earlier in `run()`, before the AI validator runs — fixing that would
+  require reordering the pipeline (AI validation before state diffing), which is out of
+  scope for this fix. Flagged here for a future pass if the email report needs to agree.
+- Test: `test_ai_caution_demotes_tier` (tests/test_validator.py).
+
+- [x] **GATE PASSED 2026-06-21:** `python -m pytest -q` → **95 passed in 368s** (15 new tests
+  added this session: 8 in tests/test_classify.py, 6 in new tests/test_screens.py, 1 in
+  tests/test_validator.py). No live DB queries, no live network calls — all fixtures
+  synthetic per the user's explicit instruction for this task.
+- [ ] **GATE (user, mini PC):** confirm against real data — GRC pivot now suppressed, the
+  8 named Fund-✓ false positives now fail the hard gates, OGN-style M&A names cap at Watch,
+  a real climax-extended name (e.g. a +100%-above-200SMA breakout) gets demoted + tagged in
+  both the email report and Telegram card. `NEEDS-LIVE-VERIFY`
+
+---
+
 ## Known limitations / pending work
 - **Prices can be 1–2 days stale** if the nightly ingest didn't complete (yfinance incremental
   pull only fetches since last stored date).
@@ -280,6 +365,11 @@ Three systemic bugs found via 13-signal audit; all fixed and tested:
 - [ ] **Stale pivot recalculation** — re-run detect_setups for checkpoint-skipped tickers
   when last classify date is > 3 days old.
 - [ ] **ZZBRK golden-test assertion** — add Buy Ready assertion to `test_funnel_golden_tiers`.
+- [ ] **AI CAUTION demotion doesn't reach watchlist_state/email report** — `run_daily.py`
+  persists `watchlist_state` (and thus the tier the email report reads) before the AI
+  validator runs; `apply_ai_caution_demotion()` (2026-06-21) only demotes the in-memory sig
+  used for the Telegram alert. Fixing this needs the AI validation step moved earlier in
+  `run()`, before the state diff/persist — a pipeline reordering, not a small patch.
 
 ---
 
