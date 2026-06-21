@@ -3,7 +3,7 @@ merger-arb pinning detector (Bug 3)."""
 import numpy as np
 import pandas as pd
 
-from sepa.screens import fundamental_screen, is_merger_arb
+from sepa.screens import fundamental_screen, is_merger_arb, fundamental_trend
 
 
 # ---------------------------------------------------------------------------
@@ -86,3 +86,31 @@ def test_normal_stock_not_flagged():
     flagged, cv = is_merger_arb(_normal_df())
     assert flagged is False
     assert cv >= 0.015
+
+
+# ---------------------------------------------------------------------------
+# fundamental_trend: EPS/revenue trajectory tag for Momentum-tier stocks
+# ---------------------------------------------------------------------------
+
+def test_fundamental_trend_accelerating_eps():
+    """3 quarters of rising EPS -> improving=True, eps_accelerating=True."""
+    f = dict(eps=[-0.12, 0.31, 0.58], sales=[])
+    trend = fundamental_trend(f)
+    assert trend["improving"] is True
+    assert trend["eps_accelerating"] is True
+    assert trend["trend_label"] == "EPS $-0.12→$0.31→$0.58 (↑)"
+
+
+def test_fundamental_trend_flat():
+    """EPS flat across 4 quarters -> improving=False."""
+    f = dict(eps=[0.20, 0.20, 0.20, 0.20], sales=[])
+    trend = fundamental_trend(f)
+    assert trend["improving"] is False
+    assert trend["eps_accelerating"] is False
+
+
+def test_fundamental_trend_insufficient_data():
+    """Only 1 quarter available -> improving=False."""
+    f = dict(eps=[0.10], sales=[])
+    trend = fundamental_trend(f)
+    assert trend["improving"] is False

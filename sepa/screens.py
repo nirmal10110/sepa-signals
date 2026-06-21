@@ -177,3 +177,59 @@ def fundamental_screen(f: dict):
 
     note = "+".join(tags) if tags else "weak"
     return score >= C.FUND_MIN_SCORE, score, note
+
+
+def _rising_tail(seq: list, min_increases: int = 2) -> bool:
+    """True if the last `min_increases` consecutive steps in seq are increases."""
+    if len(seq) < min_increases + 1:
+        return False
+    tail = seq[-(min_increases + 1):]
+    return all(b > a for a, b in zip(tail, tail[1:]))
+
+
+def fundamental_trend(f: dict) -> dict:
+    """Quarterly EPS/revenue trajectory for a Momentum-tier stock (failed the
+    SEPA fundamental screen but may be a turnaround story worth watching).
+
+    Looks at the trailing quarters already stored in the `fundamentals` table
+    (same shape as fundamental_screen's input) and flags whether EPS or
+    revenue growth is accelerating into the most recent quarter.
+    """
+    eps = f.get("eps", [])
+    sales = f.get("sales", [])
+
+    empty = {
+        "eps_trend": [], "rev_growth_trend": [],
+        "eps_accelerating": False, "rev_accelerating": False,
+        "improving": False, "trend_label": "",
+    }
+    if len(eps) < 3:
+        return empty
+
+    eps_trend = eps[-4:]
+    eps_accelerating = _rising_tail(eps_trend)
+
+    rev_growth_trend = []
+    if len(sales) >= 8:
+        tail = sales[-8:]
+        rev_growth_trend = [
+            (tail[i + 4] / tail[i] - 1) if tail[i] else 0.0 for i in range(4)
+        ]
+    rev_accelerating = _rising_tail(rev_growth_trend)
+
+    if eps_accelerating:
+        trend_label = "EPS " + "→".join(f"${v:.2f}" for v in eps_trend[-3:]) + " (↑)"
+    elif rev_accelerating:
+        trend_label = ("Rev " + "→".join(f"{v*100:.0f}%" for v in rev_growth_trend[-3:])
+                       + " YoY (↑)")
+    else:
+        trend_label = ""
+
+    return {
+        "eps_trend": eps_trend,
+        "rev_growth_trend": rev_growth_trend,
+        "eps_accelerating": eps_accelerating,
+        "rev_accelerating": rev_accelerating,
+        "improving": eps_accelerating or rev_accelerating,
+        "trend_label": trend_label,
+    }

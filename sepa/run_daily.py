@@ -11,7 +11,7 @@ from . import db
 from .providers import DBProvider
 from .indicators import add_mas, up_day_vol_ratio, ret_1y as _ret1y, ext_from_200 as _ext200
 from .screens import (trend_template, classify_stage, weighted_rs_return,
-                      rank_rs, fundamental_screen)
+                      rank_rs, fundamental_screen, fundamental_trend)
 from .patterns import detect_setups
 from .classify import decide_tier, breakout_confirmed
 from .state import transitions
@@ -150,6 +150,10 @@ def run(con=None, market_tone=None):
                 "buyable": bool(setup and setup.buyable),
                 "meta": prov.meta(t)["summary"],
                 "ret_1y": round(r1y * 100, 1) if r1y is not None else None,
+                # Same 252-trading-day return as ret_1y, kept under its own
+                # key so the climax-risk tag always shows the 52wk-gain
+                # context even if ret_1y is later repurposed for the *Trend* line.
+                "gain_52wk_pct": round(r1y * 100, 1) if r1y is not None else None,
                 "ext_200": e200,
                 "climax_flag": climax,
                 "_setup": setup,
@@ -192,6 +196,12 @@ def run(con=None, market_tone=None):
                 # Flag whether the current bar is also a confirmed breakout so the alert
                 # loop can fire without re-running the heavy breakout check.
                 sig["momentum_breakout"] = breakout_confirmed(hist.get(t), setup)
+                # Surface the EPS/revenue trajectory — a Momentum stock with
+                # accelerating fundamentals is a turnaround story, not just a
+                # technical play, even though it still fails the SEPA screen today.
+                trend = fundamental_trend(prov.fundamentals(t))
+                sig["funda_improving"] = trend["improving"]
+                sig["funda_trend_label"] = trend["trend_label"] if trend["improving"] else ""
             db.write_signal(con, asof, sig)
             db.checkpoint_done(con, asof, t)
             if tier:

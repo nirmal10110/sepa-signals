@@ -110,10 +110,22 @@ def _stock_card(sig: dict, full: bool = True) -> str:
         if ps:
             rows.append(ps)
     if sig.get("climax_risk"):
-        ext = sig.get("ext_200") or 0
+        g52 = sig.get("gain_52wk_pct")
+        if g52 is not None:
+            rows.append(
+                f'<span style="color:#b30000;font-weight:700;font-size:11px">'
+                f'⚠️ CLIMAX RISK: +{g52:.0f}% / 52wk — still building base</span>'
+            )
+        else:
+            ext = sig.get("ext_200") or 0
+            rows.append(
+                f'<span style="color:#b30000;font-weight:700;font-size:11px">'
+                f'⚠️ CLIMAX RISK: +{ext:.0f}% above 200SMA</span>'
+            )
+    if tier == "Momentum" and sig.get("funda_improving") and sig.get("funda_trend_label"):
         rows.append(
-            f'<span style="color:#b30000;font-weight:700;font-size:11px">'
-            f'⚠️ CLIMAX RISK: +{ext:.0f}% above 200SMA</span>'
+            f'<span style="color:#7d4400;font-weight:600;font-size:11px">'
+            f'⚡ Fundamentals Improving: {sig["funda_trend_label"]}</span>'
         )
     if ai_note:
         icon = "⚠️" if "CAUTION" in ai_note else "✅"
@@ -280,7 +292,8 @@ def _query(con) -> list:
                s.stage, s.tt, s.rs, s.funda, s.setup, s.footprint,
                s.pivot, s.entry, s.stop, s.asof,
                sec.name, sec.sector,
-               s.ai_note, s.ai_summary, s.ext_200, s.climax_risk
+               s.ai_note, s.ai_summary, s.ext_200, s.climax_risk,
+               s.gain_52wk_pct, s.funda_improving, s.funda_trend_label
         FROM watchlist_state ws
         LEFT JOIN signals s
             ON  s.ticker = ws.ticker
@@ -301,7 +314,8 @@ def _query(con) -> list:
 
     keys = ["ticker", "tier", "added", "stage", "tt", "rs", "funda",
             "setup", "footprint", "pivot", "entry", "stop", "asof",
-            "name", "sector", "ai_note", "ai_summary", "ext_200", "climax_risk"]
+            "name", "sector", "ai_note", "ai_summary", "ext_200", "climax_risk",
+            "gain_52wk_pct", "funda_improving", "funda_trend_label"]
     return [dict(zip(keys, r)) for r in rows]
 
 

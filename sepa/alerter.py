@@ -68,7 +68,13 @@ def build_card(sig):
     # tier the extension cap demoted (or tagged, for Momentum).
     climax_risk_line = ""
     if sig.get("climax_risk"):
-        climax_risk_line = f"\n⚠️ *CLIMAX RISK*: +{ext_200:.0f}% above 200SMA"
+        g52 = sig.get("gain_52wk_pct")
+        if g52 is not None:
+            climax_risk_line = (
+                f"\n⚠️ *CLIMAX RISK*: +{g52:.0f}% / 52wk — still building base"
+            )
+        else:
+            climax_risk_line = f"\n⚠️ *CLIMAX RISK*: +{ext_200:.0f}% above 200SMA"
 
     # AI context block (populated by the Claude validator)
     ai_summary   = sig.get("ai_summary", "")
@@ -96,8 +102,14 @@ def build_card(sig):
 
     momentum_disclaimer = ""
     if tier == "Momentum":
-        m_reason = sig.get("momentum_reason", "fundamentals not SEPA-qualified")
-        momentum_disclaimer = f"\n⚠️ *Fundamentals*: {m_reason} — technical play only"
+        if sig.get("funda_improving") and sig.get("funda_trend_label"):
+            momentum_disclaimer = (
+                f"\n⚡ *Fundamentals Improving*: {sig['funda_trend_label']} "
+                "— watch for fund confirmation"
+            )
+        else:
+            m_reason = sig.get("momentum_reason", "fundamentals not SEPA-qualified")
+            momentum_disclaimer = f"\n⚠️ *Fundamentals*: {m_reason} — technical play only"
 
     return (
         f"{tier_label} — *{sig['ticker']}*  ({sig['setup']})\n"
