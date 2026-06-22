@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="UTF-16"?>
 <!--
-  SEPA Signals — intraday scan at 09:45 ET (14:45 London).
+  SEPA Signals — intraday scan at 09:45 local (market open + 15 minutes).
   Runs 15 minutes after the open so the first 5-minute bars have settled.
+
+  StartBoundary time is in the machine's local clock — Task Scheduler does not
+  convert timezones. The mini PC's clock must be set to US market local time
+  (ET) for this to fire at the intended market time.
 
   Import with:
     schtasks /create /tn "SEPA-Intraday-0945" /xml intraday_0945.xml /f
@@ -11,11 +15,11 @@
 -->
 <Task version="1.2" xmlns="http://schemas.microsoft.com/windows/2004/02/mit/task">
   <RegistrationInfo>
-    <Description>SEPA Signals intraday breakout scan — 09:45 ET (14:45 London)</Description>
+    <Description>SEPA Signals intraday breakout scan — 09:45 market local time</Description>
   </RegistrationInfo>
   <Triggers>
     <CalendarTrigger>
-      <StartBoundary>2026-01-01T14:45:00</StartBoundary>
+      <StartBoundary>2026-01-01T09:45:00</StartBoundary>
       <ExecutionTimeLimit>PT30M</ExecutionTimeLimit>
       <ScheduleByDay>
         <DaysInterval>1</DaysInterval>

@@ -211,6 +211,14 @@ TIER_ORDER = ["Watch", "Buy Alert", "Potential Buy", "Buy Ready", "Momentum"]
 # Volume multiple required for a confirmed breakout (close ≥ pivot + vol ≥ X × 50d avg)
 BREAKOUT_VOL_MULT = _getfloat("BREAKOUT_VOL_MULT", 1.3)
 
+# --- Intraday scan health ---
+# If more than this fraction of tickers error out during an intraday scan
+# (e.g. a yfinance schema change breaking every lookup), the run is degraded
+# and silently producing near-zero alerts — fire an ops alert instead of
+# letting it fail quiet.
+INTRADAY_ERROR_RATE_THRESHOLD: float = float(
+    os.getenv("INTRADAY_ERROR_RATE_THRESHOLD", "0.05"))
+
 # --- Momentum tier (technically strong, fundamentally disqualified) ---
 # Stocks passing ALL Minervini technical criteria but failing the fundamental screen
 # are placed here rather than discarded.  Alerts fire only on confirmed breakout.

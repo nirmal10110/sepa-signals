@@ -17,6 +17,7 @@ Usage:
 import argparse
 import logging
 from datetime import datetime, time as dtime
+import pandas as pd
 from . import config as C
 from . import db
 from . import alerter
@@ -72,6 +73,32 @@ def _minutes_elapsed() -> int:
     return max(1, int((now - open_dt).total_seconds() / 60))
 
 
+def _flatten_columns(df: pd.DataFrame) -> pd.DataFrame:
+    """Collapse yfinance's (Price, Ticker) MultiIndex columns to single-level.
+
+    Some yfinance versions return MultiIndex columns even for a single-ticker
+    download. Left unflattened, df["close"] is itself a one-column DataFrame
+    rather than a Series, so df["close"].iloc[-1] yields a Series and any
+    float() cast on it raises "not a real number, not 'Series'".
+    """
+    if isinstance(df.columns, pd.MultiIndex):
+        df = df.copy()
+        df.columns = df.columns.get_level_values(0)
+    return df
+
+
+def _last_close_and_volume(df5: pd.DataFrame) -> tuple[float, float]:
+    """Extract (last close, total session volume) as scalars from a 5m bars df.
+
+    Always returns plain floats, never a pandas Series — guards against
+    yfinance returning MultiIndex columns for a single-ticker download.
+    """
+    df5 = _flatten_columns(df5).rename(columns=str.lower)
+    last_close = float(df5["close"].iloc[-1])
+    today_vol = float(df5["volume"].sum())
+    return last_close, today_vol
+
+
 def run_intraday(con=None) -> list[str]:
     """Scan for intraday breakouts; return list of alerted tickers."""
     if not _market_open():
@@ -106,20 +133,22 @@ def run_intraday(con=None) -> list[str]:
 
     minutes = _minutes_elapsed()
     alerts_sent: list[str] = []
+    error_count = 0
+    total_count = 0
+    error_messages: list[str] = []
 
     for t in tickers:
         if t not in pivots:
             continue
         pivot = pivots[t]
+        total_count += 1
         try:
             df5 = yf.download(t, period="1d", interval="5m", progress=False,
                               auto_adjust=True)
             if df5.empty:
                 log.debug("no intraday data for %s", t)
                 continue
-            df5 = df5.rename(columns=str.lower)
-            last_close = float(df5["close"].iloc[-1])
-            today_vol = float(df5["volume"].sum())
+            last_close, today_vol = _last_close_and_volume(df5)
 
             # Annualise partial-session volume to full-day pace
             vol_pace = today_vol * (_SESSION_MINUTES / minutes)
@@ -167,9 +196,21 @@ def run_intraday(con=None) -> list[str]:
                          t, last_close, pivot, vol_ratio)
                 alerts_sent.append(t)
         except Exception as e:
-            log.warning("intraday %s: %s", t, e)
+            error_count += 1
+            error_messages.append(str(e))
+            log.error("intraday %s: unhandled error", t, exc_info=True)
 
     log.info("intraday complete: %d alerts sent", len(alerts_sent))
+
+    error_rate = error_count / max(total_count, 1)
+    if error_rate > C.INTRADAY_ERROR_RATE_THRESHOLD:
+        from collections import Counter
+        top_err = Counter(error_messages).most_common(1)[0][0] if error_messages else "unknown"
+        msg = (f"⚠️ Intraday scan degraded: {error_count}/{total_count} tickers failed "
+               f"({error_rate*100:.0f}%). Top error: {top_err[:120]}")
+        log.critical(msg)
+        alerter.send_text(msg)
+
     return alerts_sent
 
 

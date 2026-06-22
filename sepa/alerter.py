@@ -165,6 +165,12 @@ def send(token, chat_id, text, image_path=None):
     return True
 
 
+def send_text(text):
+    """Send a plain text-only alert (no chart) — used for ops/health alerts
+    such as the intraday scan error-rate warning, not trading signals."""
+    return send(C.TELEGRAM_TOKEN, C.TELEGRAM_CHAT_ID, text)
+
+
 def process(con, buyable_sigs, histories, asof):
     """For each newly-buyable signal not already alerted: render, card, send, log."""
     C.CHART_DIR.mkdir(parents=True, exist_ok=True)
