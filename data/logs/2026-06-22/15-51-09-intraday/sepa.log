@@ -1,0 +1,43 @@
+2026-06-22 15:51:09 INFO    sepa  log file: C:\Users\lathe\sepa-signals\data\logs\2026-06-22\15-51-09-intraday\sepa.log
+2026-06-22 15:51:09 INFO    sepa.intraday  intraday scan: 703 tickers in ['Buy Alert', 'Momentum', 'Potential Buy', 'Watch']
+2026-06-22 15:51:13 INFO    sepa.intraday  intraday alert STX: close=1102.04 pivot=1070.23 vol_ratio=2.09
+2026-06-22 15:51:15 INFO    sepa.intraday  intraday alert CRWD: close=693.37 pivot=692.91 vol_ratio=1.86
+2026-06-22 15:51:20 INFO    sepa.intraday  intraday alert GFS: close=89.37 pivot=85.99 vol_ratio=1.35
+2026-06-22 15:51:27 INFO    sepa.intraday  intraday alert BEN: close=34.12 pivot=33.29 vol_ratio=1.54
+2026-06-22 15:51:31 INFO    sepa.intraday  intraday alert PL: close=27.09 pivot=26.36 vol_ratio=1.42
+2026-06-22 15:51:34 INFO    sepa.intraday  intraday alert RIOT: close=29.00 pivot=28.10 vol_ratio=1.60
+2026-06-22 15:51:36 INFO    sepa.intraday  intraday alert CYTK: close=78.86 pivot=78.78 vol_ratio=2.49
+2026-06-22 15:51:38 INFO    sepa.intraday  intraday alert SIMO: close=333.34 pivot=321.66 vol_ratio=1.88
+2026-06-22 15:51:44 INFO    sepa.intraday  intraday alert LQDA: close=73.12 pivot=71.80 vol_ratio=1.41
+2026-06-22 15:51:55 INFO    sepa.intraday  intraday alert CECO: close=97.85 pivot=96.74 vol_ratio=1.46
+2026-06-22 15:51:59 ERROR   yfinance  $PDFS: possibly delisted; no price data found  (period=1d)
+2026-06-22 15:51:59 ERROR   yfinance  
+1 Failed download:
+2026-06-22 15:51:59 ERROR   yfinance  ['PDFS']: possibly delisted; no price data found  (period=1d)
+2026-06-22 15:52:01 INFO    sepa.intraday  intraday alert TSAT: close=43.21 pivot=42.34 vol_ratio=2.03
+2026-06-22 15:52:03 INFO    sepa.intraday  intraday alert OUST: close=48.33 pivot=46.05 vol_ratio=3.23
+2026-06-22 15:52:06 WARNING sepa.intraday  intraday GRC: name mismatch (DB='GORMAN RUPP CO' yfinance='The Gorman-Rupp Company') — possible ticker reassignment, alert skipped
+2026-06-22 15:52:09 INFO    sepa.intraday  intraday alert TRVI: close=17.24 pivot=17.21 vol_ratio=3.97
+2026-06-22 15:52:15 INFO    sepa.intraday  intraday alert GHRS: close=22.23 pivot=21.50 vol_ratio=3.53
+2026-06-22 15:52:16 INFO    sepa.intraday  intraday alert BCAX: close=24.01 pivot=23.78 vol_ratio=1.48
+2026-06-22 15:52:24 INFO    sepa.intraday  intraday alert ORN: close=15.69 pivot=15.46 vol_ratio=1.44
+2026-06-22 15:52:26 INFO    sepa.intraday  intraday alert ADUR: close=14.62 pivot=14.27 vol_ratio=1.95
+2026-06-22 15:52:29 ERROR   yfinance  $GLSI: possibly delisted; no price data found  (period=1d)
+2026-06-22 15:52:29 ERROR   yfinance  
+1 Failed download:
+2026-06-22 15:52:29 ERROR   yfinance  ['GLSI']: possibly delisted; no price data found  (period=1d)
+2026-06-22 15:52:31 INFO    sepa.intraday  intraday alert RFIL: close=18.94 pivot=18.75 vol_ratio=4.81
+2026-06-22 15:52:34 INFO    sepa.intraday  intraday alert CLSK: close=18.11 pivot=17.61 vol_ratio=2.05
+2026-06-22 15:52:39 ERROR   yfinance  $KALV: possibly delisted; no price data found  (period=1d)
+2026-06-22 15:52:39 ERROR   yfinance  
+1 Failed download:
+2026-06-22 15:52:39 ERROR   yfinance  ['KALV']: possibly delisted; no price data found  (period=1d)
+2026-06-22 15:52:42 ERROR   yfinance  $TCNNF: possibly delisted; no price data found  (period=1d)
+2026-06-22 15:52:42 ERROR   yfinance  
+1 Failed download:
+2026-06-22 15:52:42 ERROR   yfinance  ['TCNNF']: possibly delisted; no price data found  (period=1d)
+2026-06-22 15:52:42 ERROR   yfinance  $CURLF: possibly delisted; no price data found  (period=1d)
+2026-06-22 15:52:42 ERROR   yfinance  
+1 Failed download:
+2026-06-22 15:52:42 ERROR   yfinance  ['CURLF']: possibly delisted; no price data found  (period=1d)
+2026-06-22 15:52:42 INFO    sepa.intraday  intraday complete: 19 alerts sent

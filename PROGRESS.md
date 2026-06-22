@@ -385,6 +385,53 @@ on the mini PC.
 
 ---
 
+## Intraday float/Series bug + error-rate alerting + scheduler XML fix (2026-06-22) ✅ DONE
+
+**Root cause: yfinance MultiIndex columns broke scalar extraction**
+- The 14:00 intraday scan logged 296 `float() argument must be a string or a real
+  number, not 'Series'` warnings — 42% of tickers failed silently, 0 alerts sent.
+- Some installed yfinance versions return `(Price, Ticker)` MultiIndex columns even
+  for a single-ticker `yf.download()` call. Unflattened, `df["close"]` is a
+  one-column DataFrame, not a Series, so `df["close"].iloc[-1]` itself returns a
+  one-element Series and `float(...)` on it raises.
+- `sepa/run_intraday.py`: added `_flatten_columns()` (collapses MultiIndex to
+  single-level) and `_last_close_and_volume()` (always returns plain floats) —
+  used in place of the inline `float(df5["close"].iloc[-1])` call.
+- Per-ticker exception handler changed from `log.warning(..., e)` (message only)
+  to `log.error(..., exc_info=True)` (full traceback) so a real failure mode is
+  visible in the log instead of just the exception string.
+
+**Error-rate alerting (silent degraded-scan problem)**
+- A scan that mostly fails (like the 296-warning one) previously produced *no*
+  signal that anything was wrong beyond log noise — 0 alerts looks identical to
+  "quiet market" and "broken scanner."
+- `sepa/run_intraday.py`: tracks `error_count`/`total_count`/`error_messages`
+  through the scan loop; after the loop, if `error_rate > C.INTRADAY_ERROR_RATE_THRESHOLD`
+  fires `log.critical(...)` + a Telegram text alert via the new `alerter.send_text()`.
+- `sepa/config.py`: new `INTRADAY_ERROR_RATE_THRESHOLD` (env-overridable, default
+  0.05) — kept as a config threshold per the "never inline a magic number" rule.
+- `sepa/alerter.py`: new `send_text(text)` — thin wrapper around the existing
+  `send()` for text-only ops alerts (no chart), reusing the same Telegram
+  token/chat-id config and the same no-op-when-unconfigured safety behavior.
+
+**Scheduler XML times were wrong**
+- `deploy/windows/intraday_0945.xml` had `StartBoundary` `14:45:00` (a leftover
+  London-time value) instead of `09:45:00`; `intraday_1230.xml` had `17:30:00`
+  instead of `12:30:00`. Both fixed on disk; **not re-registered** — the user
+  needs to re-run `schtasks /create ... /f` manually to pick up the corrected XML.
+
+- [x] **GATE PASSED 2026-06-22:** `python -m pytest -q` → **103 passed in 369s**
+  (5 new tests in `tests/test_intraday.py`, including
+  `test_intraday_error_rate_alert_fires`: 10/20 mock tickers raising trips the
+  alert, the other 10 are still scanned without the exception propagating).
+- [x] **Live run verified** (`python -m sepa.run_intraday`, market open): 703
+  tickers scanned, **0 unhandled errors** (down from 296 warnings / 42% failure),
+  19 alerts sent. The only `ERROR`-level lines in the run are yfinance's own
+  "possibly delisted" notices for 5 tickers, which correctly resolve to an empty
+  `df5` and `continue` rather than an exception — not counted as scan errors.
+
+---
+
 ## Known limitations / pending work
 - **Prices can be 1–2 days stale** if the nightly ingest didn't complete (yfinance incremental
   pull only fetches since last stored date).
