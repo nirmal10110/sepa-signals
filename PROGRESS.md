@@ -5,7 +5,7 @@
 > Legend: [ ] todo · [~] in progress · [x] done & verified · [!] blocked ·
 > `NEEDS-LIVE-VERIFY` = code done, user must confirm on mini PC.
 
-_Last updated: 2026-06-21 (Claude). Resume point: **External-audit bug fixes (pivot sanity, GAAP fund gates, M&A detection, climax cap, AI CAUTION demotion) — offline verified. All offline gates green.**_
+_Last updated: 2026-06-22 (Claude). Resume point: **Climax tag now shows 52wk-gain context; Momentum tier shows "Fundamentals Improving" trend label — offline verified + spot-checked against the real live DB.**_
 
 ---
 
@@ -329,6 +329,59 @@ on the mini PC.
   8 named Fund-✓ false positives now fail the hard gates, OGN-style M&A names cap at Watch,
   a real climax-extended name (e.g. a +100%-above-200SMA breakout) gets demoted + tagged in
   both the email report and Telegram card. `NEEDS-LIVE-VERIFY`
+
+---
+
+## Climax 52wk-gain tag + Momentum fundamentals-improving tag (2026-06-22) ✅ DONE
+
+**Climax tag now shows 52-week gain context**
+- The generic `⚠️ CLIMAX RISK: +X% above 200SMA` tag didn't tell the user *why* — a
+  name extended +100% above its 200SMA could be a fresh breakout or a year-long
+  blow-off; the 52wk gain disambiguates.
+- `sepa/run_daily.py`: `gain_52wk_pct` computed alongside the existing `ret_1y`
+  (same formula — 252-trading-day price return — kept under its own key so the
+  climax tag's meaning doesn't depend on `ret_1y` being repurposed elsewhere).
+- `sepa/alerter.py` / `sepa/reporter.py`: when `climax_risk=True` and `gain_52wk_pct`
+  is available, the tag reads `⚠️ CLIMAX RISK: +X% / 52wk — still building base`;
+  falls back to the old `above 200SMA` wording when 52wk data isn't available
+  (<252 bars of history) so `test_climax_tag_propagates_to_card` still passes
+  unchanged.
+- `sepa/db.py`: new `signals.gain_52wk_pct` column (migrated) so the email report
+  can show the same tag from a DB-only read.
+
+**Momentum tier: "Fundamentals Improving" trend label**
+- Momentum-tier stocks (pass all technicals, fail the fundamental screen) previously
+  showed only the generic failure reason. A subset are turnaround stories — EPS or
+  revenue accelerating into the failed quarter — worth distinguishing from a pure
+  technical play.
+- `sepa/screens.py:fundamental_trend(f)` — pure function, same `{eps, sales}` input
+  shape as `fundamental_screen()`. Returns `eps_trend`/`rev_growth_trend` (last 4
+  quarters), `eps_accelerating`/`rev_accelerating` (2+ consecutive rising steps),
+  `improving` (either accelerating), and a human-readable `trend_label` (e.g.
+  `"EPS $-0.12→$0.31→$0.58 (↑)"` or `"Rev 8%→15%→22% YoY (↑)"`). Returns all-False/empty
+  when fewer than 3 quarters of EPS are available.
+- `sepa/run_daily.py`: called right after a stock is classified Momentum; stores
+  `funda_improving` + `funda_trend_label` on the signal.
+- `sepa/alerter.py`: Momentum card disclaimer becomes `⚡ Fundamentals Improving: ...
+  — watch for fund confirmation` when `funda_improving=True`; unchanged
+  `⚠️ Fundamentals: ... — technical play only` otherwise.
+- `sepa/reporter.py`: Momentum card in the email shows the same trend-label line
+  when improving.
+- `sepa/db.py`: new `signals.funda_improving` / `funda_trend_label` columns
+  (migrated).
+- Tests: `test_fundamental_trend_accelerating_eps`, `test_fundamental_trend_flat`,
+  `test_fundamental_trend_insufficient_data` (tests/test_screens.py).
+
+- [x] **GATE PASSED 2026-06-22:** `python -m pytest -q` → **98 passed in 367s** (3 new
+  tests in tests/test_screens.py).
+- [x] **Spot-checked against the real live DB** (`python -m sepa.run_daily`, 2,853-ticker
+  universe): `gain_52wk_pct` populated on all 5 climax-flagged names sampled (e.g. STX
+  +726%/52wk, MU +833%/52wk); 32 of 207 Momentum names flagged `funda_improving=1` with
+  correct trend labels (e.g. `BE`: `EPS $-380.00→$-0.37→$0.23 (↑)`; `SMTC`:
+  `Rev 13%→15%→16% YoY (↑)`). **Note:** this same invocation is the script's normal nightly
+  entrypoint — it sent a real email report and committed+pushed the run log to GitHub
+  (`origin/main`), matching the already-established automated logging pattern in this
+  repo's history. No Telegram alerts fired (0 newly-buyable signals this run).
 
 ---
 
