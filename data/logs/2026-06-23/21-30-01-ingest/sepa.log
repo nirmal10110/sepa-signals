@@ -1,0 +1,201 @@
+2026-06-23 21:30:01 INFO    sepa  log file: C:\Users\lathe\sepa-signals\data\logs\2026-06-23\21-30-01-ingest\sepa.log
+2026-06-23 21:30:02 INFO    sepa.ingest  universe: 5000 US tickers (after ETF/shell filter)
+2026-06-23 21:30:06 ERROR   yfinance  $CONE: possibly delisted; no price data found  (period=2y) (Yahoo error = "No data found, symbol may be delisted")
+2026-06-23 21:30:17 ERROR   yfinance  
+1 Failed download:
+2026-06-23 21:30:17 ERROR   yfinance  ['CONE']: possibly delisted; no price data found  (period=2y) (Yahoo error = "No data found, symbol may be delisted")
+2026-06-23 21:30:17 INFO    sepa.ingest  prices new-ticker batch 1: loaded=0 skipped=100 failed=0
+2026-06-23 21:30:22 ERROR   yfinance  $AYR: possibly delisted; no price data found  (period=2y) (Yahoo error = "No data found, symbol may be delisted")
+2026-06-23 21:30:33 ERROR   yfinance  
+1 Failed download:
+2026-06-23 21:30:33 ERROR   yfinance  ['AYR']: possibly delisted; no price data found  (period=2y) (Yahoo error = "No data found, symbol may be delisted")
+2026-06-23 21:30:33 INFO    sepa.ingest  prices new-ticker batch 2: loaded=1 skipped=199 failed=0
+2026-06-23 21:30:53 INFO    sepa.ingest  prices new-ticker batch 3: loaded=2 skipped=298 failed=0
+2026-06-23 21:30:56 ERROR   yfinance  $OBOCY: possibly delisted; no price data found  (period=2y)
+2026-06-23 21:30:57 ERROR   yfinance  $MSSHY: possibly delisted; no price data found  (period=2y)
+2026-06-23 21:31:06 ERROR   yfinance  $NANO: possibly delisted; no price data found  (period=2y) (Yahoo error = "No data found, symbol may be delisted")
+2026-06-23 21:31:07 ERROR   yfinance  
+3 Failed downloads:
+2026-06-23 21:31:07 ERROR   yfinance  ['OBOCY', 'MSSHY']: possibly delisted; no price data found  (period=2y)
+2026-06-23 21:31:07 ERROR   yfinance  ['NANO']: possibly delisted; no price data found  (period=2y) (Yahoo error = "No data found, symbol may be delisted")
+2026-06-23 21:31:07 INFO    sepa.ingest  prices new-ticker batch 4: loaded=6 skipped=394 failed=0
+2026-06-23 21:31:13 ERROR   yfinance  $AAC: possibly delisted; no price data found  (period=2y) (Yahoo error = "No data found, symbol may be delisted")
+2026-06-23 21:31:21 ERROR   yfinance  
+1 Failed download:
+2026-06-23 21:31:21 ERROR   yfinance  ['AAC']: possibly delisted; no price data found  (period=2y) (Yahoo error = "No data found, symbol may be delisted")
+2026-06-23 21:31:21 INFO    sepa.ingest  prices new-ticker batch 5: loaded=7 skipped=493 failed=0
+2026-06-23 21:31:33 ERROR   yfinance  $SEAH: possibly delisted; no price data found  (period=2y) (Yahoo error = "No data found, symbol may be delisted")
+2026-06-23 21:31:35 ERROR   yfinance  
+1 Failed download:
+2026-06-23 21:31:35 ERROR   yfinance  ['SEAH']: possibly delisted; no price data found  (period=2y) (Yahoo error = "No data found, symbol may be delisted")
+2026-06-23 21:31:35 INFO    sepa.ingest  prices new-ticker batch 6: loaded=8 skipped=592 failed=0
+2026-06-23 21:31:48 INFO    sepa.ingest  prices new-ticker batch 7: loaded=8 skipped=692 failed=0
+2026-06-23 21:32:07 INFO    sepa.ingest  prices new-ticker batch 8: loaded=8 skipped=792 failed=0
+2026-06-23 21:32:11 ERROR   yfinance  $PTAC: possibly delisted; no price data found  (period=2y) (Yahoo error = "No data found, symbol may be delisted")
+2026-06-23 21:32:20 ERROR   yfinance  
+1 Failed download:
+2026-06-23 21:32:20 ERROR   yfinance  ['PTAC']: possibly delisted; no price data found  (period=2y) (Yahoo error = "No data found, symbol may be delisted")
+2026-06-23 21:32:20 INFO    sepa.ingest  prices new-ticker batch 9: loaded=8 skipped=892 failed=0
+2026-06-23 21:32:34 INFO    sepa.ingest  prices new-ticker batch 10: loaded=9 skipped=991 failed=0
+2026-06-23 21:32:39 ERROR   yfinance  $PFSTY: possibly delisted; no price data found  (period=2y)
+2026-06-23 21:32:44 ERROR   yfinance  $AVAC: possibly delisted; no price data found  (period=2y) (Yahoo error = "No data found, symbol may be delisted")
+2026-06-23 21:32:47 ERROR   yfinance  
+2 Failed downloads:
+2026-06-23 21:32:47 ERROR   yfinance  ['PFSTY']: possibly delisted; no price data found  (period=2y)
+2026-06-23 21:32:47 ERROR   yfinance  ['AVAC']: possibly delisted; no price data found  (period=2y) (Yahoo error = "No data found, symbol may be delisted")
+2026-06-23 21:32:47 INFO    sepa.ingest  prices new-ticker batch 11: loaded=9 skipped=1091 failed=0
+2026-06-23 21:32:51 ERROR   yfinance  $BRKH: possibly delisted; no price data found  (period=2y) (Yahoo error = "No data found, symbol may be delisted")
+2026-06-23 21:33:09 ERROR   yfinance  
+1 Failed download:
+2026-06-23 21:33:09 ERROR   yfinance  ['BRKH']: possibly delisted; no price data found  (period=2y) (Yahoo error = "No data found, symbol may be delisted")
+2026-06-23 21:33:09 INFO    sepa.ingest  prices new-ticker batch 12: loaded=9 skipped=1191 failed=0
+2026-06-23 21:33:24 INFO    sepa.ingest  prices new-ticker batch 13: loaded=9 skipped=1291 failed=0
+2026-06-23 21:33:38 INFO    sepa.ingest  prices new-ticker batch 14: loaded=9 skipped=1391 failed=0
+2026-06-23 21:33:48 ERROR   yfinance  $PHD: possibly delisted; no price data found  (period=2y) (Yahoo error = "No data found, symbol may be delisted")
+2026-06-23 21:33:53 ERROR   yfinance  
+1 Failed download:
+2026-06-23 21:33:53 ERROR   yfinance  ['PHD']: possibly delisted; no price data found  (period=2y) (Yahoo error = "No data found, symbol may be delisted")
+2026-06-23 21:33:53 INFO    sepa.ingest  prices new-ticker batch 15: loaded=9 skipped=1491 failed=0
+2026-06-23 21:34:06 INFO    sepa.ingest  prices new-ticker batch 16: loaded=9 skipped=1591 failed=0
+2026-06-23 21:34:11 ERROR   yfinance  $VII: possibly delisted; no price data found  (period=2y) (Yahoo error = "No data found, symbol may be delisted")
+2026-06-23 21:34:20 ERROR   yfinance  
+1 Failed download:
+2026-06-23 21:34:20 ERROR   yfinance  ['VII']: possibly delisted; no price data found  (period=2y) (Yahoo error = "No data found, symbol may be delisted")
+2026-06-23 21:34:20 INFO    sepa.ingest  prices new-ticker batch 17: loaded=9 skipped=1691 failed=0
+2026-06-23 21:34:35 INFO    sepa.ingest  prices new-ticker batch 18: loaded=9 skipped=1791 failed=0
+2026-06-23 21:34:48 INFO    sepa.ingest  prices new-ticker batch 19: loaded=9 skipped=1891 failed=0
+2026-06-23 21:34:54 ERROR   yfinance  $PMVC: possibly delisted; no price data found  (period=2y) (Yahoo error = "No data found, symbol may be delisted")
+2026-06-23 21:35:01 ERROR   yfinance  
+1 Failed download:
+2026-06-23 21:35:01 ERROR   yfinance  ['PMVC']: possibly delisted; no price data found  (period=2y) (Yahoo error = "No data found, symbol may be delisted")
+2026-06-23 21:35:01 INFO    sepa.ingest  prices new-ticker batch 20: loaded=9 skipped=1991 failed=0
+2026-06-23 21:35:07 ERROR   yfinance  $LVPA: possibly delisted; no price data found  (period=2y) (Yahoo error = "No data found, symbol may be delisted")
+2026-06-23 21:35:09 ERROR   yfinance  $FWAC: possibly delisted; no price data found  (period=2y) (Yahoo error = "No data found, symbol may be delisted")
+2026-06-23 21:35:16 ERROR   yfinance  
+2 Failed downloads:
+2026-06-23 21:35:16 ERROR   yfinance  ['LVPA', 'FWAC']: possibly delisted; no price data found  (period=2y) (Yahoo error = "No data found, symbol may be delisted")
+2026-06-23 21:35:16 INFO    sepa.ingest  prices new-ticker batch 21: loaded=9 skipped=2091 failed=0
+2026-06-23 21:35:19 INFO    sepa.ingest  prices new-ticker batch 22: loaded=9 skipped=2094 failed=0
+2026-06-23 21:35:23 INFO    sepa.ingest  prices incr batch 23 (start=2026-06-13): loaded=9 skipped=2104 failed=0
+2026-06-23 21:35:30 INFO    sepa.ingest  prices incr batch 24 (start=2026-06-16): loaded=13 skipped=2143 failed=0
+2026-06-23 21:35:35 INFO    sepa.ingest  prices incr batch 25 (start=2026-06-17): loaded=16 skipped=2162 failed=0
+2026-06-23 21:35:39 INFO    sepa.ingest  prices incr batch 26 (start=2026-06-18): loaded=19 skipped=2170 failed=0
+2026-06-23 21:35:56 INFO    sepa.ingest  prices incr batch 27 (start=2026-06-19): loaded=119 skipped=2170 failed=0
+2026-06-23 21:36:12 INFO    sepa.ingest  prices incr batch 28 (start=2026-06-19): loaded=219 skipped=2170 failed=0
+2026-06-23 21:36:27 INFO    sepa.ingest  prices incr batch 29 (start=2026-06-19): loaded=319 skipped=2170 failed=0
+2026-06-23 21:36:41 INFO    sepa.ingest  prices incr batch 30 (start=2026-06-19): loaded=419 skipped=2170 failed=0
+2026-06-23 21:36:55 INFO    sepa.ingest  prices incr batch 31 (start=2026-06-19): loaded=519 skipped=2170 failed=0
+2026-06-23 21:37:09 INFO    sepa.ingest  prices incr batch 32 (start=2026-06-19): loaded=619 skipped=2170 failed=0
+2026-06-23 21:37:15 ERROR   yfinance  $DD: possibly delisted; no price data found  (1d 2026-06-19 -> 2026-06-23)
+2026-06-23 21:37:23 ERROR   yfinance  
+1 Failed download:
+2026-06-23 21:37:23 ERROR   yfinance  ['DD']: possibly delisted; no price data found  (1d 2026-06-19 -> 2026-06-23)
+2026-06-23 21:37:23 INFO    sepa.ingest  prices incr batch 33 (start=2026-06-19): loaded=718 skipped=2171 failed=0
+2026-06-23 21:37:36 INFO    sepa.ingest  prices incr batch 34 (start=2026-06-19): loaded=818 skipped=2171 failed=0
+2026-06-23 21:37:50 INFO    sepa.ingest  prices incr batch 35 (start=2026-06-19): loaded=918 skipped=2171 failed=0
+2026-06-23 21:38:05 INFO    sepa.ingest  prices incr batch 36 (start=2026-06-19): loaded=1018 skipped=2171 failed=0
+2026-06-23 21:38:18 INFO    sepa.ingest  prices incr batch 37 (start=2026-06-19): loaded=1118 skipped=2171 failed=0
+2026-06-23 21:38:32 INFO    sepa.ingest  prices incr batch 38 (start=2026-06-19): loaded=1217 skipped=2172 failed=0
+2026-06-23 21:38:46 INFO    sepa.ingest  prices incr batch 39 (start=2026-06-19): loaded=1317 skipped=2172 failed=0
+2026-06-23 21:39:05 ERROR   yfinance  $HNGE: possibly delisted; no price data found  (1d 2026-06-19 -> 2026-06-23)
+2026-06-23 21:39:08 ERROR   yfinance  
+1 Failed download:
+2026-06-23 21:39:08 ERROR   yfinance  ['HNGE']: possibly delisted; no price data found  (1d 2026-06-19 -> 2026-06-23)
+2026-06-23 21:39:09 INFO    sepa.ingest  prices incr batch 40 (start=2026-06-19): loaded=1416 skipped=2173 failed=0
+2026-06-23 21:39:29 INFO    sepa.ingest  prices incr batch 41 (start=2026-06-19): loaded=1516 skipped=2173 failed=0
+2026-06-23 21:39:43 INFO    sepa.ingest  prices incr batch 42 (start=2026-06-19): loaded=1616 skipped=2173 failed=0
+2026-06-23 21:40:01 INFO    sepa.ingest  prices incr batch 43 (start=2026-06-19): loaded=1714 skipped=2175 failed=0
+2026-06-23 21:40:21 ERROR   yfinance  $CURLF: possibly delisted; no price data found  (1d 2026-06-19 -> 2026-06-23)
+2026-06-23 21:40:23 ERROR   yfinance  
+1 Failed download:
+2026-06-23 21:40:23 ERROR   yfinance  ['CURLF']: possibly delisted; no price data found  (1d 2026-06-19 -> 2026-06-23)
+2026-06-23 21:40:23 INFO    sepa.ingest  prices incr batch 44 (start=2026-06-19): loaded=1813 skipped=2176 failed=0
+2026-06-23 21:40:36 INFO    sepa.ingest  prices incr batch 45 (start=2026-06-19): loaded=1912 skipped=2177 failed=0
+2026-06-23 21:40:50 INFO    sepa.ingest  prices incr batch 46 (start=2026-06-19): loaded=2011 skipped=2178 failed=0
+2026-06-23 21:41:11 ERROR   yfinance  $HLIT: possibly delisted; no price data found  (1d 2026-06-19 -> 2026-06-23)
+2026-06-23 21:41:13 ERROR   yfinance  
+1 Failed download:
+2026-06-23 21:41:13 ERROR   yfinance  ['HLIT']: possibly delisted; no price data found  (1d 2026-06-19 -> 2026-06-23)
+2026-06-23 21:41:13 INFO    sepa.ingest  prices incr batch 47 (start=2026-06-19): loaded=2108 skipped=2181 failed=0
+2026-06-23 21:41:35 ERROR   yfinance  $PRGS: possibly delisted; no price data found  (1d 2026-06-19 -> 2026-06-23)
+2026-06-23 21:41:49 ERROR   yfinance  
+1 Failed download:
+2026-06-23 21:41:49 ERROR   yfinance  ['PRGS']: possibly delisted; no price data found  (1d 2026-06-19 -> 2026-06-23)
+2026-06-23 21:41:49 INFO    sepa.ingest  prices incr batch 48 (start=2026-06-19): loaded=2203 skipped=2186 failed=0
+2026-06-23 21:42:06 INFO    sepa.ingest  prices incr batch 49 (start=2026-06-19): loaded=2302 skipped=2187 failed=0
+2026-06-23 21:42:19 INFO    sepa.ingest  prices incr batch 50 (start=2026-06-19): loaded=2400 skipped=2189 failed=0
+2026-06-23 21:42:28 ERROR   yfinance  $WHK: possibly delisted; no price data found  (1d 2026-06-19 -> 2026-06-23)
+2026-06-23 21:42:34 ERROR   yfinance  
+1 Failed download:
+2026-06-23 21:42:34 ERROR   yfinance  ['WHK']: possibly delisted; no price data found  (1d 2026-06-19 -> 2026-06-23)
+2026-06-23 21:42:34 INFO    sepa.ingest  prices incr batch 51 (start=2026-06-19): loaded=2497 skipped=2192 failed=0
+2026-06-23 21:42:46 INFO    sepa.ingest  prices incr batch 52 (start=2026-06-19): loaded=2597 skipped=2192 failed=0
+2026-06-23 21:42:59 INFO    sepa.ingest  prices incr batch 53 (start=2026-06-19): loaded=2691 skipped=2198 failed=0
+2026-06-23 21:43:06 ERROR   yfinance  $LOKV: possibly delisted; no price data found  (1d 2026-06-19 -> 2026-06-23)
+2026-06-23 21:43:10 ERROR   yfinance  
+1 Failed download:
+2026-06-23 21:43:10 ERROR   yfinance  ['LOKV']: possibly delisted; no price data found  (1d 2026-06-19 -> 2026-06-23)
+2026-06-23 21:43:11 INFO    sepa.ingest  prices incr batch 54 (start=2026-06-19): loaded=2778 skipped=2210 failed=0
+2026-06-23 21:43:14 INFO    sepa.ingest  prices incr batch 55 (start=2026-06-20): loaded=2780 skipped=2210 failed=0
+2026-06-23 21:43:17 ERROR   yfinance  $TE: possibly delisted; no price data found  (1d 2026-06-23 -> 2026-06-23)
+2026-06-23 21:43:17 ERROR   yfinance  $BGDE: possibly delisted; no price data found  (1d 2026-06-23 -> 2026-06-23)
+2026-06-23 21:43:17 ERROR   yfinance  $RTB: possibly delisted; no price data found  (1d 2026-06-23 -> 2026-06-23)
+2026-06-23 21:43:17 ERROR   yfinance  $BOT: possibly delisted; no price data found  (1d 2026-06-23 -> 2026-06-23)
+2026-06-23 21:43:17 ERROR   yfinance  $SHOE: possibly delisted; no price data found  (1d 2026-06-23 -> 2026-06-23)
+2026-06-23 21:43:17 ERROR   yfinance  $BRBR: possibly delisted; no price data found  (1d 2026-06-23 -> 2026-06-23)
+2026-06-23 21:43:17 ERROR   yfinance  $KURA: possibly delisted; no price data found  (1d 2026-06-23 -> 2026-06-23)
+2026-06-23 21:43:18 ERROR   yfinance  $DRTS: possibly delisted; no price data found  (1d 2026-06-23 -> 2026-06-23)
+2026-06-23 21:43:18 ERROR   yfinance  $FDMT: possibly delisted; no price data found  (1d 2026-06-23 -> 2026-06-23)
+2026-06-23 21:43:18 ERROR   yfinance  $SMTOY: possibly delisted; no price data found  (1d 2026-06-23 -> 2026-06-23)
+2026-06-23 21:43:18 ERROR   yfinance  
+10 Failed downloads:
+2026-06-23 21:43:18 ERROR   yfinance  ['TE', 'BGDE', 'RTB', 'BOT', 'SHOE', 'BRBR', 'KURA', 'DRTS', 'FDMT', 'SMTOY']: possibly delisted; no price data found  (1d 2026-06-23 -> 2026-06-23)
+2026-06-23 21:43:18 INFO    sepa.ingest  prices incr batch 56 (start=2026-06-23): loaded=2780 skipped=2220 failed=0
+2026-06-23 21:43:21 INFO    sepa.ingest  prices total: loaded=2780 skipped=2220 failed=0
+2026-06-23 21:43:22 INFO    sepa.ingest  fundamentals: 0/5000 done
+2026-06-23 21:45:01 INFO    sepa.ingest  fundamentals: 100/5000 done
+2026-06-23 21:46:11 WARNING sepa.ingest  MNST: sales all-zero despite eps data present — possible EDGAR date mismatch
+2026-06-23 21:46:34 INFO    sepa.ingest  fundamentals: 200/5000 done
+2026-06-23 21:47:57 WARNING sepa.ingest  TFC: sales all-zero despite eps data present — possible EDGAR date mismatch
+2026-06-23 21:48:08 INFO    sepa.ingest  fundamentals: 300/5000 done
+2026-06-23 21:48:41 WARNING sepa.ingest  XEL: sales all-zero despite eps data present — possible EDGAR date mismatch
+2026-06-23 21:49:29 INFO    sepa.ingest  fundamentals: 400/5000 done
+2026-06-23 21:49:50 WARNING sepa.ingest  HSY: sales all-zero despite eps data present — possible EDGAR date mismatch
+2026-06-23 21:49:55 WARNING sepa.ingest  WAT revenue date fuzzy matched 2025-03-31 → 2025-03-29 (2 day delta)
+2026-06-23 21:49:55 WARNING sepa.ingest  WAT net_income date fuzzy matched 2025-03-31 → 2025-03-29 (2 day delta)
+2026-06-23 21:49:55 WARNING sepa.ingest  WAT equity date fuzzy matched 2025-03-31 → 2025-03-29 (2 day delta)
+2026-06-23 21:49:55 WARNING sepa.ingest  WAT net_income date fuzzy matched 2025-06-30 → 2025-06-28 (2 day delta)
+2026-06-23 21:49:55 WARNING sepa.ingest  WAT equity date fuzzy matched 2025-06-30 → 2025-06-28 (2 day delta)
+2026-06-23 21:49:55 WARNING sepa.ingest  WAT net_income date fuzzy matched 2025-09-30 → 2025-09-27 (3 day delta)
+2026-06-23 21:49:55 WARNING sepa.ingest  WAT equity date fuzzy matched 2025-09-30 → 2025-09-27 (3 day delta)
+2026-06-23 21:50:07 WARNING sepa.ingest  RVMD: sales all-zero despite eps data present — possible EDGAR date mismatch
+2026-06-23 21:50:30 WARNING sepa.ingest  DTE: sales all-zero despite eps data present — possible EDGAR date mismatch
+2026-06-23 21:50:55 INFO    sepa.ingest  fundamentals: 500/5000 done
+2026-06-23 21:51:35 WARNING sepa.ingest  EQR: sales all-zero despite eps data present — possible EDGAR date mismatch
+2026-06-23 21:51:36 WARNING sepa.ingest  SYF: sales all-zero despite eps data present — possible EDGAR date mismatch
+2026-06-23 21:51:39 WARNING sepa.ingest  RF: sales all-zero despite eps data present — possible EDGAR date mismatch
+2026-06-23 21:52:28 INFO    sepa.ingest  fundamentals: 600/5000 done
+2026-06-23 21:52:45 WARNING sepa.ingest  FWONA: sales all-zero despite eps data present — possible EDGAR date mismatch
+2026-06-23 21:53:53 WARNING sepa.ingest  EWBC: sales all-zero despite eps data present — possible EDGAR date mismatch
+2026-06-23 21:53:59 INFO    sepa.ingest  fundamentals: 700/5000 done
+2026-06-23 21:54:14 WARNING sepa.ingest  NLY: sales all-zero despite eps data present — possible EDGAR date mismatch
+2026-06-23 21:55:04 WARNING sepa.ingest  WMG: sales all-zero despite eps data present — possible EDGAR date mismatch
+2026-06-23 21:55:20 WARNING sepa.ingest  PNFP: sales all-zero despite eps data present — possible EDGAR date mismatch
+2026-06-23 21:55:53 INFO    sepa.ingest  fundamentals: 800/5000 done
+2026-06-23 21:56:29 WARNING sepa.ingest  AMH: sales all-zero despite eps data present — possible EDGAR date mismatch
+2026-06-23 21:56:32 WARNING sepa.ingest  ARCC: sales all-zero despite eps data present — possible EDGAR date mismatch
+2026-06-23 21:57:22 WARNING sepa.ingest  APA: sales all-zero despite eps data present — possible EDGAR date mismatch
+2026-06-23 21:57:31 WARNING sepa.ingest  AGNC: sales all-zero despite eps data present — possible EDGAR date mismatch
+2026-06-23 21:57:38 INFO    sepa.ingest  fundamentals: 900/5000 done
+2026-06-23 21:58:08 WARNING sepa.ingest  SMMT: sales all-zero despite eps data present — possible EDGAR date mismatch
+2026-06-23 21:58:44 WARNING sepa.ingest  OKLO: sales all-zero despite eps data present — possible EDGAR date mismatch
+2026-06-23 21:58:53 WARNING sepa.ingest  FLS: sales all-zero despite eps data present — possible EDGAR date mismatch
+2026-06-23 21:58:54 WARNING sepa.ingest  UMBF: sales all-zero despite eps data present — possible EDGAR date mismatch
+2026-06-23 21:59:06 INFO    sepa.ingest  fundamentals: 1000/5000 done
+2026-06-23 21:59:10 WARNING sepa.ingest  NUVL: sales all-zero despite eps data present — possible EDGAR date mismatch
+2026-06-23 21:59:17 WARNING sepa.ingest  ONB: sales all-zero despite eps data present — possible EDGAR date mismatch
+2026-06-23 21:59:21 WARNING sepa.ingest  SSB: sales all-zero despite eps data present — possible EDGAR date mismatch
+2026-06-23 22:00:36 INFO    sepa.ingest  fundamentals: 1100/5000 done
+2026-06-23 22:00:43 WARNING sepa.ingest  CBSH: sales all-zero despite eps data present — possible EDGAR date mismatch
+2026-06-23 22:00:45 WARNING sepa.ingest  BOKF: sales all-zero despite eps data present — possible EDGAR date mismatch
+2026-06-23 22:00:55 WARNING sepa.ingest  VLY: sales all-zero despite eps data present — possible EDGAR date mismatch
