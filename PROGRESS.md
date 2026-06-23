@@ -474,6 +474,34 @@ on the mini PC.
 ---
 
 ## Discovered work / TODOs found mid-build
+- NEEDS-LIVE-VERIFY (2026-06-22 audit of intraday STX/CRWD/GFS alerts): cross-checked the
+  15:51:09-intraday log against live yfinance. The logged close/pivot/vol_ratio for all
+  three exactly matched the alert text (not corrupted, not hallucinated). But all three
+  fired at ~10:51 AM ET, only ~21% into the session — `vol_ratio` extrapolates from
+  `_minutes_elapsed()` (run_intraday.py), and a small-sample early-session extrapolation
+  is noisy. Live recheck at 1:54 PM ET (~68% elapsed) showed pace had decayed to
+  STX 1.2x, CRWD 0.8x, GFS 0.7x — all now below BREAKOUT_VOL_MULT (1.3, config.py:212).
+  CRWD's price had also fallen back below its pivot by midday (signal failed/reversed).
+  Consider gating early-session vol_ratio alerts behind a minimum elapsed-time floor
+  (e.g. don't alert before ~60-90 min into the session) to reduce false-confidence pace
+  reads. Note: BREAKOUT_VOL_MULT is 1.3 in config, not 1.5 — if 1.5x is the intended bar,
+  config.py needs updating; GFS's 1.35-1.4x cleared 1.3 but would have failed 1.5.
+- TODO before 2026-07-02 (CRWD 4-for-1 forward split, confirmed effective that date):
+  grepped ingest.py and run_intraday.py — there is no split-detection or back-adjustment
+  logic anywhere in the pipeline. Pre-split pivot/price history is stored as-is in SQLite.
+  When the split executes, post-split quotes (~1/4 of pre-split) will silently desync
+  from the locally cached pre-split history (pivot, 50-day avg volume, stage calcs) for
+  CRWD specifically, and any other ticker with an announced split. Needs a split-detection
+  step in ingest.py (compare yfinance split-adjusted vs raw close, or re-pull full history
+  on detected discontinuity) before 2026-07-02.
+- FIXED (2026-06-23): `deploy/windows/intraday_0945.xml` and `intraday_1230.xml` had been
+  miswritten with StartBoundary times of 09:45/12:30, five hours before NYSE open. The mini
+  PC clock runs UK local time (BST), not US Eastern, so these tasks would have fired hours
+  before the market opened. Reverted StartBoundary to 14:45/17:30 (BST 14:45 = NYSE 09:45
+  EDT open+15min; BST 17:30 = NYSE 12:30 EDT mid-session) and updated the in-file comments
+  to spell out the BST→EDT mapping so this isn't miscorrected again. File names still say
+  `_0945`/`_1230` (EDT-derived) even though the StartBoundary is BST — not renamed since
+  task names registered via `schtasks` reference these filenames.
 - Makefile needed `venv` target (first-time setup on mini PC)
 - `tests/conftest.py` needed for Agg backend in test context
 - run_daily.py: all per-ticker loops wrapped in try/except for resilience
