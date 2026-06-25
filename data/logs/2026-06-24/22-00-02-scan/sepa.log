@@ -1,0 +1,161 @@
+2026-06-24 22:00:02 INFO    sepa  log file: C:\Users\lathe\sepa-signals\data\logs\2026-06-24\22-00-02-scan\sepa.log
+2026-06-24 22:00:02 INFO    sepa.run  SEPA scan starting — 5083 tickers
+2026-06-24 22:00:23 INFO    sepa.run  breadth: 1402/2877 (48.7%) Stage 2 -> tone: Confirmed uptrend
+2026-06-24 22:00:23 WARNING sepa.classify  INTC: pivot $68.50 is more than 10% below current price $132.28 — stock already ran, promotion suppressed
+2026-06-24 22:00:23 WARNING sepa.classify  KLAC: pivot $201.14 is more than 10% below current price $244.49 — stock already ran, promotion suppressed
+2026-06-24 22:00:23 WARNING sepa.classify  APH: pivot $136.53 is more than 10% below current price $158.70 — stock already ran, promotion suppressed
+2026-06-24 22:00:23 WARNING sepa.classify  SAN: pivot $11.05 is more than 10% below current price $13.60 — stock already ran, promotion suppressed
+2026-06-24 22:00:23 WARNING sepa.classify  RKLB: pivot $76.58 is more than 10% below current price $95.12 — stock already ran, promotion suppressed
+2026-06-24 22:00:23 WARNING sepa.classify  URI: pivot $907.24 is more than 10% below current price $1063.14 — stock already ran, promotion suppressed
+2026-06-24 22:00:23 WARNING sepa.classify  HPE: pivot $28.76 is more than 10% below current price $48.92 — stock already ran, promotion suppressed
+2026-06-24 22:00:23 WARNING sepa.classify  NBIS: pivot $219.93 is more than 10% below current price $275.25 — stock already ran, promotion suppressed
+2026-06-24 22:00:23 WARNING sepa.classify  MCHP: pivot $64.39 is more than 10% below current price $93.26 — stock already ran, promotion suppressed
+2026-06-24 22:00:23 WARNING sepa.classify  CLS: pivot $302.22 is more than 10% below current price $351.20 — stock already ran, promotion suppressed
+2026-06-24 22:00:23 WARNING sepa.classify  IX: pivot $30.47 is more than 10% below current price $39.20 — stock already ran, promotion suppressed
+2026-06-24 22:00:23 WARNING sepa.classify  UAL: pivot $95.08 is more than 10% below current price $121.55 — stock already ran, promotion suppressed
+2026-06-24 22:00:23 WARNING sepa.classify  RPRX: price appears M&A-pinned (CV=1.5%) — suppressing from buy tiers
+2026-06-24 22:00:23 WARNING sepa.classify  CNC: pivot $37.55 is more than 10% below current price $63.14 — stock already ran, promotion suppressed
+2026-06-24 22:00:23 WARNING sepa.classify  MKSI: pivot $335.15 is more than 10% below current price $389.17 — stock already ran, promotion suppressed
+2026-06-24 22:00:23 WARNING sepa.classify  ENTG: pivot $142.92 is more than 10% below current price $168.22 — stock already ran, promotion suppressed
+2026-06-24 22:00:23 WARNING sepa.classify  CIB: pivot $71.71 is more than 10% below current price $80.97 — stock already ran, promotion suppressed
+2026-06-24 22:00:23 WARNING sepa.classify  SITM: pivot $570.26 is more than 10% below current price $706.90 — stock already ran, promotion suppressed
+2026-06-24 22:00:23 WARNING sepa.classify  AMKR: pivot $75.20 is more than 10% below current price $86.72 — stock already ran, promotion suppressed
+2026-06-24 22:00:23 WARNING sepa.classify  ROKU: pivot $90.21 is more than 10% below current price $135.05 — stock already ran, promotion suppressed
+2026-06-24 22:00:23 WARNING sepa.classify  MLI: pivot $119.38 is more than 10% below current price $136.33 — stock already ran, promotion suppressed
+2026-06-24 22:00:23 WARNING sepa.classify  ARMK: price appears M&A-pinned (CV=1.1%) — suppressing from buy tiers
+2026-06-24 22:00:23 WARNING sepa.classify  KNX: pivot $64.11 is more than 10% below current price $74.00 — stock already ran, promotion suppressed
+2026-06-24 22:00:23 WARNING sepa.classify  SANM: pivot $138.56 is more than 10% below current price $247.04 — stock already ran, promotion suppressed
+2026-06-24 22:00:23 WARNING sepa.classify  AAL: pivot $11.13 is more than 10% below current price $16.14 — stock already ran, promotion suppressed
+2026-06-24 22:00:23 WARNING sepa.classify  CORT: pivot $40.47 is more than 10% below current price $79.85 — stock already ran, promotion suppressed
+2026-06-24 22:00:23 WARNING sepa.classify  SSL: pivot $8.92 is more than 10% below current price $11.11 — stock already ran, promotion suppressed
+2026-06-24 22:00:23 WARNING sepa.classify  ENS: pivot $161.96 is more than 10% below current price $223.43 — stock already ran, promotion suppressed
+2026-06-24 22:00:23 WARNING sepa.classify  MXL: pivot $17.80 is more than 10% below current price $89.08 — stock already ran, promotion suppressed
+2026-06-24 22:00:23 WARNING sepa.classify  MRCY: pivot $85.51 is more than 10% below current price $110.87 — stock already ran, promotion suppressed
+2026-06-24 22:00:23 WARNING sepa.classify  RSI: pivot $20.88 is more than 10% below current price $29.51 — stock already ran, promotion suppressed
+2026-06-24 22:00:23 WARNING sepa.classify  SNDR: pivot $25.78 is more than 10% below current price $35.36 — stock already ran, promotion suppressed
+2026-06-24 22:00:23 WARNING sepa.classify  APGE: pivot $89.50 is more than 10% below current price $132.88 — stock already ran, promotion suppressed
+2026-06-24 22:00:23 WARNING sepa.classify  ACMR: pivot $64.75 is more than 10% below current price $99.12 — stock already ran, promotion suppressed
+2026-06-24 22:00:23 WARNING sepa.classify  CNTA: price appears M&A-pinned (CV=0.5%) — suppressing from buy tiers
+2026-06-24 22:00:23 WARNING sepa.classify  AXTI: pivot $68.44 is more than 10% below current price $77.91 — stock already ran, promotion suppressed
+2026-06-24 22:00:23 WARNING sepa.classify  ENVA: pivot $137.21 is more than 10% below current price $210.99 — stock already ran, promotion suppressed
+2026-06-24 22:00:23 WARNING sepa.classify  FLNC: pivot $17.11 is more than 10% below current price $21.21 — stock already ran, promotion suppressed
+2026-06-24 22:00:23 WARNING sepa.classify  SEZL: pivot $84.70 is more than 10% below current price $151.61 — stock already ran, promotion suppressed
+2026-06-24 22:00:23 WARNING sepa.classify  BBAR: pivot $14.53 is more than 10% below current price $20.39 — stock already ran, promotion suppressed
+2026-06-24 22:00:23 WARNING sepa.classify  BFH: pivot $79.09 is more than 10% below current price $103.79 — stock already ran, promotion suppressed
+2026-06-24 22:00:23 WARNING sepa.classify  CPRX: price appears M&A-pinned (CV=0.2%) — suppressing from buy tiers
+2026-06-24 22:00:23 WARNING sepa.classify  YETI: pivot $37.54 is more than 10% below current price $47.97 — stock already ran, promotion suppressed
+2026-06-24 22:00:23 WARNING sepa.classify  GEO: pivot $15.29 is more than 10% below current price $29.96 — stock already ran, promotion suppressed
+2026-06-24 22:00:23 WARNING sepa.classify  ARCB: pivot $127.63 is more than 10% below current price $143.74 — stock already ran, promotion suppressed
+2026-06-24 22:00:23 WARNING sepa.classify  VCYT: pivot $33.54 is more than 10% below current price $53.79 — stock already ran, promotion suppressed
+2026-06-24 22:00:23 WARNING sepa.classify  CAKE: pivot $66.04 is more than 10% below current price $77.05 — stock already ran, promotion suppressed
+2026-06-24 22:00:23 WARNING sepa.classify  DAVE: pivot $282.56 is more than 10% below current price $317.97 — stock already ran, promotion suppressed
+2026-06-24 22:00:23 WARNING sepa.classify  OGN: price appears M&A-pinned (CV=0.2%) — suppressing from buy tiers
+2026-06-24 22:00:23 WARNING sepa.classify  ATRO: pivot $56.98 is more than 10% below current price $82.70 — stock already ran, promotion suppressed
+2026-06-24 22:00:23 WARNING sepa.classify  ADPT: pivot $14.84 is more than 10% below current price $17.23 — stock already ran, promotion suppressed
+2026-06-24 22:00:23 WARNING sepa.classify  ICHR: pivot $74.95 is more than 10% below current price $92.20 — stock already ran, promotion suppressed
+2026-06-24 22:00:23 WARNING sepa.classify  ESTA: pivot $67.09 is more than 10% below current price $87.01 — stock already ran, promotion suppressed
+2026-06-24 22:00:23 WARNING sepa.classify  CHRN: pivot $8.71 is more than 10% below current price $25.82 — stock already ran, promotion suppressed
+2026-06-24 22:00:23 WARNING sepa.classify  ALGT: pivot $91.61 is more than 10% below current price $103.54 — stock already ran, promotion suppressed
+2026-06-24 22:00:23 WARNING sepa.classify  RAMP: price appears M&A-pinned (CV=0.2%) — suppressing from buy tiers
+2026-06-24 22:00:23 WARNING sepa.classify  PGNY: pivot $18.18 is more than 10% below current price $26.63 — stock already ran, promotion suppressed
+2026-06-24 22:00:23 WARNING sepa.classify  MBX: pivot $28.96 is more than 10% below current price $46.39 — stock already ran, promotion suppressed
+2026-06-24 22:00:23 WARNING sepa.classify  LWLG: pivot $8.59 is more than 10% below current price $10.03 — stock already ran, promotion suppressed
+2026-06-24 22:00:23 WARNING sepa.classify  TTI: pivot $8.62 is more than 10% below current price $10.13 — stock already ran, promotion suppressed
+2026-06-24 22:00:23 WARNING sepa.classify  NEO: pivot $8.22 is more than 10% below current price $11.47 — stock already ran, promotion suppressed
+2026-06-24 22:00:23 WARNING sepa.classify  URGN: pivot $18.94 is more than 10% below current price $35.15 — stock already ran, promotion suppressed
+2026-06-24 22:00:23 WARNING sepa.classify  IART: pivot $14.00 is more than 10% below current price $17.69 — stock already ran, promotion suppressed
+2026-06-24 22:00:23 WARNING sepa.classify  ATLC: pivot $90.00 is more than 10% below current price $101.36 — stock already ran, promotion suppressed
+2026-06-24 22:00:23 WARNING sepa.classify  UMAC: pivot $16.93 is more than 10% below current price $21.51 — stock already ran, promotion suppressed
+2026-06-24 22:00:23 WARNING sepa.classify  APPS: pivot $3.87 is more than 10% below current price $10.14 — stock already ran, promotion suppressed
+2026-06-24 22:00:23 WARNING sepa.classify  FCEL: pivot $7.10 is more than 10% below current price $21.82 — stock already ran, promotion suppressed
+2026-06-24 22:00:23 WARNING sepa.classify  AVNS: price appears M&A-pinned (CV=0.4%) — suppressing from buy tiers
+2026-06-24 22:00:23 WARNING sepa.classify  GLASF: pivot $8.49 is more than 10% below current price $11.87 — stock already ran, promotion suppressed
+2026-06-24 22:00:23 WARNING sepa.classify  BJRI: pivot $37.17 is more than 10% below current price $53.16 — stock already ran, promotion suppressed
+2026-06-24 22:00:23 WARNING sepa.classify  ABSI: pivot $7.34 is more than 10% below current price $10.07 — stock already ran, promotion suppressed
+2026-06-24 22:00:23 WARNING sepa.classify  PSNL: pivot $6.73 is more than 10% below current price $10.06 — stock already ran, promotion suppressed
+2026-06-24 22:00:23 WARNING sepa.classify  XNCR: pivot $12.01 is more than 10% below current price $14.08 — stock already ran, promotion suppressed
+2026-06-24 22:00:23 WARNING sepa.classify  ALOY: pivot $14.17 is more than 10% below current price $19.17 — stock already ran, promotion suppressed
+2026-06-24 22:00:23 WARNING sepa.classify  RDVT: pivot $46.28 is more than 10% below current price $55.72 — stock already ran, promotion suppressed
+2026-06-24 22:00:23 WARNING sepa.classify  SPIR: pivot $13.73 is more than 10% below current price $17.44 — stock already ran, promotion suppressed
+2026-06-24 22:00:23 WARNING sepa.classify  CYRX: pivot $8.53 is more than 10% below current price $14.76 — stock already ran, promotion suppressed
+2026-06-24 22:00:23 WARNING sepa.classify  REPL: pivot $9.98 is more than 10% below current price $11.42 — stock already ran, promotion suppressed
+2026-06-24 22:00:23 WARNING sepa.classify  HELE: pivot $18.65 is more than 10% below current price $25.98 — stock already ran, promotion suppressed
+2026-06-24 22:00:24 WARNING sepa.classify  XOMA: price appears M&A-pinned (CV=0.4%) — suppressing from buy tiers
+2026-06-24 22:00:24 WARNING sepa.classify  GCO: pivot $29.25 is more than 10% below current price $33.82 — stock already ran, promotion suppressed
+2026-06-24 22:00:24 WARNING sepa.classify  ALMU: pivot $17.35 is more than 10% below current price $21.84 — stock already ran, promotion suppressed
+2026-06-24 22:00:24 WARNING sepa.classify  TBRG: pivot $23.25 is more than 10% below current price $26.13 — stock already ran, promotion suppressed
+2026-06-24 22:00:24 WARNING sepa.classify  ASYS: pivot $16.66 is more than 10% below current price $20.33 — stock already ran, promotion suppressed
+2026-06-24 22:00:24 WARNING sepa.classify  SVCO: pivot $7.26 is more than 10% below current price $12.88 — stock already ran, promotion suppressed
+2026-06-24 22:00:24 WARNING sepa.classify  SLP: pivot $15.31 is more than 10% below current price $18.15 — stock already ran, promotion suppressed
+2026-06-24 22:00:24 WARNING sepa.classify  RFIL: pivot $18.75 is more than 10% below current price $21.12 — stock already ran, promotion suppressed
+2026-06-24 22:00:24 WARNING sepa.classify  QMCO: pivot $10.03 is more than 10% below current price $13.81 — stock already ran, promotion suppressed
+2026-06-24 22:00:24 WARNING sepa.classify  ASRT: price appears M&A-pinned (CV=0.2%) — suppressing from buy tiers
+2026-06-24 22:00:24 WARNING sepa.classify  TRT: pivot $6.33 is more than 10% below current price $13.37 — stock already ran, promotion suppressed
+2026-06-24 22:00:24 WARNING sepa.classify  KALV: price appears M&A-pinned (CV=0.4%) — suppressing from buy tiers
+2026-06-24 22:00:24 INFO    sepa.run  momentum breakout alerts: ['ATEYY']
+2026-06-24 22:00:24 WARNING matplotlib.font_manager  findfont: Failed to find font weight semibold, now using 700.
+2026-06-24 22:00:41 INFO    httpx  HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-06-24 22:00:41 INFO    sepa.validator  validator CRDO: ```json
+{
+  "verdict": "CONFIRM",
+  "reason": "Perfect trend template (8/8), exceptional RS (97), and fundamentals pass; setup is clean with pivot well-defined and stop tight relative to recent range.",
+  "summary": "Credo Technology designs high-speed semiconductor interconnect solutions and chiplets for data center, networking, and AI applications.",
+  "thesis": "Stock is in Stage 2 with explosive momentum (+222% YTD, +75% above 200 SMA), breaking above a 24-week low-pivot structure with institutional-quality trend alignment; positioned for further extension into R2 at 264.76.",
+  "catalysts": "Data center/AI product adoption announcements, guidance raises, or design wins at hyperscalers could accelerate breakout; no near-term events identified, but momentum and technicals alone suggest continued institutional accumulation."
+}
+``` | in=469 out=208 tokens | 3.9s
+2026-06-24 22:00:45 INFO    httpx  HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-06-24 22:00:45 INFO    sepa.validator  validator NXPI: ```json
+{
+  "verdict": "CONFIRM",
+  "reason": "Strong Stage 2 setup with perfect trend template score (8/8), excellent relative strength (81), and fundamentals passed; price is extended but not excessive above the 200-SMA.",
+  "summary": "NXP Semiconductors is a global automotive and industrial semiconductor manufacturer, a key supplier of microcontrollers, connectivity, and security chips.",
+  "thesis": "The stock has completed a clean 24-week consolidation with a tight pivot at 305.99 and is now in early Stage 2 with all trend conditions aligned; automotive/IoT chip demand and NXP's market position support continuation.",
+  "catalysts": "Earnings beats, automotive production recovery, 5G/IoT adoption acceleration, or favorable semiconductor industry cycle progression could validate the breakout."
+}
+``` | in=472 out=198 tokens | 3.6s
+2026-06-24 22:00:49 INFO    httpx  HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-06-24 22:00:49 INFO    sepa.validator  validator AIR: ```json
+{
+  "verdict": "CONFIRM",
+  "reason": "Strong technical setup with 8/8 trend confirmation, high RS, and clean VCP structure; fundamentals pass and stock shows sustained uptrend after +93% YTD run.",
+  "summary": "AAR Corp is a diversified aerospace and defense contractor providing parts, components, and supply chain solutions to commercial and military aircraft customers.",
+  "thesis": "Stock is in early Stage 2 with robust relative strength (79) and a textbook VCP base; the 33% extension above 200 SMA confirms institutional accumulation, and the setup offers a clean entry near pivot with defined risk.",
+  "catalysts": "Potential tailwinds include recovery in commercial aviation maintenance demand, defense spending cycles, and earnings beats as aerospace production normalizes post-supply-chain disruption."
+}
+``` | in=446 out=197 tokens | 3.3s
+2026-06-24 22:00:53 INFO    httpx  HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-06-24 22:00:53 INFO    sepa.validator  validator LLY: ```json
+{
+  "verdict": "CONFIRM",
+  "reason": "Textbook cup-with-handle on strong relative strength (RS 70) with clean 7/8 trend structure; fundamentals pass and pivot sits 14% above 200 SMA, consistent with Minervini Stage 2 setup.",
+  "summary": "Eli Lilly is a top-tier pharmaceutical and biotechnology company focused on oncology, immunology, and endocrinology therapies.",
+  "thesis": "LLY has shown sustained momentum (+45% YTD) with a well-formed cup structure; handle breakout near 1122.5 pivot aligns with institutional accumulation phase in a secular growth sector (GLP-1 and obesity treatments).",
+  "catalysts": "Upcoming clinical trial data, FDA approvals for pipeline candidates (particularly GLP-1 and tirzepatide expansion), and quarterly earnings beats given strong investor demand for obesity and diabetes solutions."
+}
+``` | in=458 out=227 tokens | 3.6s
+2026-06-24 22:00:57 INFO    httpx  HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-06-24 22:00:57 INFO    sepa.validator  validator CVCO: ```json
+{
+  "verdict": "CONFIRM",
+  "reason": "Clean 24-week consolidation with strong relative strength (70), passing trend template (7/8), and fundamentals approved; setup matches Minervini stage 2 profile with defined risk/reward.",
+  "summary": "CAVCO Industries manufactures factory-built housing and modular buildings for residential and commercial markets.",
+  "thesis": "Stock has established a tight pivot at 604.47 after 24 weeks of consolidation with solid year-to-date momentum (+43%); RS of 70 and 6% extension above 200 SMA indicate institutional accumulation and early stage 2 breakout potential.",
+  "catalysts": "Housing demand trends, manufactured housing industry cycles, earnings reports, and potential housing policy announcements could serve as catalysts; monitor for volume confirmation above resistance."
+}
+``` | in=470 out=202 tokens | 3.3s
+2026-06-24 22:01:00 INFO    httpx  HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-06-24 22:01:00 INFO    sepa.validator  validator CON: ```json
+{
+  "verdict": "CAUTION",
+  "reason": "Strong technical setup with solid fundamentals, but lack of recent news and limited public awareness of Concentra's business momentum create uncertainty on near-term catalysts.",
+  "summary": "Concentra is a healthcare services provider offering occupational health, urgent care, and diagnostic imaging services across North America.",
+  "thesis": "Cup-with-handle breakout with 8/8 trend confirmation and 70 RS suggests institutional accumulation; 30% extension above 200 SMA indicates upside still has room before extended valuation concerns arise.",
+  "catalysts": "Earnings announcements, M&A activity in the healthcare services sector, or organic growth acceleration in occupational health services would validate the breakout; absence of recent headlines suggests event risk is low near-term."
+}
+``` | in=456 out=194 tokens | 2.9s
+2026-06-24 22:01:01 WARNING sepa.run  CON: AI CAUTION → demoted from Potential Buy to Buy Alert
+2026-06-24 22:01:53 INFO    sepa.reporter  daily report → nirmal.lather3@gmail.com  (698 stocks)
+2026-06-24 22:01:53 INFO    sepa.run  HEARTBEAT: SEPA scan 2026-06-24: 0 Buy Ready, 18 Potential Buy, 182 Momentum, 79 promotions, 4 alerts. Breadth 48.7% Stage2 -> Confirmed uptrend
+2026-06-24 22:01:55 INFO    sepa.run  DB maintenance complete
+2026-06-24 22:01:57 INFO    sepa.run  logs pushed to GitHub
