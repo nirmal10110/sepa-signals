@@ -116,14 +116,27 @@ def _download_batch(tickers, *, period=None, start=None, end=None):
     return _retry(lambda: yf.download(tickers, **kwargs))
 
 
-def _process_batch(con, batch, data, counter):
-    """Extract per-ticker DataFrames from a batch download result and upsert."""
+def _process_batch(con, batch, data, counter, missing_out=None):
+    """Extract per-ticker DataFrames from a batch download result and upsert.
+
+    A ticker whose raw rows are entirely empty/NaN is yfinance's "possibly
+    delisted" false positive — it's appended to missing_out (if given) for
+    an individual retry instead of being counted as skipped. A ticker whose
+    raw data is real but fails the hygiene filter (penny stock, illiquid)
+    is counted as skipped — that's a correct exclusion, not a glitch.
+    """
     loaded = skipped = failed = 0
     for t in batch:
         try:
-            df = data[t] if len(batch) > 1 else data
-            df = df.rename(columns=str.lower)[["open", "high", "low", "close", "volume"]].dropna()
-            df = hygiene_filter(df)
+            raw = data[t] if len(batch) > 1 else data
+            raw = raw.rename(columns=str.lower)[["open", "high", "low", "close", "volume"]].dropna()
+            if raw.empty:
+                if missing_out is not None:
+                    missing_out.append(t)
+                else:
+                    skipped += 1
+                continue
+            df = hygiene_filter(raw)
             if df.empty:
                 skipped += 1
                 continue
@@ -135,6 +148,58 @@ def _process_batch(con, batch, data, counter):
     counter[0] += loaded
     counter[1] += skipped
     counter[2] += failed
+
+
+def _fetch_individual_with_retry(t, *, period=None, start=None, end=None):
+    """Re-fetch a single ticker that came back empty from a batch download.
+
+    yfinance sometimes drops a valid ticker from a batch call with a
+    "possibly delisted; no price data found" warning that is transient
+    (FTNT and others have shown this). Retry it alone before giving up.
+    """
+    import yfinance as yf
+    kwargs = dict(auto_adjust=True)
+    if start:
+        kwargs["start"] = start
+        if end:
+            kwargs["end"] = end
+    else:
+        kwargs["period"] = period
+    for attempt in range(1, C.INGEST_RETRY_COUNT + 1):
+        log.warning("ingest %s: missing from batch result, retrying individually (attempt %d/%d)",
+                    t, attempt, C.INGEST_RETRY_COUNT)
+        try:
+            df = yf.Ticker(t).history(**kwargs)
+        except Exception as e:
+            log.error("ingest %s: fetch error attempt %d/%d: %s",
+                      t, attempt, C.INGEST_RETRY_COUNT, e)
+            df = pd.DataFrame()
+        if not df.empty:
+            log.info("ingest %s: recovered via individual fetch", t)
+            return df
+        if attempt < C.INGEST_RETRY_COUNT:
+            time.sleep(C.INGEST_RETRY_BACKOFF)
+    log.error("ingest %s: no price data after %d retries — ticker will be stale",
+              t, C.INGEST_RETRY_COUNT)
+    return pd.DataFrame()
+
+
+def _retry_missing(con, missing, counter, *, period=None, start=None, end=None):
+    """Individually retry tickers that came back empty from a batch download,
+    clean + hygiene-filter the result, and upsert any that recover."""
+    for t in missing:
+        df = _fetch_individual_with_retry(t, period=period, start=start, end=end)
+        if df.empty:
+            counter[2] += 1
+            continue
+        df = df.rename(columns=str.lower)[["open", "high", "low", "close", "volume"]].dropna()
+        df = hygiene_filter(df)
+        if df.empty:
+            counter[1] += 1
+            continue
+        db.upsert_prices(con, t, df)
+        counter[0] += 1
+    con.commit()
 
 
 def load_prices(con, tickers, period=None):
@@ -177,8 +242,11 @@ def load_prices(con, tickers, period=None):
             counter[2] += len(batch)
             time.sleep(5)
             continue
-        _process_batch(con, batch, data, counter)
+        missing = []
+        _process_batch(con, batch, data, counter, missing_out=missing)
         con.commit()
+        if missing:
+            _retry_missing(con, missing, counter, period=full_period)
         batch_idx += 1
         log.info("prices new-ticker batch %d: loaded=%d skipped=%d failed=%d",
                  batch_idx, *counter)
@@ -201,8 +269,11 @@ def load_prices(con, tickers, period=None):
                 counter[2] += len(batch)
                 time.sleep(5)
                 continue
-            _process_batch(con, batch, data, counter)
+            missing = []
+            _process_batch(con, batch, data, counter, missing_out=missing)
             con.commit()
+            if missing:
+                _retry_missing(con, missing, counter, start=start_date, end=today)
             batch_idx += 1
             log.info("prices incr batch %d (start=%s): loaded=%d skipped=%d failed=%d",
                      batch_idx, start_date, *counter)
@@ -364,6 +435,28 @@ def load_fundamentals(con, ticker, cik):
         con.commit()
 
 
+def check_stale_prices(con, max_age_days=None):
+    """Log + alert on tickers whose newest stored price is too old.
+
+    A ticker can end up stale after load_prices() if it failed every batch
+    AND individual retry (genuinely delisted, or yfinance outage longer than
+    our retry budget). Surfacing this is the safety net for Fix 1: a name
+    silently dropped here would never get a TT score, tier, or signal.
+    """
+    max_age_days = max_age_days if max_age_days is not None else C.INGEST_STALE_DAYS
+    stale = db.get_stale_tickers(con, max_age_days)
+    for ticker, last_date in stale:
+        log.warning("STALE PRICE DATA: %s last updated %s — may produce missed signals",
+                    ticker, last_date or "never")
+    if len(stale) > C.STALE_TICKER_ALERT_THRESHOLD:
+        from . import alerter
+        examples = ", ".join(t for t, _ in stale[:5])
+        alerter.send_text(
+            f"⚠️ Price data stale for {len(stale)} tickers (e.g. {examples}) — check yfinance feed"
+        )
+    return stale
+
+
 def ingest_us(con, limit=None, with_fundamentals=True):
     """Full nightly ingest. Run on the mini PC. NEEDS-LIVE-VERIFY."""
     rows = fetch_us_universe(limit or C.UNIVERSE_LIMIT)
@@ -371,6 +464,7 @@ def ingest_us(con, limit=None, with_fundamentals=True):
     tickers = [t for t, *_ in rows]
     log.info("universe: %d US tickers (after ETF/shell filter)", len(tickers))
     load_prices(con, tickers)
+    check_stale_prices(con)
     if with_fundamentals:
         for i, (t, _, cik) in enumerate(rows):
             load_fundamentals(con, t, cik)

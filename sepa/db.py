@@ -331,6 +331,24 @@ def get_price_latest_dates(con, tickers: list) -> dict:
     return {t: d for t, d in rows if d}
 
 
+def get_stale_tickers(con, max_age_days: int) -> list:
+    """Return [(ticker, last_date)] for active securities whose newest stored
+    price is older than max_age_days, or that have no price data at all
+    (last_date is None in that case)."""
+    rows = con.execute(
+        """SELECT s.ticker, p.last_date
+           FROM securities s
+           LEFT JOIN (
+               SELECT ticker, MAX(date) AS last_date FROM prices GROUP BY ticker
+           ) p ON s.ticker = p.ticker
+           WHERE s.active = 1
+             AND (p.last_date IS NULL OR p.last_date < date('now', ?))
+           ORDER BY s.ticker""",
+        (f"-{max_age_days} days",),
+    ).fetchall()
+    return rows
+
+
 def get_fundamentals_fetched_at(con, ticker) -> str | None:
     """Return the ISO datetime string when fundamentals were last fetched, or None."""
     row = con.execute("SELECT fund_fetched_at FROM securities WHERE ticker=?",

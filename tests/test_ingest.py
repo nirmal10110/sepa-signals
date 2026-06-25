@@ -233,3 +233,189 @@ def test_all_zero_sales_warning_when_eps_present(caplog, tmp_path):
 
     assert "sales all-zero despite eps data present" in caplog.text
     assert "FAKE" in caplog.text
+
+
+# ---------------------------------------------------------------- yfinance "possibly delisted" retry
+def test_process_batch_routes_empty_ticker_to_missing(tmp_path):
+    """A ticker with all-empty raw rows (yfinance's false-positive 'delisted')
+    must be routed to missing_out, not counted as skipped."""
+    from sepa import db as sepa_db
+    from sepa.ingest import _process_batch
+
+    con = sepa_db.connect(tmp_path / "test.db")
+    good = _price_df(np.full(60, 50.0), np.full(60, 100_000.0))
+    empty = pd.DataFrame(columns=["Open", "High", "Low", "Close", "Volume"])
+    data = {"GOOD": good, "FTNT": empty}
+
+    counter = [0, 0, 0]
+    missing = []
+    _process_batch(con, ["GOOD", "FTNT"], data, counter, missing_out=missing)
+
+    assert missing == ["FTNT"]
+    assert counter[0] == 1   # GOOD loaded
+    assert counter[1] == 0   # nothing hygiene-skipped
+    assert counter[2] == 0
+
+
+def test_process_batch_hygiene_skip_not_routed_to_missing(tmp_path):
+    """A ticker with real (non-empty) data that fails the hygiene filter is a
+    genuine skip, not a batch glitch — it must NOT be retried individually."""
+    from sepa import db as sepa_db
+    from sepa.ingest import _process_batch
+
+    con = sepa_db.connect(tmp_path / "test.db")
+    penny = _price_df(np.full(60, 5.0), np.full(60, 1_000_000.0))  # below $10
+
+    counter = [0, 0, 0]
+    missing = []
+    # single-ticker batch: _process_batch uses `data` directly, not data[t]
+    _process_batch(con, ["PENNY"], penny, counter, missing_out=missing)
+
+    assert missing == []
+    assert counter[1] == 1   # skipped, not missing
+
+
+def test_fetch_individual_with_retry_recovers_on_later_attempt(monkeypatch, caplog):
+    """Mock yf.Ticker(t).history() to fail (empty) on the first attempt and
+    return real data on the second — the ticker must be recovered and logged."""
+    from unittest.mock import patch, MagicMock
+    from sepa.ingest import _fetch_individual_with_retry
+
+    good = _price_df(np.full(5, 50.0), np.full(5, 100_000.0))
+    calls = {"n": 0}
+
+    def fake_history(**kwargs):
+        calls["n"] += 1
+        return pd.DataFrame() if calls["n"] == 1 else good
+
+    mock_ticker = MagicMock()
+    mock_ticker.history.side_effect = fake_history
+
+    monkeypatch.setattr("sepa.ingest.time.sleep", lambda *_: None)
+    with patch("yfinance.Ticker", return_value=mock_ticker):
+        with caplog.at_level(logging.INFO, logger="sepa.ingest"):
+            df = _fetch_individual_with_retry("FTNT", period="2y")
+
+    assert not df.empty
+    assert calls["n"] == 2
+    assert (f"FTNT: missing from batch result, retrying individually "
+            f"(attempt 1/{C.INGEST_RETRY_COUNT})") in caplog.text
+    assert "FTNT: recovered via individual fetch" in caplog.text
+
+
+def test_fetch_individual_with_retry_exhausts_and_logs_error(monkeypatch, caplog):
+    """If every individual retry also comes back empty, log the final ERROR
+    and return an empty DataFrame — the caller marks the ticker stale."""
+    from unittest.mock import patch, MagicMock
+    from sepa.ingest import _fetch_individual_with_retry
+
+    mock_ticker = MagicMock()
+    mock_ticker.history.return_value = pd.DataFrame()
+
+    monkeypatch.setattr("sepa.ingest.time.sleep", lambda *_: None)
+    with patch("yfinance.Ticker", return_value=mock_ticker):
+        with caplog.at_level(logging.WARNING, logger="sepa.ingest"):
+            df = _fetch_individual_with_retry("DEADCO", period="2y")
+
+    assert df.empty
+    assert mock_ticker.history.call_count == C.INGEST_RETRY_COUNT
+    assert (f"DEADCO: no price data after {C.INGEST_RETRY_COUNT} retries "
+            f"— ticker will be stale") in caplog.text
+
+
+def test_retry_missing_upserts_recovered_ticker(tmp_path, monkeypatch):
+    """_retry_missing must upsert a ticker that recovers via individual fetch
+    and bump the loaded counter."""
+    from unittest.mock import patch
+    from sepa import db as sepa_db
+    from sepa.ingest import _retry_missing
+
+    con = sepa_db.connect(tmp_path / "test.db")
+    sepa_db.upsert_security(con, "FTNT", "Fortinet Inc", "NASDAQ", "Tech")
+    recovered = _price_df(np.full(60, 80.0), np.full(60, 200_000.0))
+
+    counter = [0, 0, 0]
+    with patch("sepa.ingest._fetch_individual_with_retry", return_value=recovered):
+        _retry_missing(con, ["FTNT"], counter, period="2y")
+
+    assert counter[0] == 1
+    hist = sepa_db.get_history(con, "FTNT")
+    assert not hist.empty
+
+
+def test_retry_missing_counts_persistent_failure(tmp_path):
+    """A ticker that never recovers (still empty after retries) must be
+    counted as failed, not silently dropped."""
+    from unittest.mock import patch
+    from sepa import db as sepa_db
+    from sepa.ingest import _retry_missing
+
+    con = sepa_db.connect(tmp_path / "test.db")
+    counter = [0, 0, 0]
+    with patch("sepa.ingest._fetch_individual_with_retry", return_value=pd.DataFrame()):
+        _retry_missing(con, ["DEADCO"], counter)
+
+    assert counter == [0, 0, 1]
+
+
+# ---------------------------------------------------------------- stale price detection
+def test_stale_ticker_logged(tmp_path, caplog):
+    """A ticker whose newest stored price is older than INGEST_STALE_DAYS
+    must produce a WARNING naming the ticker and last date."""
+    import datetime
+    from sepa import db as sepa_db
+    from sepa.ingest import check_stale_prices
+
+    con = sepa_db.connect(tmp_path / "test.db")
+    sepa_db.upsert_security(con, "STALE1", "Stale Corp", "NASDAQ", "Tech")
+    old_date = (datetime.date.today() - datetime.timedelta(days=5)).isoformat()
+    idx = pd.DatetimeIndex([old_date])
+    df = pd.DataFrame({"open": [10.0], "high": [10.0], "low": [10.0],
+                       "close": [10.0], "volume": [100_000.0]}, index=idx)
+    sepa_db.upsert_prices(con, "STALE1", df)
+    con.commit()
+
+    with caplog.at_level(logging.WARNING, logger="sepa.ingest"):
+        stale = check_stale_prices(con, max_age_days=3)
+
+    assert any(t == "STALE1" for t, _ in stale)
+    assert "STALE PRICE DATA: STALE1" in caplog.text
+    assert old_date in caplog.text
+
+
+def test_fresh_ticker_not_flagged_stale(tmp_path, caplog):
+    import datetime
+    from sepa import db as sepa_db
+    from sepa.ingest import check_stale_prices
+
+    con = sepa_db.connect(tmp_path / "test.db")
+    sepa_db.upsert_security(con, "FRESH1", "Fresh Corp", "NASDAQ", "Tech")
+    today = datetime.date.today().isoformat()
+    idx = pd.DatetimeIndex([today])
+    df = pd.DataFrame({"open": [10.0], "high": [10.0], "low": [10.0],
+                       "close": [10.0], "volume": [100_000.0]}, index=idx)
+    sepa_db.upsert_prices(con, "FRESH1", df)
+    con.commit()
+
+    stale = check_stale_prices(con, max_age_days=3)
+    assert not any(t == "FRESH1" for t, _ in stale)
+
+
+def test_stale_ticker_alert_above_threshold(tmp_path):
+    """More than STALE_TICKER_ALERT_THRESHOLD stale tickers must trigger a
+    Telegram ops alert via alerter.send_text."""
+    from unittest.mock import patch
+    from sepa import db as sepa_db
+    from sepa.ingest import check_stale_prices
+
+    con = sepa_db.connect(tmp_path / "test.db")
+    for i in range(C.STALE_TICKER_ALERT_THRESHOLD + 1):
+        sepa_db.upsert_security(con, f"STALE{i}", f"Stale Corp {i}", "NASDAQ", "Tech")
+    con.commit()
+
+    with patch("sepa.alerter.send_text") as mock_send:
+        check_stale_prices(con, max_age_days=3)
+
+    mock_send.assert_called_once()
+    msg = mock_send.call_args[0][0]
+    assert f"{C.STALE_TICKER_ALERT_THRESHOLD + 1}" in msg

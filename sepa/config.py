@@ -113,6 +113,18 @@ PRICE_LOOKBACK     = _get("PRICE_LOOKBACK", "2y")
 FUND_CACHE_DAYS_NORMAL   = _getfloat("FUND_CACHE_DAYS_NORMAL",   7.0)
 FUND_CACHE_DAYS_EARNINGS = _getfloat("FUND_CACHE_DAYS_EARNINGS", 0.25)  # 6 h
 
+# --- price ingest retry / staleness ---
+# yfinance occasionally drops a perfectly valid ticker from a batch download
+# with a "possibly delisted; no price data found" warning that is actually a
+# transient API glitch, not a real delisting (seen on FTNT and others). Retry
+# any ticker missing from the batch result individually before giving up.
+INGEST_RETRY_COUNT: int   = _getint("INGEST_RETRY_COUNT", 3)
+INGEST_RETRY_BACKOFF: int = _getint("INGEST_RETRY_BACKOFF", 5)   # seconds between attempts
+# Tickers with no price newer than this are flagged STALE after ingest, and
+# a Telegram ops alert fires if more than STALE_TICKER_ALERT_THRESHOLD are stale.
+INGEST_STALE_DAYS: int            = _getint("INGEST_STALE_DAYS", 3)
+STALE_TICKER_ALERT_THRESHOLD: int = _getint("STALE_TICKER_ALERT_THRESHOLD", 10)
+
 
 # ===========================================================================
 # ALGORITHM THRESHOLDS  (tune in .env after Phase 2 calibration)
