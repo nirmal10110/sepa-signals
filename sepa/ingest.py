@@ -448,7 +448,15 @@ def check_stale_prices(con, max_age_days=None):
     for ticker, last_date in stale:
         log.warning("STALE PRICE DATA: %s last updated %s — may produce missed signals",
                     ticker, last_date or "never")
-    if len(stale) > C.STALE_TICKER_ALERT_THRESHOLD:
+    total_tracked = len(db.universe(con))
+    stale_pct = len(stale) / max(total_tracked, 1)
+    if stale_pct > 0.20:
+        # Whole universe flagged is a feed outage, not a per-ticker problem —
+        # alerting here just spams; the run log already has the warnings above.
+        log.warning("stale tickers are %.0f%% of universe (%d/%d) — suppressing "
+                    "ops alert, likely a systemic feed issue", stale_pct * 100,
+                    len(stale), total_tracked)
+    elif len(stale) > C.STALE_TICKER_ALERT_THRESHOLD:
         from . import alerter
         examples = ", ".join(t for t, _ in stale[:5])
         alerter.send_text(

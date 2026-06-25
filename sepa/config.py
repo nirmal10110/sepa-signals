@@ -122,7 +122,7 @@ INGEST_RETRY_COUNT: int   = _getint("INGEST_RETRY_COUNT", 3)
 INGEST_RETRY_BACKOFF: int = _getint("INGEST_RETRY_BACKOFF", 5)   # seconds between attempts
 # Tickers with no price newer than this are flagged STALE after ingest, and
 # a Telegram ops alert fires if more than STALE_TICKER_ALERT_THRESHOLD are stale.
-INGEST_STALE_DAYS: int            = _getint("INGEST_STALE_DAYS", 3)
+INGEST_STALE_DAYS: int            = _getint("INGEST_STALE_DAYS", 5)
 STALE_TICKER_ALERT_THRESHOLD: int = _getint("STALE_TICKER_ALERT_THRESHOLD", 10)
 
 
