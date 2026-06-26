@@ -1,0 +1,113 @@
+2026-06-26 14:00:01 INFO    sepa  log file: C:\Users\lathe\sepa-signals\data\logs\2026-06-26\14-00-01-scan\sepa.log
+2026-06-26 14:00:01 INFO    sepa.run  SEPA scan starting — 5083 tickers
+2026-06-26 14:00:23 INFO    sepa.run  breadth: 1404/2885 (48.7%) Stage 2 -> tone: Confirmed uptrend
+2026-06-26 14:00:23 WARNING sepa.classify  INTC: pivot $68.50 is more than 10% below current price $131.65 — stock already ran, promotion suppressed
+2026-06-26 14:00:23 WARNING sepa.classify  KLAC: pivot $201.14 is more than 10% below current price $240.48 — stock already ran, promotion suppressed
+2026-06-26 14:00:23 WARNING sepa.classify  APH: pivot $136.53 is more than 10% below current price $162.78 — stock already ran, promotion suppressed
+2026-06-26 14:00:23 WARNING sepa.classify  SAN: pivot $11.05 is more than 10% below current price $13.37 — stock already ran, promotion suppressed
+2026-06-26 14:00:23 WARNING sepa.classify  RKLB: pivot $76.58 is more than 10% below current price $85.41 — stock already ran, promotion suppressed
+2026-06-26 14:00:23 WARNING sepa.classify  WBD: price appears M&A-pinned (CV=1.3%) — suppressing from buy tiers
+2026-06-26 14:00:23 WARNING sepa.classify  URI: pivot $907.24 is more than 10% below current price $1083.72 — stock already ran, promotion suppressed
+2026-06-26 14:00:23 WARNING sepa.classify  HPE: pivot $28.76 is more than 10% below current price $48.75 — stock already ran, promotion suppressed
+2026-06-26 14:00:23 WARNING sepa.classify  UMC: pivot $12.71 is more than 10% below current price $28.01 — stock already ran, promotion suppressed
+2026-06-26 14:00:23 WARNING sepa.classify  MCHP: pivot $64.39 is more than 10% below current price $92.48 — stock already ran, promotion suppressed
+2026-06-26 14:00:23 WARNING sepa.classify  EBAY: price appears M&A-pinned (CV=1.3%) — suppressing from buy tiers
+2026-06-26 14:00:23 WARNING sepa.classify  CLS: pivot $302.22 is more than 10% below current price $362.24 — stock already ran, promotion suppressed
+2026-06-26 14:00:23 WARNING sepa.classify  IX: pivot $30.47 is more than 10% below current price $38.35 — stock already ran, promotion suppressed
+2026-06-26 14:00:23 WARNING sepa.classify  TEVA: pivot $30.25 is more than 10% below current price $34.22 — stock already ran, promotion suppressed
+2026-06-26 14:00:23 WARNING sepa.classify  UAL: pivot $95.08 is more than 10% below current price $130.54 — stock already ran, promotion suppressed
+2026-06-26 14:00:23 WARNING sepa.classify  NTRA: pivot $202.73 is more than 10% below current price $259.97 — stock already ran, promotion suppressed
+2026-06-26 14:00:23 WARNING sepa.classify  CNC: pivot $37.55 is more than 10% below current price $62.97 — stock already ran, promotion suppressed
+2026-06-26 14:00:23 WARNING sepa.classify  WSM: pivot $202.28 is more than 10% below current price $235.66 — stock already ran, promotion suppressed
+2026-06-26 14:00:23 WARNING sepa.classify  MKSI: pivot $335.15 is more than 10% below current price $381.62 — stock already ran, promotion suppressed
+2026-06-26 14:00:23 WARNING sepa.classify  UTHR: price appears M&A-pinned (CV=1.4%) — suppressing from buy tiers
+2026-06-26 14:00:23 WARNING sepa.classify  ENTG: pivot $142.92 is more than 10% below current price $171.46 — stock already ran, promotion suppressed
+2026-06-26 14:00:23 WARNING sepa.classify  SN: pivot $108.45 is more than 10% below current price $140.19 — stock already ran, promotion suppressed
+2026-06-26 14:00:23 WARNING sepa.classify  SITM: pivot $570.26 is more than 10% below current price $692.47 — stock already ran, promotion suppressed
+2026-06-26 14:00:23 WARNING sepa.classify  ROKU: pivot $90.21 is more than 10% below current price $135.93 — stock already ran, promotion suppressed
+2026-06-26 14:00:23 WARNING sepa.classify  MLI: pivot $119.38 is more than 10% below current price $133.17 — stock already ran, promotion suppressed
+2026-06-26 14:00:23 WARNING sepa.classify  SANM: pivot $138.56 is more than 10% below current price $248.81 — stock already ran, promotion suppressed
+2026-06-26 14:00:23 WARNING sepa.classify  AAL: pivot $11.13 is more than 10% below current price $17.44 — stock already ran, promotion suppressed
+2026-06-26 14:00:23 WARNING sepa.classify  CORT: pivot $40.47 is more than 10% below current price $81.56 — stock already ran, promotion suppressed
+2026-06-26 14:00:23 WARNING sepa.classify  SSL: pivot $8.92 is more than 10% below current price $10.50 — stock already ran, promotion suppressed
+2026-06-26 14:00:23 WARNING sepa.classify  ENS: pivot $161.96 is more than 10% below current price $218.94 — stock already ran, promotion suppressed
+2026-06-26 14:00:23 WARNING sepa.classify  LTH: pivot $34.87 is more than 10% below current price $38.87 — stock already ran, promotion suppressed
+2026-06-26 14:00:23 WARNING sepa.classify  ALKS: pivot $44.92 is more than 10% below current price $50.45 — stock already ran, promotion suppressed
+2026-06-26 14:00:23 WARNING sepa.classify  HXL: pivot $82.43 is more than 10% below current price $95.48 — stock already ran, promotion suppressed
+2026-06-26 14:00:23 WARNING sepa.classify  MXL: pivot $17.80 is more than 10% below current price $84.99 — stock already ran, promotion suppressed
+2026-06-26 14:00:23 WARNING sepa.classify  MRCY: pivot $85.51 is more than 10% below current price $105.00 — stock already ran, promotion suppressed
+2026-06-26 14:00:23 WARNING sepa.classify  RSI: pivot $20.88 is more than 10% below current price $29.83 — stock already ran, promotion suppressed
+2026-06-26 14:00:23 WARNING sepa.classify  SNDR: pivot $25.78 is more than 10% below current price $34.97 — stock already ran, promotion suppressed
+2026-06-26 14:00:23 WARNING sepa.classify  APGE: pivot $89.50 is more than 10% below current price $132.69 — stock already ran, promotion suppressed
+2026-06-26 14:00:23 WARNING sepa.classify  CNTA: price appears M&A-pinned (CV=0.5%) — suppressing from buy tiers
+2026-06-26 14:00:23 WARNING sepa.classify  ENVA: pivot $137.21 is more than 10% below current price $216.58 — stock already ran, promotion suppressed
+2026-06-26 14:00:23 WARNING sepa.classify  FLNC: pivot $17.11 is more than 10% below current price $19.75 — stock already ran, promotion suppressed
+2026-06-26 14:00:23 WARNING sepa.classify  VECO: pivot $62.48 is more than 10% below current price $71.16 — stock already ran, promotion suppressed
+2026-06-26 14:00:23 WARNING sepa.classify  SEZL: pivot $84.70 is more than 10% below current price $159.27 — stock already ran, promotion suppressed
+2026-06-26 14:00:23 WARNING sepa.classify  BBAR: pivot $14.53 is more than 10% below current price $18.95 — stock already ran, promotion suppressed
+2026-06-26 14:00:23 WARNING sepa.classify  BFH: pivot $79.09 is more than 10% below current price $104.91 — stock already ran, promotion suppressed
+2026-06-26 14:00:23 WARNING sepa.classify  CPRX: price appears M&A-pinned (CV=0.2%) — suppressing from buy tiers
+2026-06-26 14:00:23 WARNING sepa.classify  YETI: pivot $37.54 is more than 10% below current price $49.64 — stock already ran, promotion suppressed
+2026-06-26 14:00:23 WARNING sepa.classify  GEO: pivot $15.29 is more than 10% below current price $29.38 — stock already ran, promotion suppressed
+2026-06-26 14:00:23 WARNING sepa.classify  ARCB: pivot $127.63 is more than 10% below current price $145.18 — stock already ran, promotion suppressed
+2026-06-26 14:00:23 WARNING sepa.classify  VCYT: pivot $33.54 is more than 10% below current price $56.76 — stock already ran, promotion suppressed
+2026-06-26 14:00:23 WARNING sepa.classify  CAKE: pivot $66.04 is more than 10% below current price $78.17 — stock already ran, promotion suppressed
+2026-06-26 14:00:23 WARNING sepa.classify  DAVE: pivot $282.56 is more than 10% below current price $323.22 — stock already ran, promotion suppressed
+2026-06-26 14:00:23 WARNING sepa.classify  OGN: price appears M&A-pinned (CV=0.3%) — suppressing from buy tiers
+2026-06-26 14:00:23 WARNING sepa.classify  ATRO: pivot $56.98 is more than 10% below current price $84.86 — stock already ran, promotion suppressed
+2026-06-26 14:00:23 WARNING sepa.classify  ARQT: pivot $24.10 is more than 10% below current price $27.37 — stock already ran, promotion suppressed
+2026-06-26 14:00:23 WARNING sepa.classify  ADPT: pivot $14.84 is more than 10% below current price $19.34 — stock already ran, promotion suppressed
+2026-06-26 14:00:23 WARNING sepa.classify  ICHR: pivot $74.95 is more than 10% below current price $89.38 — stock already ran, promotion suppressed
+2026-06-26 14:00:23 WARNING sepa.classify  IDYA: pivot $31.48 is more than 10% below current price $36.28 — stock already ran, promotion suppressed
+2026-06-26 14:00:23 WARNING sepa.classify  PDFS: pivot $55.09 is more than 10% below current price $63.56 — stock already ran, promotion suppressed
+2026-06-26 14:00:23 WARNING sepa.classify  OUST: pivot $34.86 is more than 10% below current price $40.71 — stock already ran, promotion suppressed
+2026-06-26 14:00:23 WARNING sepa.classify  ESTA: pivot $67.09 is more than 10% below current price $87.21 — stock already ran, promotion suppressed
+2026-06-26 14:00:23 WARNING sepa.classify  CHRN: pivot $8.71 is more than 10% below current price $22.13 — stock already ran, promotion suppressed
+2026-06-26 14:00:23 WARNING sepa.classify  ALGT: pivot $91.61 is more than 10% below current price $107.32 — stock already ran, promotion suppressed
+2026-06-26 14:00:23 WARNING sepa.classify  RAMP: price appears M&A-pinned (CV=0.3%) — suppressing from buy tiers
+2026-06-26 14:00:23 WARNING sepa.classify  PGNY: pivot $18.18 is more than 10% below current price $26.89 — stock already ran, promotion suppressed
+2026-06-26 14:00:23 WARNING sepa.classify  FLYW: pivot $12.86 is more than 10% below current price $16.54 — stock already ran, promotion suppressed
+2026-06-26 14:00:23 WARNING sepa.classify  MBX: pivot $28.96 is more than 10% below current price $48.40 — stock already ran, promotion suppressed
+2026-06-26 14:00:23 WARNING sepa.classify  LWLG: pivot $8.59 is more than 10% below current price $10.03 — stock already ran, promotion suppressed
+2026-06-26 14:00:23 WARNING sepa.classify  TTI: pivot $8.62 is more than 10% below current price $10.13 — stock already ran, promotion suppressed
+2026-06-26 14:00:23 WARNING sepa.classify  PVLA: pivot $116.51 is more than 10% below current price $129.84 — stock already ran, promotion suppressed
+2026-06-26 14:00:23 WARNING sepa.classify  NEO: pivot $8.22 is more than 10% below current price $12.90 — stock already ran, promotion suppressed
+2026-06-26 14:00:23 WARNING sepa.classify  URGN: pivot $18.94 is more than 10% below current price $35.42 — stock already ran, promotion suppressed
+2026-06-26 14:00:23 WARNING sepa.classify  GHRS: pivot $21.50 is more than 10% below current price $24.60 — stock already ran, promotion suppressed
+2026-06-26 14:00:23 WARNING sepa.classify  IART: pivot $14.00 is more than 10% below current price $17.78 — stock already ran, promotion suppressed
+2026-06-26 14:00:23 WARNING sepa.classify  ATLC: pivot $90.00 is more than 10% below current price $104.54 — stock already ran, promotion suppressed
+2026-06-26 14:00:23 WARNING sepa.classify  UMAC: pivot $16.93 is more than 10% below current price $19.52 — stock already ran, promotion suppressed
+2026-06-26 14:00:23 WARNING sepa.classify  APPS: pivot $3.87 is more than 10% below current price $10.14 — stock already ran, promotion suppressed
+2026-06-26 14:00:23 WARNING sepa.classify  FCEL: pivot $7.10 is more than 10% below current price $21.56 — stock already ran, promotion suppressed
+2026-06-26 14:00:23 WARNING sepa.classify  REAL: pivot $9.81 is more than 10% below current price $12.86 — stock already ran, promotion suppressed
+2026-06-26 14:00:23 WARNING sepa.classify  AVNS: price appears M&A-pinned (CV=0.3%) — suppressing from buy tiers
+2026-06-26 14:00:23 WARNING sepa.classify  GLASF: pivot $8.49 is more than 10% below current price $11.01 — stock already ran, promotion suppressed
+2026-06-26 14:00:23 WARNING sepa.classify  BJRI: pivot $37.17 is more than 10% below current price $54.62 — stock already ran, promotion suppressed
+2026-06-26 14:00:23 WARNING sepa.classify  ABSI: pivot $7.34 is more than 10% below current price $10.07 — stock already ran, promotion suppressed
+2026-06-26 14:00:23 WARNING sepa.classify  JBIO: pivot $14.25 is more than 10% below current price $21.90 — stock already ran, promotion suppressed
+2026-06-26 14:00:23 WARNING sepa.classify  VELO: pivot $11.53 is more than 10% below current price $18.05 — stock already ran, promotion suppressed
+2026-06-26 14:00:23 WARNING sepa.classify  XNCR: pivot $12.01 is more than 10% below current price $14.45 — stock already ran, promotion suppressed
+2026-06-26 14:00:23 WARNING sepa.classify  DRTS: pivot $8.54 is more than 10% below current price $10.05 — stock already ran, promotion suppressed
+2026-06-26 14:00:23 WARNING sepa.classify  ALOY: pivot $14.17 is more than 10% below current price $16.67 — stock already ran, promotion suppressed
+2026-06-26 14:00:23 WARNING sepa.classify  RDVT: pivot $46.28 is more than 10% below current price $55.59 — stock already ran, promotion suppressed
+2026-06-26 14:00:23 WARNING sepa.classify  SPIR: pivot $13.73 is more than 10% below current price $17.13 — stock already ran, promotion suppressed
+2026-06-26 14:00:23 WARNING sepa.classify  FEIM: pivot $57.53 is more than 10% below current price $67.27 — stock already ran, promotion suppressed
+2026-06-26 14:00:23 WARNING sepa.classify  BIOA: pivot $19.61 is more than 10% below current price $22.83 — stock already ran, promotion suppressed
+2026-06-26 14:00:23 WARNING sepa.classify  CYRX: pivot $8.53 is more than 10% below current price $15.52 — stock already ran, promotion suppressed
+2026-06-26 14:00:23 WARNING sepa.classify  REPL: pivot $9.98 is more than 10% below current price $11.27 — stock already ran, promotion suppressed
+2026-06-26 14:00:23 WARNING sepa.classify  HELE: pivot $18.65 is more than 10% below current price $27.92 — stock already ran, promotion suppressed
+2026-06-26 14:00:23 WARNING sepa.classify  XOMA: price appears M&A-pinned (CV=0.4%) — suppressing from buy tiers
+2026-06-26 14:00:23 WARNING sepa.classify  GCO: pivot $29.25 is more than 10% below current price $35.32 — stock already ran, promotion suppressed
+2026-06-26 14:00:23 WARNING sepa.classify  ALMU: pivot $17.35 is more than 10% below current price $21.02 — stock already ran, promotion suppressed
+2026-06-26 14:00:23 WARNING sepa.classify  TBRG: price appears M&A-pinned (CV=0.3%) — suppressing from buy tiers
+2026-06-26 14:00:23 WARNING sepa.classify  ASYS: pivot $16.66 is more than 10% below current price $19.53 — stock already ran, promotion suppressed
+2026-06-26 14:00:23 WARNING sepa.classify  SVCO: pivot $7.26 is more than 10% below current price $11.82 — stock already ran, promotion suppressed
+2026-06-26 14:00:23 WARNING sepa.classify  SLP: pivot $15.31 is more than 10% below current price $18.17 — stock already ran, promotion suppressed
+2026-06-26 14:00:23 WARNING sepa.classify  QMCO: pivot $10.03 is more than 10% below current price $13.42 — stock already ran, promotion suppressed
+2026-06-26 14:00:23 WARNING sepa.classify  ASRT: price appears M&A-pinned (CV=0.2%) — suppressing from buy tiers
+2026-06-26 14:00:23 WARNING sepa.classify  TRT: pivot $6.33 is more than 10% below current price $12.49 — stock already ran, promotion suppressed
+2026-06-26 14:00:23 WARNING sepa.classify  KALV: price appears M&A-pinned (CV=0.4%) — suppressing from buy tiers
+2026-06-26 14:00:25 INFO    sepa.reporter  daily report → nirmal.lather3@gmail.com  (696 stocks)
+2026-06-26 14:00:25 INFO    sepa.run  HEARTBEAT: SEPA scan 2026-06-26: 2 Buy Ready, 15 Potential Buy, 175 Momentum, 0 promotions, 0 alerts. Breadth 48.7% Stage2 -> Confirmed uptrend
+2026-06-26 14:00:27 INFO    sepa.run  DB maintenance complete
+2026-06-26 14:00:29 INFO    sepa.run  logs pushed to GitHub

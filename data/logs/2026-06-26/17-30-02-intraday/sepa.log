@@ -1,0 +1,56 @@
+2026-06-26 17:30:02 INFO    sepa  log file: C:\Users\lathe\sepa-signals\data\logs\2026-06-26\17-30-02-intraday\sepa.log
+2026-06-26 17:30:02 INFO    sepa.intraday  intraday scan: 694 tickers in ['Buy Alert', 'Momentum', 'Potential Buy', 'Watch']
+2026-06-26 17:30:10 ERROR   yfinance  $MCHP: possibly delisted; no price data found  (period=1d)
+2026-06-26 17:30:10 ERROR   yfinance  
+1 Failed download:
+2026-06-26 17:30:10 ERROR   yfinance  ['MCHP']: possibly delisted; no price data found  (period=1d)
+2026-06-26 17:30:31 ERROR   yfinance  $LQDA: possibly delisted; no price data found  (period=1d)
+2026-06-26 17:30:31 ERROR   yfinance  
+1 Failed download:
+2026-06-26 17:30:31 ERROR   yfinance  ['LQDA']: possibly delisted; no price data found  (period=1d)
+2026-06-26 17:30:36 ERROR   yfinance  $ENVA: possibly delisted; no price data found  (period=1d)
+2026-06-26 17:30:36 ERROR   yfinance  
+1 Failed download:
+2026-06-26 17:30:36 ERROR   yfinance  ['ENVA']: possibly delisted; no price data found  (period=1d)
+2026-06-26 17:30:47 INFO    sepa.intraday  intraday alert KYIV: close=15.03 pivot=14.52 vol_ratio=3.47
+2026-06-26 17:31:13 INFO    sepa.intraday  intraday alert PLOW: close=53.21 pivot=50.74 vol_ratio=1.47
+2026-06-26 17:31:17 INFO    sepa.intraday  intraday alert ALOY: close=14.59 pivot=14.17 vol_ratio=1.82
+2026-06-26 17:31:25 ERROR   yfinance  $KZIA: possibly delisted; no price data found  (period=1d)
+2026-06-26 17:31:25 ERROR   yfinance  
+1 Failed download:
+2026-06-26 17:31:25 ERROR   yfinance  ['KZIA']: possibly delisted; no price data found  (period=1d)
+2026-06-26 17:31:26 ERROR   yfinance  $SILC: possibly delisted; no price data found  (period=1d)
+2026-06-26 17:31:26 ERROR   yfinance  
+1 Failed download:
+2026-06-26 17:31:26 ERROR   yfinance  ['SILC']: possibly delisted; no price data found  (period=1d)
+2026-06-26 17:31:31 INFO    sepa.intraday  intraday alert MAZE: close=27.83 pivot=26.67 vol_ratio=2.00
+2026-06-26 17:31:33 ERROR   yfinance  $KALV: possibly delisted; no price data found  (period=1d)
+2026-06-26 17:31:33 ERROR   yfinance  
+1 Failed download:
+2026-06-26 17:31:33 ERROR   yfinance  ['KALV']: possibly delisted; no price data found  (period=1d)
+2026-06-26 17:31:34 ERROR   yfinance  $TCNNF: possibly delisted; no price data found  (period=1d)
+2026-06-26 17:31:34 ERROR   yfinance  
+1 Failed download:
+2026-06-26 17:31:34 ERROR   yfinance  ['TCNNF']: possibly delisted; no price data found  (period=1d)
+2026-06-26 17:31:35 ERROR   yfinance  $CURLF: possibly delisted; no price data found  (period=1d)
+2026-06-26 17:31:35 ERROR   yfinance  
+1 Failed download:
+2026-06-26 17:31:35 ERROR   yfinance  ['CURLF']: possibly delisted; no price data found  (period=1d)
+2026-06-26 17:31:40 ERROR   yfinance  $TBPH: possibly delisted; no price data found  (period=1d)
+2026-06-26 17:31:40 ERROR   yfinance  
+1 Failed download:
+2026-06-26 17:31:40 ERROR   yfinance  ['TBPH']: possibly delisted; no price data found  (period=1d)
+2026-06-26 17:31:40 ERROR   yfinance  $NPCE: possibly delisted; no price data found  (period=1d)
+2026-06-26 17:31:40 ERROR   yfinance  
+1 Failed download:
+2026-06-26 17:31:40 ERROR   yfinance  ['NPCE']: possibly delisted; no price data found  (period=1d)
+2026-06-26 17:31:43 INFO    sepa.intraday  intraday alert TENX: close=13.65 pivot=13.00 vol_ratio=1.57
+2026-06-26 17:31:43 ERROR   yfinance  $TGT: possibly delisted; no price data found  (period=1d)
+2026-06-26 17:31:43 ERROR   yfinance  
+1 Failed download:
+2026-06-26 17:31:43 ERROR   yfinance  ['TGT']: possibly delisted; no price data found  (period=1d)
+2026-06-26 17:31:44 ERROR   yfinance  $BB: possibly delisted; no price data found  (period=1d)
+2026-06-26 17:31:44 ERROR   yfinance  
+1 Failed download:
+2026-06-26 17:31:44 ERROR   yfinance  ['BB']: possibly delisted; no price data found  (period=1d)
+2026-06-26 17:31:47 INFO    sepa.intraday  intraday complete: 5 alerts sent
