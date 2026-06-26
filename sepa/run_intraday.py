@@ -1,55 +1,32 @@
 """Intraday breakout scanner.
 
-Pulls 5-minute bars for tickers currently in Watch, Buy Alert, or Potential Buy.
-Fires a lightweight Telegram alert when a ticker crosses above its pivot with
-volume pace ≥ BREAKOUT_VOL_MULT × the 50-day daily average.
-
-Volume pace = today's cumulative 5m volume × (390 / minutes_elapsed_since_930).
-This extrapolates the partial-session volume to a full-day run rate.
+Re-evaluates every Stage-2/TT>=5 watchlist ticker from scratch: 252 days of
+DB price history plus a single live yfinance quote, recomputing SMAs, Stage
+2, and trend-template score rather than trusting yesterday's stored
+classification. Fires only on a genuine breakout — price crossing the pivot
+from below, with volume pace confirming, and the pivot not already stale
+(price ran more than INTRADAY_STALE_PIVOT_RUN past it before today).
 
 Does NOT update tier state in the DB — the nightly run is authoritative.
 Run at 9:45 AM and 12:30 PM ET via the Task Scheduler XMLs in deploy/windows/.
 
 Usage:
     python -m sepa.run_intraday
-    python -m sepa.run_intraday --mode intraday
 """
-import argparse
 import logging
 from datetime import datetime, time as dtime
 import pandas as pd
 from . import config as C
 from . import db
 from . import alerter
+from .indicators import add_mas, hi_lo_52w
+from .screens import trend_template, classify_stage
 
 log = logging.getLogger("sepa.intraday")
 
 _MARKET_OPEN = dtime(9, 30)
 _MARKET_CLOSE = dtime(16, 0)
-_SCAN_TIERS = {"Watch", "Buy Alert", "Potential Buy", "Momentum"}
-_SESSION_MINUTES = 390   # 9:30–16:00 ET = 390 minutes
-
-# Common corporate-suffix tokens stripped before name comparison
-_CORP_SUFFIXES = {"inc", "corp", "ltd", "llc", "plc", "co", "group",
-                  "holdings", "technologies", "technology", "international"}
-
-
-def _names_match(db_name: str, yf_name: str) -> bool:
-    """Return True if the significant tokens in both names overlap enough.
-
-    Protects against ticker reassignment: when a company goes bankrupt and the
-    ticker is later assigned to an unrelated company, yfinance will return
-    price data but the company name will differ entirely from what is in our DB.
-    """
-    def tokens(s: str) -> set[str]:
-        return {w.lower().rstrip(".,") for w in s.split()
-                if w.lower().rstrip(".,") not in _CORP_SUFFIXES and len(w) > 1}
-
-    db_tok = tokens(db_name)
-    yf_tok = tokens(yf_name)
-    if not db_tok or not yf_tok:
-        return True  # can't compare, allow through
-    return bool(db_tok & yf_tok)
+_SESSION_MINUTES = 390   # 9:30-16:00 ET = 390 minutes
 
 
 def _now_et() -> datetime:
@@ -58,7 +35,7 @@ def _now_et() -> datetime:
         import zoneinfo
         return datetime.now(zoneinfo.ZoneInfo("America/New_York"))
     except (ImportError, KeyError):
-        from datetime import timezone, timedelta
+        from datetime import timezone
         return datetime.now(timezone.utc).astimezone().replace(tzinfo=None)
 
 
@@ -73,127 +50,129 @@ def _minutes_elapsed() -> int:
     return max(1, int((now - open_dt).total_seconds() / 60))
 
 
-def _flatten_columns(df: pd.DataFrame) -> pd.DataFrame:
-    """Collapse yfinance's (Price, Ticker) MultiIndex columns to single-level.
+def load_watchlist(con) -> list[dict]:
+    """Tickers from the most recent nightly run classified Stage 2, TT>=5,
+    with a valid pivot — the universe eligible for an intraday breakout."""
+    rows = con.execute(
+        """SELECT ticker, pivot, stage, tt, rs FROM signals
+           WHERE (ticker, asof) IN
+                 (SELECT ticker, MAX(asof) FROM signals GROUP BY ticker)
+             AND stage = 2 AND tt >= 5 AND pivot > 0
+           ORDER BY ticker"""
+    ).fetchall()
+    return [{"ticker": t, "pivot": float(p), "stage": int(s), "tt": int(tt),
+             "rs": int(rs) if rs is not None else 0}
+            for t, p, s, tt, rs in rows]
 
-    Some yfinance versions return MultiIndex columns even for a single-ticker
-    download. Left unflattened, df["close"] is itself a one-column DataFrame
-    rather than a Series, so df["close"].iloc[-1] yields a Series and any
-    float() cast on it raises "not a real number, not 'Series'".
+
+def load_daily_history(con, ticker: str) -> pd.DataFrame:
+    """Most recent 252 trading days of close/volume, oldest first — enough
+    for a 200SMA without pulling full price history into memory."""
+    return pd.read_sql_query(
+        """SELECT date, close, volume FROM (
+               SELECT date, close, volume FROM prices
+               WHERE ticker=? ORDER BY date DESC LIMIT 252
+           ) ORDER BY date ASC""",
+        con, params=(ticker,), parse_dates=["date"]).set_index("date")
+
+
+def get_live_quote(ticker: str) -> tuple[float, float]:
+    """Today's live price and cumulative intraday volume so far — the one
+    yfinance call the scanner needs."""
+    import yfinance as yf
+    bars = yf.Ticker(ticker).history(period="1d", interval="1m").dropna()
+    if bars.empty:
+        raise ValueError(f"no intraday bars for {ticker}")
+    bars = bars.rename(columns=str.lower)
+    live_price = float(bars["close"].iloc[-1])
+    intraday_volume = float(bars["volume"].sum())
+    return live_price, intraday_volume
+
+
+def evaluate_breakout(history_df: pd.DataFrame, live_price: float,
+                      live_volume: float, pivot: float, rs: int,
+                      elapsed_pct: float) -> dict:
+    """Decide, from scratch, whether this is a genuine breakout right now.
+
+    Joins today's live price onto the 252-day history to recompute Stage 2
+    and the trend-template score, then gates on direction (crossing the
+    pivot from below, not having already run past it from above), pivot
+    staleness, and volume pace before allowing an alert.
     """
-    if isinstance(df.columns, pd.MultiIndex):
-        df = df.copy()
-        df.columns = df.columns.get_level_values(0)
-    return df
+    if len(history_df) < 200 or history_df["close"].isna().any():
+        return {"alert": False, "reason": "insufficient history"}
+
+    prev_close = float(history_df["close"].iloc[-1])
+    avg_daily_vol = float(history_df["volume"].tail(50).mean())
+
+    live_row = pd.DataFrame(
+        {"close": [live_price], "volume": [live_volume]},
+        index=[history_df.index[-1] + pd.Timedelta(days=1)])
+    live_df = add_mas(pd.concat([history_df, live_row]))
+
+    if live_df[["sma50", "sma150", "sma200"]].iloc[-1].isna().any():
+        return {"alert": False, "reason": "insufficient history for 200sma"}
+
+    tt_score, _checks = trend_template(live_df, rs)
+    stage, _confidence = classify_stage(live_df, tt_score)
+    hi_52w, _lo_52w = hi_lo_52w(live_df)
+
+    stage2_ok = stage == 2
+    tt_ok = tt_score >= 5
+    direction_ok = prev_close < pivot <= live_price
+    run_mult = 1 + C.INTRADAY_STALE_PIVOT_RUN
+    stale_pivot = hi_52w > pivot * run_mult and prev_close > pivot * run_mult
+
+    vol_pace = ((live_volume / max(elapsed_pct, 1e-6)) / avg_daily_vol
+                if avg_daily_vol > 0 else 0.0)
+    volume_ok = vol_pace >= C.BREAKOUT_VOL_MULT
+
+    alert = stage2_ok and tt_ok and direction_ok and not stale_pivot and volume_ok
+    reason = (f"stage{stage} TT{tt_score}/8 dir={'ok' if direction_ok else 'fail'} "
+              f"stale={'yes' if stale_pivot else 'no'} vol={vol_pace:.2f}x")
+    return {
+        "alert": alert, "stage": stage, "tt_score": tt_score,
+        "direction_ok": direction_ok, "stale_pivot": stale_pivot,
+        "vol_pace": vol_pace, "volume_ok": volume_ok, "reason": reason,
+    }
 
 
-def _last_close_and_volume(df5: pd.DataFrame) -> tuple[float, float]:
-    """Extract (last close, total session volume) as scalars from a 5m bars df.
-
-    Always returns plain floats, never a pandas Series — guards against
-    yfinance returning MultiIndex columns for a single-ticker download.
-    """
-    df5 = _flatten_columns(df5).rename(columns=str.lower)
-    last_close = float(df5["close"].iloc[-1])
-    today_vol = float(df5["volume"].sum())
-    return last_close, today_vol
-
-
-def run_intraday(con=None) -> list[str]:
-    """Scan for intraday breakouts; return list of alerted tickers."""
+def run_scan(con=None) -> list[str]:
+    """Scan the Stage-2/TT>=5 watchlist for genuine intraday breakouts."""
     if not _market_open():
         log.info("market closed — intraday scan skipped")
         print("market closed — intraday scan skipped")
         return []
 
     con = con or db.connect()
-    state = db.prev_state(con)
-    tickers = [t for t, info in state.items() if info["tier"] in _SCAN_TIERS]
-
-    if not tickers:
-        log.info("no tickers in scan tiers — intraday skipped")
+    watchlist = load_watchlist(con)
+    if not watchlist:
+        log.info("no Stage 2 / TT>=5 tickers — intraday skipped")
         return []
 
-    log.info("intraday scan: %d tickers in %s", len(tickers), sorted(_SCAN_TIERS))
+    log.info("intraday scan: %d watchlist tickers", len(watchlist))
+    elapsed_pct = _minutes_elapsed() / _SESSION_MINUTES
 
-    # Latest pivot price per ticker (from most recent signals row)
-    pivots: dict[str, float] = {}
-    for t in tickers:
-        row = con.execute(
-            "SELECT pivot FROM signals WHERE ticker=? ORDER BY asof DESC LIMIT 1",
-            (t,)).fetchone()
-        if row and row[0] and float(row[0]) > 0:
-            pivots[t] = float(row[0])
-
-    try:
-        import yfinance as yf
-    except ImportError:
-        log.error("yfinance not installed — intraday scan aborted")
-        return []
-
-    minutes = _minutes_elapsed()
     alerts_sent: list[str] = []
     error_count = 0
-    total_count = 0
     error_messages: list[str] = []
 
-    for t in tickers:
-        if t not in pivots:
-            continue
-        pivot = pivots[t]
-        total_count += 1
+    for row in watchlist:
+        t, pivot, rs = row["ticker"], row["pivot"], row["rs"]
         try:
-            df5 = yf.download(t, period="1d", interval="5m", progress=False,
-                              auto_adjust=True)
-            if df5.empty:
-                log.debug("no intraday data for %s", t)
+            history = load_daily_history(con, t)
+            if history.empty:
                 continue
-            last_close, today_vol = _last_close_and_volume(df5)
-
-            # Annualise partial-session volume to full-day pace
-            vol_pace = today_vol * (_SESSION_MINUTES / minutes)
-
-            # 50-day avg daily volume from the DB price history
-            hist = db.get_history(con, t)
-            if len(hist) < 10:
-                continue
-            n = min(50, len(hist))
-            avg_vol_50 = float(hist["volume"].iloc[-n:].mean())
-            if avg_vol_50 <= 0:
-                continue
-
-            vol_ratio = vol_pace / avg_vol_50
-
-            # Only alert when price is at or just above the pivot (within BUY_ZONE_WIDTH).
-            # Without the upper bound every stock that broke out months ago would
-            # re-fire every intraday scan — the pivot stored in DB is not updated
-            # unless a new nightly scan re-evaluates the base.
-            pct_above = (last_close - pivot) / pivot
-            near_pivot = 0 <= pct_above <= C.BUY_ZONE_WIDTH
-
-            if near_pivot and vol_ratio >= C.BREAKOUT_VOL_MULT:
-                # Guard against ticker reassignment: verify yfinance still
-                # returns the same company we ingested.  A mismatch means the
-                # ticker was re-used after a delisting/bankruptcy.
-                db_name_row = con.execute(
-                    "SELECT name FROM securities WHERE ticker=?", (t,)
-                ).fetchone()
-                if db_name_row:
-                    yf_info = yf.Ticker(t).info
-                    yf_name = yf_info.get("longName") or yf_info.get("shortName") or ""
-                    if yf_name and not _names_match(db_name_row[0], yf_name):
-                        log.warning(
-                            "intraday %s: name mismatch (DB=%r yfinance=%r) "
-                            "— possible ticker reassignment, alert skipped",
-                            t, db_name_row[0], yf_name)
-                        continue
-
-                msg = (f"📶 *{t}* crossing pivot intraday\n"
-                       f"close `{last_close:.2f}` ≥ pivot `{pivot:.2f}` "
-                       f"(+{pct_above:.1%}) — vol pace `{vol_ratio:.1f}×` avg")
+            live_price, live_volume = get_live_quote(t)
+            result = evaluate_breakout(history, live_price, live_volume,
+                                       pivot, rs, elapsed_pct)
+            if result["alert"]:
+                msg = (f"📶 *{t}* breaking out intraday\n"
+                       f"live `{live_price:.2f}` crossing pivot `{pivot:.2f}` — "
+                       f"Stage {result['stage']} · TT {result['tt_score']}/8 · "
+                       f"vol pace `{result['vol_pace']:.1f}×` avg")
                 alerter.send(C.TELEGRAM_TOKEN, C.TELEGRAM_CHAT_ID, msg)
-                log.info("intraday alert %s: close=%.2f pivot=%.2f vol_ratio=%.2f",
-                         t, last_close, pivot, vol_ratio)
+                log.info("intraday alert %s: %s", t, result["reason"])
                 alerts_sent.append(t)
         except Exception as e:
             error_count += 1
@@ -202,11 +181,12 @@ def run_intraday(con=None) -> list[str]:
 
     log.info("intraday complete: %d alerts sent", len(alerts_sent))
 
-    error_rate = error_count / max(total_count, 1)
+    total = len(watchlist)
+    error_rate = error_count / max(total, 1)
     if error_rate > C.INTRADAY_ERROR_RATE_THRESHOLD:
         from collections import Counter
         top_err = Counter(error_messages).most_common(1)[0][0] if error_messages else "unknown"
-        msg = (f"⚠️ Intraday scan degraded: {error_count}/{total_count} tickers failed "
+        msg = (f"⚠️ Intraday scan degraded: {error_count}/{total} tickers failed "
                f"({error_rate*100:.0f}%). Top error: {top_err[:120]}")
         log.critical(msg)
         alerter.send_text(msg)
@@ -217,9 +197,4 @@ def run_intraday(con=None) -> list[str]:
 if __name__ == "__main__":
     from .log_config import setup_logging
     setup_logging(run_name="intraday")
-    parser = argparse.ArgumentParser(description="SEPA intraday breakout scanner")
-    parser.add_argument("--mode", default="intraday",
-                        help="scan mode (only 'intraday' currently supported)")
-    args = parser.parse_args()
-    if args.mode == "intraday":
-        run_intraday()
+    run_scan()
