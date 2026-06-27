@@ -124,6 +124,10 @@ INGEST_RETRY_BACKOFF: int = _getint("INGEST_RETRY_BACKOFF", 5)   # seconds betwe
 # a Telegram ops alert fires if more than STALE_TICKER_ALERT_THRESHOLD are stale.
 INGEST_STALE_DAYS: int            = _getint("INGEST_STALE_DAYS", 5)
 STALE_TICKER_ALERT_THRESHOLD: int = _getint("STALE_TICKER_ALERT_THRESHOLD", 10)
+# Consecutive nightly load_prices failures (no usable data, even after the
+# individual retry above) before a ticker is auto-deactivated. Stops dead
+# tickers from permanently polluting the stale-ticker alert.
+INGEST_DEACTIVATE_STREAK: int = _getint("INGEST_DEACTIVATE_STREAK", 3)
 
 
 # ===========================================================================
@@ -230,6 +234,12 @@ BREAKOUT_VOL_MULT = _getfloat("BREAKOUT_VOL_MULT", 1.3)
 # letting it fail quiet.
 INTRADAY_ERROR_RATE_THRESHOLD: float = float(
     os.getenv("INTRADAY_ERROR_RATE_THRESHOLD", "0.05"))
+
+# --- Intraday pivot staleness ---
+# If the 52-week high already sits more than this fraction above the pivot,
+# AND yesterday's close does too, the stock ran past this base long ago —
+# the breakout already happened, this isn't a fresh one (the QMCO case).
+INTRADAY_STALE_PIVOT_RUN: float = _getfloat("INTRADAY_STALE_PIVOT_RUN", 0.10)
 
 # --- Momentum tier (technically strong, fundamentally disqualified) ---
 # Stocks passing ALL Minervini technical criteria but failing the fundamental screen
