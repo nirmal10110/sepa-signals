@@ -45,7 +45,7 @@
   <Actions Context="Author">
     <Exec>
       <Command>C:\Users\lathe\sepa-signals\.venv\Scripts\python.exe</Command>
-      <Arguments>-m sepa.run_intraday --mode intraday</Arguments>
+      <Arguments>-m sepa.run_intraday</Arguments>
       <WorkingDirectory>C:\Users\lathe\sepa-signals</WorkingDirectory>
     </Exec>
   </Actions>
