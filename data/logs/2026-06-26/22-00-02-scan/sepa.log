@@ -1,0 +1,388 @@
+2026-06-26 22:00:02 INFO    sepa  log file: C:\Users\lathe\sepa-signals\data\logs\2026-06-26\22-00-02-scan\sepa.log
+2026-06-26 22:00:02 INFO    sepa.run  SEPA scan starting — 5083 tickers
+2026-06-26 22:00:24 INFO    sepa.run  breadth: 1424/2899 (49.1%) Stage 2 -> tone: Confirmed uptrend
+2026-06-26 22:00:24 WARNING sepa.classify  MU: pivot $1079.57 is more than 10% below current price $1213.56 — stock already ran, promotion suppressed
+2026-06-26 22:00:24 WARNING sepa.classify  INTC: pivot $68.50 is more than 10% below current price $132.87 — stock already ran, promotion suppressed
+2026-06-26 22:00:24 WARNING sepa.classify  APH: pivot $136.53 is more than 10% below current price $165.15 — stock already ran, promotion suppressed
+2026-06-26 22:00:24 WARNING sepa.classify  SAN: pivot $11.05 is more than 10% below current price $13.38 — stock already ran, promotion suppressed
+2026-06-26 22:00:24 WARNING sepa.classify  ATEYY: pivot $177.00 is more than 10% below current price $216.24 — stock already ran, promotion suppressed
+2026-06-26 22:00:24 WARNING sepa.classify  URI: pivot $907.24 is more than 10% below current price $1139.51 — stock already ran, promotion suppressed
+2026-06-26 22:00:24 WARNING sepa.classify  HPE: pivot $28.76 is more than 10% below current price $46.72 — stock already ran, promotion suppressed
+2026-06-26 22:00:24 WARNING sepa.classify  NBIS: pivot $219.93 is more than 10% below current price $256.63 — stock already ran, promotion suppressed
+2026-06-26 22:00:24 WARNING sepa.classify  DAL: pivot $82.49 is more than 10% below current price $92.11 — stock already ran, promotion suppressed
+2026-06-26 22:00:24 WARNING sepa.classify  UMC: pivot $12.71 is more than 10% below current price $27.73 — stock already ran, promotion suppressed
+2026-06-26 22:00:24 WARNING sepa.classify  MCHP: pivot $64.39 is more than 10% below current price $94.12 — stock already ran, promotion suppressed
+2026-06-26 22:00:24 WARNING sepa.classify  CLS: pivot $302.22 is more than 10% below current price $361.40 — stock already ran, promotion suppressed
+2026-06-26 22:00:24 WARNING sepa.classify  IX: pivot $30.47 is more than 10% below current price $38.48 — stock already ran, promotion suppressed
+2026-06-26 22:00:24 WARNING sepa.classify  UAL: pivot $95.08 is more than 10% below current price $134.61 — stock already ran, promotion suppressed
+2026-06-26 22:00:24 WARNING sepa.classify  NTRA: pivot $202.73 is more than 10% below current price $260.74 — stock already ran, promotion suppressed
+2026-06-26 22:00:24 WARNING sepa.classify  CNC: pivot $37.55 is more than 10% below current price $64.77 — stock already ran, promotion suppressed
+2026-06-26 22:00:24 WARNING sepa.classify  WSM: pivot $202.28 is more than 10% below current price $240.06 — stock already ran, promotion suppressed
+2026-06-26 22:00:24 WARNING sepa.classify  UTHR: price appears M&A-pinned (CV=1.1%) — suppressing from buy tiers
+2026-06-26 22:00:24 WARNING sepa.classify  SN: pivot $108.45 is more than 10% below current price $142.85 — stock already ran, promotion suppressed
+2026-06-26 22:00:24 WARNING sepa.classify  SITM: pivot $570.26 is more than 10% below current price $675.70 — stock already ran, promotion suppressed
+2026-06-26 22:00:24 WARNING sepa.classify  ROKU: pivot $90.21 is more than 10% below current price $134.73 — stock already ran, promotion suppressed
+2026-06-26 22:00:24 WARNING sepa.classify  MLI: pivot $119.38 is more than 10% below current price $134.39 — stock already ran, promotion suppressed
+2026-06-26 22:00:24 WARNING sepa.classify  ARMK: price appears M&A-pinned (CV=1.0%) — suppressing from buy tiers
+2026-06-26 22:00:24 WARNING sepa.classify  SANM: pivot $138.56 is more than 10% below current price $253.56 — stock already ran, promotion suppressed
+2026-06-26 22:00:24 WARNING sepa.classify  APLD: pivot $28.52 is more than 10% below current price $40.95 — stock already ran, promotion suppressed
+2026-06-26 22:00:24 WARNING sepa.classify  AAL: pivot $11.13 is more than 10% below current price $17.57 — stock already ran, promotion suppressed
+2026-06-26 22:00:24 WARNING sepa.classify  CRL: pivot $189.85 is more than 10% below current price $212.71 — stock already ran, promotion suppressed
+2026-06-26 22:00:24 WARNING sepa.classify  CORT: pivot $40.47 is more than 10% below current price $84.75 — stock already ran, promotion suppressed
+2026-06-26 22:00:24 WARNING sepa.classify  SSL: pivot $8.92 is more than 10% below current price $10.15 — stock already ran, promotion suppressed
+2026-06-26 22:00:24 WARNING sepa.classify  TECH: pivot $54.41 is more than 10% below current price $70.70 — stock already ran, promotion suppressed
+2026-06-26 22:00:24 WARNING sepa.classify  ENS: pivot $161.96 is more than 10% below current price $226.34 — stock already ran, promotion suppressed
+2026-06-26 22:00:24 WARNING sepa.classify  LTH: pivot $34.87 is more than 10% below current price $39.86 — stock already ran, promotion suppressed
+2026-06-26 22:00:24 WARNING sepa.classify  ALKS: pivot $44.92 is more than 10% below current price $52.83 — stock already ran, promotion suppressed
+2026-06-26 22:00:24 WARNING sepa.classify  HXL: pivot $82.43 is more than 10% below current price $96.21 — stock already ran, promotion suppressed
+2026-06-26 22:00:24 WARNING sepa.classify  MRCY: pivot $85.51 is more than 10% below current price $105.57 — stock already ran, promotion suppressed
+2026-06-26 22:00:24 WARNING sepa.classify  RSI: pivot $20.88 is more than 10% below current price $30.36 — stock already ran, promotion suppressed
+2026-06-26 22:00:24 WARNING sepa.classify  SNDR: pivot $25.78 is more than 10% below current price $36.20 — stock already ran, promotion suppressed
+2026-06-26 22:00:24 WARNING sepa.classify  APGE: pivot $89.50 is more than 10% below current price $132.68 — stock already ran, promotion suppressed
+2026-06-26 22:00:24 WARNING sepa.classify  M: pivot $23.03 is more than 10% below current price $25.70 — stock already ran, promotion suppressed
+2026-06-26 22:00:24 WARNING sepa.classify  VSXY: pivot $51.56 is more than 10% below current price $83.00 — stock already ran, promotion suppressed
+2026-06-26 22:00:24 WARNING sepa.classify  CNTA: price appears M&A-pinned (CV=0.5%) — suppressing from buy tiers
+2026-06-26 22:00:24 WARNING sepa.classify  GOLF: pivot $99.44 is more than 10% below current price $113.20 — stock already ran, promotion suppressed
+2026-06-26 22:00:24 WARNING sepa.classify  PACS: pivot $35.97 is more than 10% below current price $40.68 — stock already ran, promotion suppressed
+2026-06-26 22:00:24 WARNING sepa.classify  HNGE: pivot $63.62 is more than 10% below current price $75.14 — stock already ran, promotion suppressed
+2026-06-26 22:00:24 WARNING sepa.classify  HRI: pivot $133.28 is more than 10% below current price $153.00 — stock already ran, promotion suppressed
+2026-06-26 22:00:24 WARNING sepa.classify  ENVA: pivot $137.21 is more than 10% below current price $221.38 — stock already ran, promotion suppressed
+2026-06-26 22:00:24 WARNING sepa.classify  LIVN: pivot $72.44 is more than 10% below current price $81.05 — stock already ran, promotion suppressed
+2026-06-26 22:00:24 WARNING sepa.classify  GFF: pivot $72.18 is more than 10% below current price $95.92 — stock already ran, promotion suppressed
+2026-06-26 22:00:24 WARNING sepa.classify  SEZL: pivot $84.70 is more than 10% below current price $163.74 — stock already ran, promotion suppressed
+2026-06-26 22:00:24 WARNING sepa.classify  BBAR: pivot $14.53 is more than 10% below current price $19.06 — stock already ran, promotion suppressed
+2026-06-26 22:00:24 WARNING sepa.classify  BFH: pivot $79.09 is more than 10% below current price $104.96 — stock already ran, promotion suppressed
+2026-06-26 22:00:24 WARNING sepa.classify  CPRX: price appears M&A-pinned (CV=0.2%) — suppressing from buy tiers
+2026-06-26 22:00:24 WARNING sepa.classify  YETI: pivot $37.54 is more than 10% below current price $50.01 — stock already ran, promotion suppressed
+2026-06-26 22:00:24 WARNING sepa.classify  GEO: pivot $15.29 is more than 10% below current price $29.33 — stock already ran, promotion suppressed
+2026-06-26 22:00:24 WARNING sepa.classify  ARCB: pivot $127.63 is more than 10% below current price $150.02 — stock already ran, promotion suppressed
+2026-06-26 22:00:24 WARNING sepa.classify  VCYT: pivot $33.54 is more than 10% below current price $58.55 — stock already ran, promotion suppressed
+2026-06-26 22:00:24 WARNING sepa.classify  DAVE: pivot $282.56 is more than 10% below current price $322.75 — stock already ran, promotion suppressed
+2026-06-26 22:00:24 WARNING sepa.classify  OGN: price appears M&A-pinned (CV=0.3%) — suppressing from buy tiers
+2026-06-26 22:00:24 WARNING sepa.classify  ATRO: pivot $56.98 is more than 10% below current price $87.15 — stock already ran, promotion suppressed
+2026-06-26 22:00:24 WARNING sepa.classify  ADPT: pivot $14.84 is more than 10% below current price $20.25 — stock already ran, promotion suppressed
+2026-06-26 22:00:24 WARNING sepa.classify  IDYA: pivot $31.48 is more than 10% below current price $36.29 — stock already ran, promotion suppressed
+2026-06-26 22:00:24 WARNING sepa.classify  PDFS: pivot $55.09 is more than 10% below current price $68.67 — stock already ran, promotion suppressed
+2026-06-26 22:00:24 WARNING sepa.classify  ESTA: pivot $67.09 is more than 10% below current price $89.07 — stock already ran, promotion suppressed
+2026-06-26 22:00:24 WARNING sepa.classify  CTOS: pivot $10.73 is more than 10% below current price $11.97 — stock already ran, promotion suppressed
+2026-06-26 22:00:24 WARNING sepa.classify  ALGT: pivot $91.61 is more than 10% below current price $110.05 — stock already ran, promotion suppressed
+2026-06-26 22:00:24 WARNING sepa.classify  PGNY: pivot $18.18 is more than 10% below current price $27.38 — stock already ran, promotion suppressed
+2026-06-26 22:00:24 WARNING sepa.classify  FLYW: pivot $12.86 is more than 10% below current price $16.88 — stock already ran, promotion suppressed
+2026-06-26 22:00:24 WARNING sepa.classify  TILE: pivot $31.87 is more than 10% below current price $35.51 — stock already ran, promotion suppressed
+2026-06-26 22:00:24 WARNING sepa.classify  MBX: pivot $28.96 is more than 10% below current price $50.37 — stock already ran, promotion suppressed
+2026-06-26 22:00:24 WARNING sepa.classify  SION: pivot $38.38 is more than 10% below current price $42.77 — stock already ran, promotion suppressed
+2026-06-26 22:00:24 WARNING sepa.classify  LWLG: pivot $8.59 is more than 10% below current price $10.03 — stock already ran, promotion suppressed
+2026-06-26 22:00:24 WARNING sepa.classify  TTI: pivot $8.62 is more than 10% below current price $10.20 — stock already ran, promotion suppressed
+2026-06-26 22:00:24 WARNING sepa.classify  PVLA: pivot $116.51 is more than 10% below current price $136.20 — stock already ran, promotion suppressed
+2026-06-26 22:00:24 WARNING sepa.classify  NEO: pivot $8.22 is more than 10% below current price $13.73 — stock already ran, promotion suppressed
+2026-06-26 22:00:24 WARNING sepa.classify  URGN: pivot $18.94 is more than 10% below current price $34.38 — stock already ran, promotion suppressed
+2026-06-26 22:00:24 WARNING sepa.classify  GHRS: pivot $21.50 is more than 10% below current price $25.34 — stock already ran, promotion suppressed
+2026-06-26 22:00:24 WARNING sepa.classify  IART: pivot $14.00 is more than 10% below current price $18.10 — stock already ran, promotion suppressed
+2026-06-26 22:00:24 WARNING sepa.classify  ATLC: pivot $90.00 is more than 10% below current price $108.27 — stock already ran, promotion suppressed
+2026-06-26 22:00:24 WARNING sepa.classify  FCEL: pivot $7.10 is more than 10% below current price $19.65 — stock already ran, promotion suppressed
+2026-06-26 22:00:24 WARNING sepa.classify  REAL: pivot $9.81 is more than 10% below current price $12.43 — stock already ran, promotion suppressed
+2026-06-26 22:00:24 WARNING sepa.classify  AVNS: price appears M&A-pinned (CV=0.3%) — suppressing from buy tiers
+2026-06-26 22:00:24 WARNING sepa.classify  GLASF: pivot $8.49 is more than 10% below current price $12.74 — stock already ran, promotion suppressed
+2026-06-26 22:00:24 WARNING sepa.classify  BJRI: pivot $37.17 is more than 10% below current price $56.33 — stock already ran, promotion suppressed
+2026-06-26 22:00:24 WARNING sepa.classify  ABSI: pivot $7.34 is more than 10% below current price $10.21 — stock already ran, promotion suppressed
+2026-06-26 22:00:24 WARNING sepa.classify  JBIO: pivot $14.25 is more than 10% below current price $21.81 — stock already ran, promotion suppressed
+2026-06-26 22:00:24 WARNING sepa.classify  VELO: pivot $11.53 is more than 10% below current price $17.38 — stock already ran, promotion suppressed
+2026-06-26 22:00:24 WARNING sepa.classify  XNCR: pivot $12.01 is more than 10% below current price $14.74 — stock already ran, promotion suppressed
+2026-06-26 22:00:24 WARNING sepa.classify  WRLD: pivot $178.45 is more than 10% below current price $201.84 — stock already ran, promotion suppressed
+2026-06-26 22:00:24 WARNING sepa.classify  RDVT: pivot $46.28 is more than 10% below current price $56.22 — stock already ran, promotion suppressed
+2026-06-26 22:00:24 WARNING sepa.classify  SPIR: pivot $13.73 is more than 10% below current price $15.99 — stock already ran, promotion suppressed
+2026-06-26 22:00:24 WARNING sepa.classify  BIOA: pivot $19.61 is more than 10% below current price $22.62 — stock already ran, promotion suppressed
+2026-06-26 22:00:24 WARNING sepa.classify  CYRX: pivot $8.53 is more than 10% below current price $15.88 — stock already ran, promotion suppressed
+2026-06-26 22:00:24 WARNING sepa.classify  REPL: pivot $9.98 is more than 10% below current price $11.13 — stock already ran, promotion suppressed
+2026-06-26 22:00:24 WARNING sepa.classify  HELE: pivot $18.65 is more than 10% below current price $27.83 — stock already ran, promotion suppressed
+2026-06-26 22:00:24 WARNING sepa.classify  XOMA: price appears M&A-pinned (CV=0.5%) — suppressing from buy tiers
+2026-06-26 22:00:24 WARNING sepa.classify  GCO: pivot $29.25 is more than 10% below current price $34.74 — stock already ran, promotion suppressed
+2026-06-26 22:00:24 WARNING sepa.classify  ALMU: pivot $17.35 is more than 10% below current price $20.40 — stock already ran, promotion suppressed
+2026-06-26 22:00:24 WARNING sepa.classify  AMCX: pivot $7.58 is more than 10% below current price $10.08 — stock already ran, promotion suppressed
+2026-06-26 22:00:24 WARNING sepa.classify  BNED: pivot $11.67 is more than 10% below current price $13.43 — stock already ran, promotion suppressed
+2026-06-26 22:00:24 WARNING sepa.classify  MEI: pivot $14.02 is more than 10% below current price $18.00 — stock already ran, promotion suppressed
+2026-06-26 22:00:24 WARNING sepa.classify  MNPR: pivot $57.62 is more than 10% below current price $87.63 — stock already ran, promotion suppressed
+2026-06-26 22:00:24 WARNING sepa.classify  TBRG: price appears M&A-pinned (CV=0.3%) — suppressing from buy tiers
+2026-06-26 22:00:24 WARNING sepa.classify  SVCO: pivot $7.26 is more than 10% below current price $11.95 — stock already ran, promotion suppressed
+2026-06-26 22:00:24 WARNING sepa.classify  SLP: pivot $15.31 is more than 10% below current price $18.14 — stock already ran, promotion suppressed
+2026-06-26 22:00:24 WARNING sepa.classify  SLN: pivot $7.00 is more than 10% below current price $10.14 — stock already ran, promotion suppressed
+2026-06-26 22:00:24 WARNING sepa.classify  QMCO: pivot $10.03 is more than 10% below current price $12.93 — stock already ran, promotion suppressed
+2026-06-26 22:00:24 WARNING sepa.classify  ASRT: price appears M&A-pinned (CV=0.2%) — suppressing from buy tiers
+2026-06-26 22:00:24 WARNING sepa.classify  TRT: pivot $6.33 is more than 10% below current price $12.07 — stock already ran, promotion suppressed
+2026-06-26 22:00:24 WARNING sepa.classify  KALV: price appears M&A-pinned (CV=0.4%) — suppressing from buy tiers
+2026-06-26 22:00:25 INFO    sepa.run  momentum breakout alerts: ['LFST', 'ALOY', 'FEIM', 'BBCP', 'KPTI']
+2026-06-26 22:00:25 WARNING matplotlib.font_manager  findfont: Failed to find font weight semibold, now using 700.
+2026-06-26 22:01:10 ERROR   sepa.alerter  alert processing failed for ALOY: HTTPSConnectionPool(host='api.telegram.org', port=443): Read timed out. (read timeout=30)
+Traceback (most recent call last):
+  File "C:\Users\lathe\sepa-signals\.venv\Lib\site-packages\urllib3\connectionpool.py", line 464, in _make_request
+    self._validate_conn(conn)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Users\lathe\sepa-signals\.venv\Lib\site-packages\urllib3\connectionpool.py", line 1106, in _validate_conn
+    conn.connect()
+    ~~~~~~~~~~~~^^
+  File "C:\Users\lathe\sepa-signals\.venv\Lib\site-packages\urllib3\connection.py", line 796, in connect
+    sock_and_verified = _ssl_wrap_socket_and_match_hostname(
+        sock=sock,
+    ...<14 lines>...
+        assert_fingerprint=self.assert_fingerprint,
+    )
+  File "C:\Users\lathe\sepa-signals\.venv\Lib\site-packages\urllib3\connection.py", line 975, in _ssl_wrap_socket_and_match_hostname
+    ssl_sock = ssl_wrap_socket(
+        sock=sock,
+    ...<8 lines>...
+        tls_in_tls=tls_in_tls,
+    )
+  File "C:\Users\lathe\sepa-signals\.venv\Lib\site-packages\urllib3\util\ssl_.py", line 433, in ssl_wrap_socket
+    ssl_sock = _ssl_wrap_socket_impl(sock, context, tls_in_tls, server_hostname)
+  File "C:\Users\lathe\sepa-signals\.venv\Lib\site-packages\urllib3\util\ssl_.py", line 477, in _ssl_wrap_socket_impl
+    return ssl_context.wrap_socket(sock, server_hostname=server_hostname)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\lathe\AppData\Local\Python\pythoncore-3.14-64\Lib\ssl.py", line 455, in wrap_socket
+    return self.sslsocket_class._create(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        sock=sock,
+        ^^^^^^^^^^
+    ...<5 lines>...
+        session=session
+        ^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\lathe\AppData\Local\Python\pythoncore-3.14-64\Lib\ssl.py", line 1076, in _create
+    self.do_handshake()
+    ~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\lathe\AppData\Local\Python\pythoncore-3.14-64\Lib\ssl.py", line 1372, in do_handshake
+    self._sslobj.do_handshake()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~^^
+TimeoutError: _ssl.c:1063: The handshake operation timed out
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\lathe\sepa-signals\.venv\Lib\site-packages\requests\adapters.py", line 696, in send
+    resp = conn.urlopen(
+        method=request.method,
+    ...<9 lines>...
+        chunked=chunked,
+    )
+  File "C:\Users\lathe\sepa-signals\.venv\Lib\site-packages\urllib3\connectionpool.py", line 842, in urlopen
+    retries = retries.increment(
+        method, url, error=new_e, _pool=self, _stacktrace=sys.exc_info()[2]
+    )
+  File "C:\Users\lathe\sepa-signals\.venv\Lib\site-packages\urllib3\util\retry.py", line 498, in increment
+    raise reraise(type(error), error, _stacktrace)
+          ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\lathe\sepa-signals\.venv\Lib\site-packages\urllib3\util\util.py", line 39, in reraise
+    raise value
+  File "C:\Users\lathe\sepa-signals\.venv\Lib\site-packages\urllib3\connectionpool.py", line 788, in urlopen
+    response = self._make_request(
+        conn,
+    ...<10 lines>...
+        **response_kw,
+    )
+  File "C:\Users\lathe\sepa-signals\.venv\Lib\site-packages\urllib3\connectionpool.py", line 488, in _make_request
+    raise new_e
+  File "C:\Users\lathe\sepa-signals\.venv\Lib\site-packages\urllib3\connectionpool.py", line 466, in _make_request
+    self._raise_timeout(err=e, url=url, timeout_value=conn.timeout)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\lathe\sepa-signals\.venv\Lib\site-packages\urllib3\connectionpool.py", line 367, in _raise_timeout
+    raise ReadTimeoutError(
+        self, url, f"Read timed out. (read timeout={timeout_value})"
+    ) from err
+urllib3.exceptions.ReadTimeoutError: HTTPSConnectionPool(host='api.telegram.org', port=443): Read timed out. (read timeout=30)
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\lathe\sepa-signals\sepa\alerter.py", line 190, in process
+    ok = send(C.TELEGRAM_TOKEN, C.TELEGRAM_CHAT_ID, build_card(sig), img)
+  File "C:\Users\lathe\sepa-signals\sepa\alerter.py", line 156, in send
+    r = requests.post(f"https://api.telegram.org/bot{token}/sendMessage",
+                      data={"chat_id": chat_id, "text": text, "parse_mode": "Markdown"},
+                      timeout=30)
+  File "C:\Users\lathe\sepa-signals\.venv\Lib\site-packages\requests\api.py", line 134, in post
+    return request("post", url, data=data, json=json, **kwargs)
+  File "C:\Users\lathe\sepa-signals\.venv\Lib\site-packages\requests\api.py", line 71, in request
+    return session.request(method=method, url=url, **kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\lathe\sepa-signals\.venv\Lib\site-packages\requests\sessions.py", line 651, in request
+    resp = self.send(prep, **send_kwargs)
+  File "C:\Users\lathe\sepa-signals\.venv\Lib\site-packages\requests\sessions.py", line 784, in send
+    r = adapter.send(request, **kwargs)
+  File "C:\Users\lathe\sepa-signals\.venv\Lib\site-packages\requests\adapters.py", line 742, in send
+    raise ReadTimeout(e, request=request)
+requests.exceptions.ReadTimeout: HTTPSConnectionPool(host='api.telegram.org', port=443): Read timed out. (read timeout=30)
+2026-06-26 22:02:03 ERROR   sepa.alerter  alert processing failed for BBCP: HTTPSConnectionPool(host='api.telegram.org', port=443): Read timed out. (read timeout=30)
+Traceback (most recent call last):
+  File "C:\Users\lathe\sepa-signals\.venv\Lib\site-packages\urllib3\connectionpool.py", line 464, in _make_request
+    self._validate_conn(conn)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Users\lathe\sepa-signals\.venv\Lib\site-packages\urllib3\connectionpool.py", line 1106, in _validate_conn
+    conn.connect()
+    ~~~~~~~~~~~~^^
+  File "C:\Users\lathe\sepa-signals\.venv\Lib\site-packages\urllib3\connection.py", line 796, in connect
+    sock_and_verified = _ssl_wrap_socket_and_match_hostname(
+        sock=sock,
+    ...<14 lines>...
+        assert_fingerprint=self.assert_fingerprint,
+    )
+  File "C:\Users\lathe\sepa-signals\.venv\Lib\site-packages\urllib3\connection.py", line 975, in _ssl_wrap_socket_and_match_hostname
+    ssl_sock = ssl_wrap_socket(
+        sock=sock,
+    ...<8 lines>...
+        tls_in_tls=tls_in_tls,
+    )
+  File "C:\Users\lathe\sepa-signals\.venv\Lib\site-packages\urllib3\util\ssl_.py", line 433, in ssl_wrap_socket
+    ssl_sock = _ssl_wrap_socket_impl(sock, context, tls_in_tls, server_hostname)
+  File "C:\Users\lathe\sepa-signals\.venv\Lib\site-packages\urllib3\util\ssl_.py", line 477, in _ssl_wrap_socket_impl
+    return ssl_context.wrap_socket(sock, server_hostname=server_hostname)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\lathe\AppData\Local\Python\pythoncore-3.14-64\Lib\ssl.py", line 455, in wrap_socket
+    return self.sslsocket_class._create(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        sock=sock,
+        ^^^^^^^^^^
+    ...<5 lines>...
+        session=session
+        ^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\lathe\AppData\Local\Python\pythoncore-3.14-64\Lib\ssl.py", line 1076, in _create
+    self.do_handshake()
+    ~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\lathe\AppData\Local\Python\pythoncore-3.14-64\Lib\ssl.py", line 1372, in do_handshake
+    self._sslobj.do_handshake()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~^^
+TimeoutError: _ssl.c:1063: The handshake operation timed out
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\lathe\sepa-signals\.venv\Lib\site-packages\requests\adapters.py", line 696, in send
+    resp = conn.urlopen(
+        method=request.method,
+    ...<9 lines>...
+        chunked=chunked,
+    )
+  File "C:\Users\lathe\sepa-signals\.venv\Lib\site-packages\urllib3\connectionpool.py", line 842, in urlopen
+    retries = retries.increment(
+        method, url, error=new_e, _pool=self, _stacktrace=sys.exc_info()[2]
+    )
+  File "C:\Users\lathe\sepa-signals\.venv\Lib\site-packages\urllib3\util\retry.py", line 498, in increment
+    raise reraise(type(error), error, _stacktrace)
+          ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\lathe\sepa-signals\.venv\Lib\site-packages\urllib3\util\util.py", line 39, in reraise
+    raise value
+  File "C:\Users\lathe\sepa-signals\.venv\Lib\site-packages\urllib3\connectionpool.py", line 788, in urlopen
+    response = self._make_request(
+        conn,
+    ...<10 lines>...
+        **response_kw,
+    )
+  File "C:\Users\lathe\sepa-signals\.venv\Lib\site-packages\urllib3\connectionpool.py", line 488, in _make_request
+    raise new_e
+  File "C:\Users\lathe\sepa-signals\.venv\Lib\site-packages\urllib3\connectionpool.py", line 466, in _make_request
+    self._raise_timeout(err=e, url=url, timeout_value=conn.timeout)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\lathe\sepa-signals\.venv\Lib\site-packages\urllib3\connectionpool.py", line 367, in _raise_timeout
+    raise ReadTimeoutError(
+        self, url, f"Read timed out. (read timeout={timeout_value})"
+    ) from err
+urllib3.exceptions.ReadTimeoutError: HTTPSConnectionPool(host='api.telegram.org', port=443): Read timed out. (read timeout=30)
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\lathe\sepa-signals\sepa\alerter.py", line 190, in process
+    ok = send(C.TELEGRAM_TOKEN, C.TELEGRAM_CHAT_ID, build_card(sig), img)
+  File "C:\Users\lathe\sepa-signals\sepa\alerter.py", line 148, in send
+    r1 = requests.post(f"https://api.telegram.org/bot{token}/sendPhoto",
+                       data={"chat_id": chat_id},
+                       files={"photo": f}, timeout=30)
+  File "C:\Users\lathe\sepa-signals\.venv\Lib\site-packages\requests\api.py", line 134, in post
+    return request("post", url, data=data, json=json, **kwargs)
+  File "C:\Users\lathe\sepa-signals\.venv\Lib\site-packages\requests\api.py", line 71, in request
+    return session.request(method=method, url=url, **kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\lathe\sepa-signals\.venv\Lib\site-packages\requests\sessions.py", line 651, in request
+    resp = self.send(prep, **send_kwargs)
+  File "C:\Users\lathe\sepa-signals\.venv\Lib\site-packages\requests\sessions.py", line 784, in send
+    r = adapter.send(request, **kwargs)
+  File "C:\Users\lathe\sepa-signals\.venv\Lib\site-packages\requests\adapters.py", line 742, in send
+    raise ReadTimeout(e, request=request)
+requests.exceptions.ReadTimeout: HTTPSConnectionPool(host='api.telegram.org', port=443): Read timed out. (read timeout=30)
+2026-06-26 22:02:30 INFO    httpx  HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-06-26 22:02:30 INFO    sepa.validator  validator AMD: ```json
+{
+  "verdict": "CAUTION",
+  "reason": "Exceptional 1-year return (+271%) combined with extreme extension (+98% above 200 SMA) suggests late-stage momentum rather than early-stage breakout; climax run risk is material despite strong technicals.",
+  "summary": "Advanced Micro Devices designs and manufactures high-performance processors for data centers, gaming, and embedded systems, competing directly with Intel and NVIDIA.",
+  "thesis": "Power Play setup with 8/8 trend confirmation and 97 RS shows institutional accumulation, but the setup's value depends on whether AMD is building a new consolidation base or exhausting a year-long rally at inflated valuations.",
+  "catalysts": "AI data center demand strength, earnings beats on server CPU share gains, or major design wins with cloud hyperscalers could validate the breakout; conversely, margin compression or competitive losses could trigger mean reversion."
+}
+``` | in=501 out=220 tokens | 3.5s
+2026-06-26 22:02:35 INFO    httpx  HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-06-26 22:02:35 INFO    sepa.validator  validator LRCX: ```json
+{
+  "verdict": "CONFIRM",
+  "reason": "LRCX exhibits classic Stage 2 setup with 8/8 trend confirmation, RS in 95th percentile, and clean pivot structure after 320% run; fundamentals passed quantitative screen and extension above 200-SMA is healthy (not parabolic).",
+  "summary": "LAM Research is a leading supplier of semiconductor fabrication equipment, particularly deposition and etch systems critical to advanced chip manufacturing.",
+  "thesis": "The stock has established a higher-low pattern above pivot 409.54 with R1/R2 resistance levels defined; institutional consolidation at these levels paired with strong relative strength suggests accumulation ahead of next leg in secular semiconductor equipment cycle.",
+  "catalysts": "Earnings beats driven by recovery in capex spending from memory/logic fabs, guidance raises for 2025, or positive supply-chain commentary during earnings calls."
+}
+``` | in=468 out=217 tokens | 3.8s
+2026-06-26 22:02:38 INFO    httpx  HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-06-26 22:02:38 INFO    sepa.validator  validator KLAC: ```json
+{
+  "verdict": "CONFIRM",
+  "reason": "Perfect Minervini setup with 8/8 trend template, extreme RS (93), and clean stage 2 structure; fundamentals pass and 1-year momentum confirms institutional accumulation.",
+  "summary": "KLA Corp is a leading supplier of process control and yield management solutions for semiconductor manufacturing, critical to chipmakers' fab operations.",
+  "thesis": "Stock is in pristine stage 2 with R1 support at 201.14 and pivot at 269.16; high RS (93) indicates it is dramatically outperforming the market, suggesting strong relative demand into a secular semiconductor cycle recovery.",
+  "catalysts": "Potential Q-results beat driven by increased capex spending by foundries (TSMC, Samsung) and logic/memory manufacturers ramping advanced nodes; any positive semiconductor equipment sector guidance or share buyback announcements could re-accelerate."
+}
+``` | in=465 out=218 tokens | 3.4s
+2026-06-26 22:02:42 INFO    httpx  HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-06-26 22:02:42 INFO    sepa.validator  validator ENTG: ```json
+{
+  "verdict": "CONFIRM",
+  "reason": "Clean stage-2 setup with strong trend confirmation (8/8), excellent relative strength (87), and fundamentals passing; 115% YTD return validates the trend without obvious overextension warnings at current levels.",
+  "summary": "Entegris is a specialty materials and contamination control company serving semiconductor, life sciences, and advanced manufacturing customers.",
+  "thesis": "Stock is in early-stage accumulation with a well-defined 24-week pivot structure; the 56% extension above the 200 SMA shows sustainable uptrend momentum, and RS of 87 indicates it is outperforming the market significantly during a semiconductor recovery cycle.",
+  "catalysts": "Semiconductor equipment spending cycles, customer inventory normalization, and potential earnings beats on increased fab utilization and advanced packaging demand."
+}
+``` | in=467 out=201 tokens | 3.3s
+2026-06-26 22:02:47 INFO    httpx  HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-06-26 22:02:47 INFO    sepa.validator  validator TEVA: ```json
+{
+  "verdict": "CAUTION",
+  "reason": "Strong technical setup undermined by Teva's structural headwinds (generic competition, litigation legacy, debt burden) and lack of near-term catalysts despite the 98% YTD rally.",
+  "summary": "Teva is a global generic pharmaceutical manufacturer with a legacy of opioid litigation settlements and exposure to pricing pressure in mature markets.",
+  "thesis": "The cup-with-handle pattern and stage-2 consolidation suggest institutional accumulation at reasonable support, and the 79 RS indicates relative strength; however, the stock's 98% move YTD raises the risk of profit-taking before any fundamental inflection.",
+  "catalysts": "Potential upside catalysts include successful biosimilar launches, opioid settlement resolution completion, or strategic M&A; however, no specific near-term events are evident—wait for earnings/pipeline updates to confirm conviction."
+}
+``` | in=458 out=219 tokens | 3.8s
+2026-06-26 22:02:50 INFO    httpx  HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-06-26 22:02:50 INFO    sepa.validator  validator HAE: ```json
+{
+  "verdict": "CONFIRM",
+  "reason": "Classic Stage 2 setup with strong trend template (7/8), solid RS (72), and fundamentals passing; 21% extension above 200 SMA confirms sustained uptrend with room to pivot.",
+  "summary": "Haemonetics designs and manufactures blood management and plasma collection systems for hospitals and blood banks globally.",
+  "thesis": "HAE has recovered from a 24-week low and is staging above its 200-day moving average in a multi-month uptrend, suggesting institutional accumulation in a secular healthcare/blood-safety market with durable demand.",
+  "catalysts": "Potential Q-results beats, new hospital contracts, or expansion of plasma/blood-management automation adoption in emerging markets; watch for analyst upgrades if margin trends improve."
+}
+``` | in=466 out=195 tokens | 3.0s
+2026-06-26 22:02:54 INFO    httpx  HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-06-26 22:02:54 INFO    sepa.validator  validator BANC: ```json
+{
+  "verdict": "CONFIRM",
+  "reason": "Stock exhibits classic stage 2 accumulation setup with perfect trend template score (8/8), strong relative strength (70), and recent 55% YTD return confirms institutional accumulation; fundamentals passed screen.",
+  "summary": "Banc of California is a regional bank holding company providing commercial and consumer banking services, primarily in California and the Southwest.",
+  "thesis": "24-week low pivot at 20.17 with tight 53-cent stop loss (19.37) offers favorable risk-reward; stage 2 positioning with 15% extension above 200 SMA suggests breakout potential if it clears resistance at 20.17-20.25 zone.",
+  "catalysts": "Regional bank sector rotation, potential Fed rate policy clarity, and quarterly earnings announcements could catalyze moves; watch for any M&A activity or capital deployment announcements typical of this sector."
+}
+``` | in=471 out=221 tokens | 3.1s
+2026-06-26 22:02:54 WARNING sepa.run  AMD: AI CAUTION → demoted from Potential Buy to Buy Alert
+2026-06-26 22:02:54 WARNING sepa.run  TEVA: AI CAUTION → demoted from Potential Buy to Buy Alert
+2026-06-26 22:04:23 INFO    sepa.reporter  daily report → nirmal.lather3@gmail.com  (710 stocks)
+2026-06-26 22:04:23 INFO    sepa.run  HEARTBEAT: SEPA scan 2026-06-26: 1 Buy Ready, 18 Potential Buy, 184 Momentum, 78 promotions, 7 alerts. Breadth 49.1% Stage2 -> Confirmed uptrend
+2026-06-26 22:04:26 INFO    sepa.run  DB maintenance complete
+2026-06-26 22:04:28 INFO    sepa.run  logs pushed to GitHub
