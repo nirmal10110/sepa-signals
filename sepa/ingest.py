@@ -116,7 +116,7 @@ def _download_batch(tickers, *, period=None, start=None, end=None):
     return _retry(lambda: yf.download(tickers, **kwargs))
 
 
-def _process_batch(con, batch, data, counter, missing_out=None):
+def _process_batch(con, batch, data, counter, missing_out=None, failed_out=None):
     """Extract per-ticker DataFrames from a batch download result and upsert.
 
     A ticker whose raw rows are entirely empty/NaN is yfinance's "possibly
@@ -124,6 +124,8 @@ def _process_batch(con, batch, data, counter, missing_out=None):
     an individual retry instead of being counted as skipped. A ticker whose
     raw data is real but fails the hygiene filter (penny stock, illiquid)
     is counted as skipped — that's a correct exclusion, not a glitch.
+    A ticker that raises during processing is appended to failed_out (if
+    given) so the caller can track its consecutive-failure streak.
     """
     loaded = skipped = failed = 0
     for t in batch:
@@ -138,13 +140,17 @@ def _process_batch(con, batch, data, counter, missing_out=None):
                 continue
             df = hygiene_filter(raw)
             if df.empty:
+                db.set_hygiene_excluded(con, t, True)
                 skipped += 1
                 continue
             db.upsert_prices(con, t, df)
+            db.set_hygiene_excluded(con, t, False)
             loaded += 1
         except Exception as e:
             log.warning("price load failed %s: %s", t, e)
             failed += 1
+            if failed_out is not None:
+                failed_out.append(t)
     counter[0] += loaded
     counter[1] += skipped
     counter[2] += failed
@@ -184,13 +190,19 @@ def _fetch_individual_with_retry(t, *, period=None, start=None, end=None):
     return pd.DataFrame()
 
 
-def _retry_missing(con, missing, counter, *, period=None, start=None, end=None):
+def _retry_missing(con, missing, counter, *, period=None, start=None, end=None, failed_out=None):
     """Individually retry tickers that came back empty from a batch download,
-    clean + hygiene-filter the result, and upsert any that recover."""
+    clean + hygiene-filter the result, and upsert any that recover.
+
+    A ticker still empty after the individual retry is appended to
+    failed_out (if given) — it has no usable data this run, distinct from a
+    hygiene-filter skip below."""
     for t in missing:
         df = _fetch_individual_with_retry(t, period=period, start=start, end=end)
         if df.empty:
             counter[2] += 1
+            if failed_out is not None:
+                failed_out.append(t)
             continue
         df = df.rename(columns=str.lower)[["open", "high", "low", "close", "volume"]].dropna()
         df = hygiene_filter(df)
@@ -200,6 +212,30 @@ def _retry_missing(con, missing, counter, *, period=None, start=None, end=None):
         db.upsert_prices(con, t, df)
         counter[0] += 1
     con.commit()
+
+
+def _update_fail_streaks(con, failed: list[str], attempted: list[str]):
+    """Bump/reset each ticker's consecutive yfinance-failure streak and
+    auto-deactivate any that hit INGEST_DEACTIVATE_STREAK, so a dead ticker
+    stops permanently polluting the stale-ticker alert (check_stale_prices
+    only tracks active securities)."""
+    failed_set = set(failed)
+    succeeded = [t for t in attempted if t not in failed_set]
+    db.reset_fail_streaks(con, succeeded)
+    db.increment_fail_streaks(con, list(failed_set))
+    deactivated = db.deactivate_stale_streaks(con, C.INGEST_DEACTIVATE_STREAK)
+    con.commit()
+    if deactivated:
+        log.warning("ingest: auto-deactivated %d tickers after %d consecutive "
+                    "yfinance failures: %s", len(deactivated),
+                    C.INGEST_DEACTIVATE_STREAK, deactivated[:10])
+        from . import alerter
+        examples = ", ".join(deactivated[:5])
+        more = "..." if len(deactivated) > 5 else ""
+        alerter.send_text(
+            f"🔇 Auto-deactivated {len(deactivated)} tickers (persistent "
+            f"yfinance failures): {examples}{more}")
+    return deactivated
 
 
 def load_prices(con, tickers, period=None):
@@ -230,6 +266,7 @@ def load_prices(con, tickers, period=None):
         by_last_date[latest[t]].append(t)
 
     counter = [0, 0, 0]   # [loaded, skipped, failed]
+    failed_tickers: list[str] = []
     batch_idx = 0
 
     # --- new tickers: full period download ---
@@ -240,13 +277,14 @@ def load_prices(con, tickers, period=None):
         except Exception as e:
             log.error("new-ticker batch failed: %s", e)
             counter[2] += len(batch)
+            failed_tickers.extend(batch)
             time.sleep(5)
             continue
         missing = []
-        _process_batch(con, batch, data, counter, missing_out=missing)
+        _process_batch(con, batch, data, counter, missing_out=missing, failed_out=failed_tickers)
         con.commit()
         if missing:
-            _retry_missing(con, missing, counter, period=full_period)
+            _retry_missing(con, missing, counter, period=full_period, failed_out=failed_tickers)
         batch_idx += 1
         log.info("prices new-ticker batch %d: loaded=%d skipped=%d failed=%d",
                  batch_idx, *counter)
@@ -267,19 +305,21 @@ def load_prices(con, tickers, period=None):
             except Exception as e:
                 log.error("incremental batch failed (start=%s): %s", start_date, e)
                 counter[2] += len(batch)
+                failed_tickers.extend(batch)
                 time.sleep(5)
                 continue
             missing = []
-            _process_batch(con, batch, data, counter, missing_out=missing)
+            _process_batch(con, batch, data, counter, missing_out=missing, failed_out=failed_tickers)
             con.commit()
             if missing:
-                _retry_missing(con, missing, counter, start=start_date, end=today)
+                _retry_missing(con, missing, counter, start=start_date, end=today, failed_out=failed_tickers)
             batch_idx += 1
             log.info("prices incr batch %d (start=%s): loaded=%d skipped=%d failed=%d",
                      batch_idx, start_date, *counter)
             time.sleep(3)
 
     log.info("prices total: loaded=%d skipped=%d failed=%d", *counter)
+    _update_fail_streaks(con, failed_tickers, tickers)
 
 
 # ---------------------------------------------------------------- fundamentals

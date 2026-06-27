@@ -5,7 +5,7 @@
 > Legend: [ ] todo · [~] in progress · [x] done & verified · [!] blocked ·
 > `NEEDS-LIVE-VERIFY` = code done, user must confirm on mini PC.
 
-_Last updated: 2026-06-22 (Claude). Resume point: **Climax tag now shows 52wk-gain context; Momentum tier shows "Fundamentals Improving" trend label — offline verified + spot-checked against the real live DB.**_
+_Last updated: 2026-06-27 (Claude). Resume point: **Auto-deactivation of persistently-failing tickers landed (`yfinance_fail_streak` + `INGEST_DEACTIVATE_STREAK`) — offline verified, `NEEDS-LIVE-VERIFY` on the mini PC.**_
 
 ---
 
@@ -432,9 +432,283 @@ on the mini PC.
 
 ---
 
+## yfinance "possibly delisted" retry + stale-price detection (2026-06-25) ✅ DONE (offline)
+
+**Root cause: silent universe drop on transient yfinance batch glitches**
+- FTNT (and others) were disappearing from the universe with no error: yfinance's
+  batch `yf.download()` occasionally returns empty/all-NaN rows for one ticker in
+  an otherwise-good batch ("possibly delisted; no price data found"), which is a
+  transient API glitch, not a real delisting. The ticker got no price data, no TT
+  score, no tier, and never appeared in signals — failing silently per the Phase 6
+  ops-hardening gap this closes.
+
+**Fix 1 — individual retry for batch-missing tickers**
+- `sepa/ingest.py`: `_process_batch()` now distinguishes two failure modes —
+  a ticker with **entirely empty raw rows** (the glitch) is routed to a new
+  `missing_out` list; a ticker with **real data that fails the hygiene filter**
+  (penny stock, illiquid) is still counted as `skipped` as before. Only the
+  former is retried — a correct hygiene exclusion must never be retried.
+- New `_fetch_individual_with_retry(t, period=, start=, end=)`: retries
+  `yf.Ticker(t).history(...)` up to `C.INGEST_RETRY_COUNT` times with
+  `C.INGEST_RETRY_BACKOFF`-second sleeps; logs a `WARNING` per attempt, an
+  `INFO` on recovery, and a final `ERROR` ("...ticker will be stale") if every
+  attempt comes back empty.
+- New `_retry_missing(con, missing, counter, ...)`: drives the retry for a
+  batch's missing list, applies the same column-normalize + hygiene-filter
+  path as the main batch, and upserts any ticker that recovers. Wired into
+  both the new-ticker and incremental branches of `load_prices()`.
+- `sepa/config.py`: `INGEST_RETRY_COUNT` (default 3), `INGEST_RETRY_BACKOFF`
+  (default 5s) — env-overridable, no inlined magic numbers.
+
+**Fix 2 — stale-price detection (safety net for retries that still fail)**
+- `sepa/db.py`: `get_stale_tickers(con, max_age_days)` — LEFT JOIN of
+  `securities` against `MAX(date)` per ticker in `prices`; returns active
+  tickers with no price newer than `max_age_days` (or no price at all).
+- `sepa/ingest.py`: `check_stale_prices(con, max_age_days=None)` — logs a
+  `WARNING` per stale ticker; if the stale count exceeds
+  `C.STALE_TICKER_ALERT_THRESHOLD` (default 10), sends a Telegram ops alert
+  via the existing `alerter.send_text()` (same pattern as the intraday
+  error-rate alert from the 2026-06-22 fix). Called at the end of
+  `ingest_us()`.
+- `sepa/config.py`: `INGEST_STALE_DAYS` (default 3), `STALE_TICKER_ALERT_THRESHOLD`
+  (default 10).
+
+- [x] **GATE PASSED 2026-06-25:** `python -m pytest -q` → **112 passed in 373s**
+  (10 new tests in `tests/test_ingest.py`: missing-vs-skipped routing, retry
+  recovery on a later attempt, retry exhaustion + final-error log, upsert on
+  recovery, persistent-failure counting, stale-ticker logging, fresh-ticker
+  not flagged, and the >threshold Telegram-alert trigger).
+- [ ] **GATE (user, mini PC):** `NEEDS-LIVE-VERIFY` — confirm a real "possibly
+  delisted" batch glitch (FTNT-style) recovers via individual retry on a live
+  nightly run, and that the stale-ticker WARNING/alert fires correctly if the
+  yfinance feed degrades for real.
+
+---
+
+## Stale-ticker false-positive fix: hygiene-excluded tickers wrongly flagged stale (2026-06-25) ✅ DONE (offline)
+
+**Bug report:** the 2026-06-25 21:30 ingest run flagged 2250 of 5083 active
+securities as stale — reported as "basically the whole universe."
+
+**Investigated as a date-comparison/timezone/off-by-one bug per the original
+report and ruled that out**: raw SQL against `data/sepa.db` showed `MAX(date)`
+stored as plain `YYYY-MM-DD` (no timezone suffix), and `INGEST_STALE_DAYS` was
+already 5 (bumped from 3 by commit `920dd77`, made between the 21:30 log run
+and this fix, which also added the 20%-of-universe Telegram-suppression guard).
+A raw `date('now','-5 days')` comparison against `prices` directly found only
+98 genuinely stale tickers, not 2250.
+
+**Actual root cause:** `get_stale_tickers()` LEFT JOINs `securities` against
+`prices`; any active security with **no price row at all** shows up with
+`last_date IS NULL` and is reported stale ("last updated never"). 2152 of the
+5083 active securities have *never* had a price row, almost entirely because
+`hygiene_filter()` correctly and permanently rejects them (penny stock /
+illiquid — by design, per its own docstring: "a correct exclusion, not a
+glitch"). Nothing marked these tickers as excluded, so `active` stayed `1`
+forever and they re-triggered the same false "stale" warning every single
+night. 2152 (never-ingested/hygiene-excluded) + 98 (genuinely stale) = 2250,
+exactly matching the reported count.
+
+Confirmed commit `920dd77`'s 20%-suppression guard already stops the Telegram
+alert in this exact case (2250/5083 = 44% > 20%) — but it only suppresses the
+*alert*; the 2250 misleading per-ticker WARNING log lines still print every
+run, and the guard's own test (`test_stale_ticker_alert_above_threshold`) was
+broken by it (a small all-stale test universe always exceeds 20%) — found
+failing on `main` before this fix.
+
+**Fix**
+- `sepa/db.py`: new `hygiene_excluded` column on `securities` (schema +
+  `_migrate()`), new `set_hygiene_excluded(con, ticker, bool)` helper.
+  `get_stale_tickers()` now excludes `hygiene_excluded=1` tickers — they are
+  intentionally never given price data, not stale.
+- `sepa/ingest.py`: `_process_batch()` sets `hygiene_excluded=True` when real
+  (non-empty) price data fails `hygiene_filter()`, and clears it on the next
+  successful load — self-heals if a ticker's price/volume later qualifies.
+- `tests/test_ingest.py`: fixed `test_stale_ticker_alert_above_threshold` to
+  use a realistic universe size (stale tickers ~9% of total) so it tests the
+  absolute-threshold alert path distinctly from the percentage-suppression
+  path. Added `test_stale_pct_above_20pct_suppresses_alert`,
+  `test_hygiene_excluded_ticker_not_flagged_stale`, and
+  `test_hygiene_excluded_clears_when_ticker_recovers`.
+- [x] **GATE PASSED 2026-06-25:** `python -m pytest -q` → **115 passed in
+  370s**.
+- [ ] **GATE (user, mini PC):** `NEEDS-LIVE-VERIFY` — after this lands, the
+  next real nightly ingest should show the stale-ticker WARNING count drop
+  from ~2250 to roughly the genuinely-stale figure (~98 on 2026-06-25's data).
+
+**Side effect during this fix, disclosed to user:** running `python -m
+sepa.run_daily` to satisfy the CLAUDE.md acceptance gate turned out to **not**
+be offline/synthetic — it made live Anthropic API calls (validator), sent a
+real daily email report, and auto-committed+pushed log files directly to
+`origin/main` (commit `d9858af`, log files only, no code). No Telegram alerts
+fired (0 alerts that run). Flagged here since CLAUDE.md describes this command
+as the "offline synthetic run" gate, which it is not — `run_daily` is a live
+production command. `VERIFY-AGAINST-BOOK` not applicable; this is a tooling/
+docs accuracy gap worth fixing separately (PLAN.md or CLAUDE.md should name
+the actual offline-safe entry point, if one exists, instead of `run_daily`).
+
+---
+
+## Intraday scanner rewrite: re-evaluate from scratch, not trust yesterday's tier (2026-06-26) DONE (offline) / NEEDS-LIVE-VERIFY pending
+
+**Problem with the old `run_intraday.py`:** it trusted the DB's last-stored
+tier (`db.prev_state()`) and pivot, then asked only "is price within
+`BUY_ZONE_WIDTH` of that pivot with volume pace >= threshold?" That re-fires
+on any stock that broke out months ago and is still drifting near its old
+pivot (the QMCO case) and never re-checks whether the stock is still Stage 2
+intraday.
+
+**Rewrite:**
+- `sepa/run_intraday.py`: `run_intraday()` renamed to `run_scan()` (no other
+  module referenced the old name - verified via repo-wide grep). Old 5-minute
+  bar volume-pace extrapolation replaced with:
+  - `load_watchlist(con)`: pulls every ticker from the latest nightly
+    `signals` row with `stage=2 AND tt>=5 AND pivot>0` - Stage 2 leaders
+    only, not every Watch/Buy Alert/Momentum ticker.
+  - `load_daily_history(con, ticker)`: last 252 trading days of close/volume
+    from the DB (no live history pull).
+  - `get_live_quote(ticker)`: the one yfinance call per ticker - 1-minute
+    bars for today, collapsed to (live price, cumulative intraday volume).
+  - `evaluate_breakout(...)`: appends the live quote as a synthetic last
+    bar, recomputes SMAs/Stage/trend-template from scratch via
+    `indicators.add_mas` + `screens.trend_template`/`classify_stage`, then
+    gates an alert on ALL of: Stage 2 now, TT>=5 now, direction check
+    (`prev_close < pivot <= live_price` - a fresh cross today, not already
+    cleared), stale-pivot guard (52wk high AND prev close already greater
+    than `pivot * (1 + INTRADAY_STALE_PIVOT_RUN)` means the base broke out
+    long ago), and volume pace >= `BREAKOUT_VOL_MULT`.
+- `sepa/config.py`: new `INTRADAY_STALE_PIVOT_RUN` (default 0.10, env-overridable).
+- Old MultiIndex-flattening helpers (`_flatten_columns`, `_last_close_and_volume`,
+  `_names_match`) and the `--mode` CLI arg removed - no longer applicable to
+  the new single-quote-per-ticker shape. Ticker-reassignment name-mismatch
+  guard was dropped in the rewrite, not reintroduced (`run_scan` only walks
+  tickers already in `securities`/`signals`, not raw yfinance lookups).
+- `tests/test_intraday.py`: fully rewritten for the new logic - direction
+  check (fires / QMCO already-past-pivot case), stale-pivot guard, Stage-2
+  failure on an underlying downtrend, and the error-rate alert path (now
+  mocking `get_live_quote` instead of `yfinance.download`). All mocked, no
+  real network calls.
+- [x] **GATE PASSED 2026-06-26:** `python -m pytest -q -m "not live"` ->
+  **113 passed, 2 deselected in 372.98s**.
+- [ ] **GATE (user, mini PC):** `NEEDS-LIVE-VERIFY` - a prior attempt to
+  live-verify `get_live_quote()` against real yfinance during this session
+  hung on the network call and was abandoned; the rewrite has not been run
+  against a real market-hours quote yet. Confirm on the mini PC during
+  market hours that `python -m sepa.run_intraday` completes without hanging
+  and that `evaluate_breakout` fires correctly on a real Stage-2 breakout.
+- `deploy/windows/intraday_0945.xml` and `intraday_1230.xml` still passed
+  `--mode intraday` to the scheduled task command line after the flag was
+  dropped from the script; harmless (unused argv is ignored, no argparse to
+  reject it) but updated both XMLs to `-m sepa.run_intraday` for accuracy.
+
+---
+
+## Investigated: 101 stale tickers, examples AAC/AIOS/AMEGF/AMSS/ARSMF (2026-06-27)
+
+**User's hypothesis was wrong for 4 of the 5 named examples.** AIOS, AMEGF,
+AMSS, and ARSMF are not OTC-foreign tickers yfinance can't serve — live check
+(`yf.Ticker(t).history(period="5d")`) returned real data for all four right
+now. Only AAC is genuinely unfetchable ("possibly delisted; no price data
+found", confirmed failing on 5 consecutive nightly ingest runs 2026-06-22
+through 2026-06-26).
+
+**Root-cause breakdown of the 101** (cross-referenced each stale ticker's
+position in a fresh, unlimited `fetch_us_universe()` call against
+`UNIVERSE_LIMIT=5000` from `.env`, then live-checked yfinance fetchability):
+
+| Cause | Count | Detail |
+|---|---|---|
+| **Dropped out of the top-5000 universe window** | 78 (77%) | Fetchable via yfinance, but `fetch_us_universe(limit)` truncates to `rows[:5000]` — SEC's `company_tickers.json` ordering is not stable day-to-day, so a ticker that was inside the top 5000 when first added to `securities` (and so `active=1` forever, since `upsert_security`'s `ON CONFLICT` never touches `active`) can drift past index 5000 on a later day and simply stop being passed to `load_prices()`. No error, no log line — it's never attempted, so `get_stale_tickers()` flags it forever. **AIOS, AMEGF, AMSS, ARSMF (3 of the user's 5 examples) are this case** — indices 5107/7454/5305/7499 respectively in the full (unlimited) fetch. |
+| **Genuinely unfetchable, still inside the universe window** | 17 | Confirmed "possibly delisted; no price data found" on a live check just now: AAC, AVAC, AYR, BRKH, CONE, CURLF, FWAC, LVPA, MSSHY, NANO, OBOCY, PFSTY, PHD, PMVC, PTAC, SEAH, VII. Several (AAC, AVAC, BRKH, FWAC, PTAC) look like SPAC tickers that liquidated/de-registered, not OTC-foreign names. **AAC (1 of the user's 5 examples) is this case.** |
+| **Dropped from the SEC universe entirely** | 4 | BIOT, JMG, OPTN, TCGL no longer appear in SEC's `company_tickers.json` at all (deregistered/merged) *and* are unfetchable via yfinance — genuinely dead by both signals. |
+| **Dropped from SEC universe but still fetchable** | 1 | IXAQF — gone from the SEC list, but yfinance still serves it fine. Same underlying "fell out of the source list" issue as the 78 above, different source list. |
+| **Transient lag, not dead** | 1 | WHK — DB last price 2026-06-18 (8 days stale), but a live check just returned 1 day of data fine. Likely just lagging the retry budget, not broken. |
+
+**Action taken: none, deliberately.** Two reasons:
+1. A concurrent in-progress change in this same working tree (`sepa/ingest.py`
+   `_update_fail_streaks` + `sepa/db.py` `increment_fail_streaks` /
+   `deactivate_stale_streaks`, gated by new `INGEST_DEACTIVATE_STREAK`) already
+   auto-deactivates a ticker after `INGEST_DEACTIVATE_STREAK` (default 3)
+   consecutive `load_prices()` failures *while it's still in the attempted
+   universe* — this is exactly the right mechanism for the 17-ticker "genuinely
+   unfetchable, still in-window" bucket (including AAC) and needs no help from
+   this investigation; it'll self-resolve within 3 nights of that code landing.
+2. The dominant 77% bucket is **not** a "permanently unfetchable ticker" problem
+   — these are real, currently-tradeable, yfinance-fetchable securities that
+   the universe selection simply stopped looking at. Marking them `active=0`
+   would be silencing real coverage to make a noise metric look better, which
+   is the wrong fix (and exactly what CLAUDE.md's "never fake a result to pass
+   a check" rules out). The dropped-from-SEC-entirely buckets (4 dead + 1
+   fetchable) have the same shape but a different source list.
+
+**Recommended real fix (not implemented — architecture decision, flagged for
+the user):** `fetch_us_universe(limit)` truncates with `rows[:limit]` against
+whatever order SEC's JSON happens to be in that day. Either (a) raise/remove
+`UNIVERSE_LIMIT` (currently 5000, full unfiltered universe is ~9,841 post
+ETF/shell filter), (b) sort deterministically before truncating (e.g. by CIK
+ascending) so the top-N window is stable across days instead of churning, or
+(c) extend the `securities` row with a "missing from universe fetch" streak
+(parallel to the new yfinance-failure streak) and auto-deactivate on that
+instead of just on fetch failure. Until one of these lands, any ticker that
+drifts past the cutoff will permanently and silently stop being analyzed —
+this is a coverage gap, not just stale-alert noise.
+
+---
+
+## Auto-deactivation of persistently-failing tickers (2026-06-27) ✅ DONE (offline)
+
+Closes the mechanism flagged as "in-progress" in the 2026-06-27 stale-ticker
+investigation above (item 1 in that section's "Action taken" rationale) — a
+ticker that fails `load_prices()` for real (no usable data even after the
+individual retry from the 2026-06-25 fix) for `INGEST_DEACTIVATE_STREAK`
+(default 3) consecutive nightly runs is now marked `active=0`, so it stops
+permanently polluting `check_stale_prices()`'s warnings/alerts instead of
+re-flagging forever.
+
+- `sepa/db.py`: new `securities.yfinance_fail_streak` column (migrated, default
+  0). Three new pure-SQL helpers: `reset_fail_streaks(con, tickers)` (zero the
+  streak for tickers that loaded successfully this run), `increment_fail_streaks(con,
+  tickers)` (bump by 1 for tickers that didn't), `deactivate_stale_streaks(con,
+  threshold)` (sets `active=0` for any security whose streak has reached
+  `threshold`, returns the list of tickers it just deactivated).
+- `sepa/ingest.py`: `_process_batch()` and `_retry_missing()` both take an
+  optional `failed_out` list and append a ticker to it when it has no usable
+  data after all retries (exception during batch processing, or still empty
+  after the individual retry) — distinct from a hygiene-filter skip, which is
+  an intentional exclusion, not a failure. `load_prices()` accumulates a
+  `failed_tickers` list across every batch (new-ticker and incremental, plus
+  whole-batch download exceptions) and calls the new `_update_fail_streaks(con,
+  failed_tickers, tickers)` once at the end. That function resets the streak
+  for everything that succeeded, increments it for everything that didn't,
+  deactivates anything at threshold, and — matching the existing
+  `check_stale_prices()` ops-alert pattern — fires a Telegram text alert via
+  `alerter.send_text()` naming the deactivated tickers (capped to first 5 in
+  the message, first 10 in the log line).
+- `sepa/config.py`: `INGEST_DEACTIVATE_STREAK` (default 3, env-overridable).
+  Note: this constant already existed in `config.py` before this task (restored
+  by commit `7456c26` as one of several constants that went missing in the
+  intraday-scanner rewrite) but was dead — nothing in `db.py`/`ingest.py`
+  referenced it until this change actually wired it up.
+- `tests/test_ingest.py`: 4 new tests — `test_fail_streak_increments` (0→1→2
+  across repeated failures), `test_fail_streak_resets_on_success` (streak=2
+  then a success run resets to 0), `test_auto_deactivate_at_threshold` (streak
+  hits `INGEST_DEACTIVATE_STREAK` → `active=0` + exactly one `alerter.send_text`
+  call naming the ticker), `test_successful_tickers_not_deactivated` (control
+  ticker that always succeeds stays `active=1`, streak=0, no alert).
+- [x] **GATE PASSED 2026-06-27:** `python -m pytest -q` → **119 passed in 375s**.
+- [ ] **GATE (user, mini PC):** `NEEDS-LIVE-VERIFY` — confirm on a real nightly
+  ingest that AAC (or another of the 17 genuinely-unfetchable tickers named in
+  the 2026-06-27 stale-ticker investigation above) actually flips to `active=0`
+  after its 3rd consecutive failed night, and that the Telegram ops alert
+  fires correctly when that happens.
+
+---
+
 ## Known limitations / pending work
 - **Prices can be 1–2 days stale** if the nightly ingest didn't complete (yfinance incremental
-  pull only fetches since last stored date).
+  pull only fetches since last stored date). Partially mitigated 2026-06-25:
+  `ingest.check_stale_prices()` now logs a WARNING per stale ticker and fires a
+  Telegram alert above `STALE_TICKER_ALERT_THRESHOLD` — visibility, not auto-fix.
 - **Pivot staleness**: the nightly classify recomputes the pivot from the last 65 bars of price
   history, but if a stock is in the `done` checkpoint set on a resume run, its pivot comes from
   the DB (last classify) rather than fresh price data. Stale pivots cause intraday alerts to
@@ -457,11 +731,15 @@ on the mini PC.
 
 ## Backlog / future upgrades
 - [ ] **Universe: switch to S&P 1500** (S&P 500 + MidCap 400 + SmallCap 600) instead of first-N
-  from SEC registry. Current approach takes the oldest 3,000 SEC registrants (by CIK), which
-  is roughly the right stocks but not sorted by quality/liquidity. S&P 1500 is the true
-  institutional universe Minervini targets and would give cleaner signal quality.
-  Approach: fetch constituent list from a free source (e.g. Wikipedia S&P 500 table + iShares
-  ETF holdings for the other two), replace `fetch_us_universe()` with a constituent loader.
+  from SEC registry. Current approach takes first-`UNIVERSE_LIMIT` (5000) SEC registrants in
+  whatever order `company_tickers.json` returns them — **not stable by CIK as previously
+  noted here**: confirmed 2026-06-27 (see "Investigated: 101 stale tickers" above) that
+  borderline tickers drift across the cutoff day to day, permanently dropping real, fetchable
+  securities out of analysis with no error logged. S&P 1500 is the true institutional universe
+  Minervini targets and would give cleaner signal quality AND fix the drift bug (a fixed
+  constituent list doesn't reorder daily). Approach: fetch constituent list from a free source
+  (e.g. Wikipedia S&P 500 table + iShares ETF holdings for the other two), replace
+  `fetch_us_universe()` with a constituent loader.
 - [ ] **Stale pivot recalculation** — re-run detect_setups for checkpoint-skipped tickers
   when last classify date is > 3 days old.
 - [ ] **ZZBRK golden-test assertion** — add Buy Ready assertion to `test_funnel_golden_tiers`.

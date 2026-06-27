@@ -403,7 +403,41 @@ def test_fresh_ticker_not_flagged_stale(tmp_path, caplog):
 
 def test_stale_ticker_alert_above_threshold(tmp_path):
     """More than STALE_TICKER_ALERT_THRESHOLD stale tickers must trigger a
-    Telegram ops alert via alerter.send_text."""
+    Telegram ops alert via alerter.send_text — but only when stale names are
+    a small slice of the universe. A large fresh population keeps stale_pct
+    under the 20% systemic-outage guard, isolating the absolute-threshold
+    alert path from the outage-suppression path (see
+    test_stale_pct_above_20pct_suppresses_alert for that one)."""
+    import datetime
+    from unittest.mock import patch
+    from sepa import db as sepa_db
+    from sepa.ingest import check_stale_prices
+
+    con = sepa_db.connect(tmp_path / "test.db")
+    for i in range(C.STALE_TICKER_ALERT_THRESHOLD + 1):
+        sepa_db.upsert_security(con, f"STALE{i}", f"Stale Corp {i}", "NASDAQ", "Tech")
+    today = datetime.date.today().isoformat()
+    idx = pd.DatetimeIndex([today])
+    fresh_df = pd.DataFrame({"open": [10.0], "high": [10.0], "low": [10.0],
+                             "close": [10.0], "volume": [100_000.0]}, index=idx)
+    n_fresh = (C.STALE_TICKER_ALERT_THRESHOLD + 1) * 10   # keeps stale_pct ~9%, well under 20%
+    for i in range(n_fresh):
+        sepa_db.upsert_security(con, f"FRESH{i}", f"Fresh Corp {i}", "NASDAQ", "Tech")
+        sepa_db.upsert_prices(con, f"FRESH{i}", fresh_df)
+    con.commit()
+
+    with patch("sepa.alerter.send_text") as mock_send:
+        check_stale_prices(con, max_age_days=3)
+
+    mock_send.assert_called_once()
+    msg = mock_send.call_args[0][0]
+    assert f"{C.STALE_TICKER_ALERT_THRESHOLD + 1}" in msg
+
+
+def test_stale_pct_above_20pct_suppresses_alert(tmp_path):
+    """When stale tickers exceed 20% of the tracked universe, that's a
+    feed-wide outage, not per-ticker delisting — suppress the Telegram
+    alert (the run log's per-ticker warnings are enough) rather than spam."""
     from unittest.mock import patch
     from sepa import db as sepa_db
     from sepa.ingest import check_stale_prices
@@ -416,6 +450,140 @@ def test_stale_ticker_alert_above_threshold(tmp_path):
     with patch("sepa.alerter.send_text") as mock_send:
         check_stale_prices(con, max_age_days=3)
 
+    mock_send.assert_not_called()
+
+
+def test_hygiene_excluded_ticker_not_flagged_stale(tmp_path):
+    """A ticker whose real price data fails hygiene_filter (penny/illiquid)
+    is intentionally never given a price row. It must NOT show up as stale
+    forever just because it never gets one — that's exactly the bug that
+    made 2250/5083 active securities flag stale on 2026-06-25 (the universe
+    expanded to include thousands of penny/illiquid names that hygiene_filter
+    correctly rejects every single night)."""
+    from sepa import db as sepa_db
+    from sepa.ingest import check_stale_prices
+
+    con = sepa_db.connect(tmp_path / "test.db")
+    sepa_db.upsert_security(con, "PENNY1", "Penny Corp", "NASDAQ", "Tech")
+    sepa_db.set_hygiene_excluded(con, "PENNY1", True)
+    con.commit()
+
+    stale = check_stale_prices(con, max_age_days=3)
+
+    assert not any(t == "PENNY1" for t, _ in stale)
+
+
+# ---------------------------------------------------------------- auto-deactivation
+def test_fail_streak_increments(tmp_path):
+    """A ticker that fails repeatedly should see its streak climb 0->1->2."""
+    from sepa import db as sepa_db
+    from sepa.ingest import _update_fail_streaks
+
+    con = sepa_db.connect(tmp_path / "test.db")
+    sepa_db.upsert_security(con, "BADCO", "Bad Corp", "NASDAQ", "Tech")
+    con.commit()
+
+    _update_fail_streaks(con, ["BADCO"], ["BADCO"])
+    streak = con.execute(
+        "SELECT yfinance_fail_streak FROM securities WHERE ticker=?", ("BADCO",)
+    ).fetchone()[0]
+    assert streak == 1
+
+    _update_fail_streaks(con, ["BADCO"], ["BADCO"])
+    streak = con.execute(
+        "SELECT yfinance_fail_streak FROM securities WHERE ticker=?", ("BADCO",)
+    ).fetchone()[0]
+    assert streak == 2
+
+
+def test_fail_streak_resets_on_success(tmp_path):
+    """A ticker with an existing streak that succeeds must reset to 0."""
+    from sepa import db as sepa_db
+    from sepa.ingest import _update_fail_streaks
+
+    con = sepa_db.connect(tmp_path / "test.db")
+    sepa_db.upsert_security(con, "RECOV", "Recovering Corp", "NASDAQ", "Tech")
+    con.commit()
+
+    _update_fail_streaks(con, ["RECOV"], ["RECOV"])
+    _update_fail_streaks(con, ["RECOV"], ["RECOV"])
+    streak = con.execute(
+        "SELECT yfinance_fail_streak FROM securities WHERE ticker=?", ("RECOV",)
+    ).fetchone()[0]
+    assert streak == 2
+
+    # Now it succeeds (not in the failed list)
+    _update_fail_streaks(con, [], ["RECOV"])
+    streak = con.execute(
+        "SELECT yfinance_fail_streak FROM securities WHERE ticker=?", ("RECOV",)
+    ).fetchone()[0]
+    assert streak == 0
+
+
+def test_auto_deactivate_at_threshold(tmp_path):
+    """Hitting INGEST_DEACTIVATE_STREAK consecutive failures must set
+    active=0 and fire a Telegram ops alert."""
+    from unittest.mock import patch
+    from sepa import db as sepa_db
+    from sepa.ingest import _update_fail_streaks
+
+    con = sepa_db.connect(tmp_path / "test.db")
+    sepa_db.upsert_security(con, "DEADCO", "Dead Corp", "NASDAQ", "Tech")
+    con.commit()
+
+    with patch("sepa.alerter.send_text") as mock_send:
+        for _ in range(C.INGEST_DEACTIVATE_STREAK):
+            _update_fail_streaks(con, ["DEADCO"], ["DEADCO"])
+
+    active = con.execute(
+        "SELECT active FROM securities WHERE ticker=?", ("DEADCO",)
+    ).fetchone()[0]
+    assert active == 0
     mock_send.assert_called_once()
-    msg = mock_send.call_args[0][0]
-    assert f"{C.STALE_TICKER_ALERT_THRESHOLD + 1}" in msg
+    assert "DEADCO" in mock_send.call_args[0][0]
+
+
+def test_successful_tickers_not_deactivated(tmp_path):
+    """A control ticker that never fails must stay active with streak 0."""
+    from unittest.mock import patch
+    from sepa import db as sepa_db
+    from sepa.ingest import _update_fail_streaks
+
+    con = sepa_db.connect(tmp_path / "test.db")
+    sepa_db.upsert_security(con, "GOODCO", "Good Corp", "NASDAQ", "Tech")
+    con.commit()
+
+    with patch("sepa.alerter.send_text") as mock_send:
+        for _ in range(C.INGEST_DEACTIVATE_STREAK + 2):
+            _update_fail_streaks(con, [], ["GOODCO"])
+
+    row = con.execute(
+        "SELECT active, yfinance_fail_streak FROM securities WHERE ticker=?",
+        ("GOODCO",),
+    ).fetchone()
+    assert row == (1, 0)
+    mock_send.assert_not_called()
+
+
+def test_hygiene_excluded_clears_when_ticker_recovers(tmp_path):
+    """If a previously hygiene-excluded ticker later loads real prices
+    (e.g. its price/volume rallies past the hygiene threshold), the flag
+    must clear so it re-enters normal stale tracking."""
+    import datetime
+    from sepa import db as sepa_db
+    from sepa.ingest import check_stale_prices
+
+    con = sepa_db.connect(tmp_path / "test.db")
+    sepa_db.upsert_security(con, "RECOVER1", "Recover Corp", "NASDAQ", "Tech")
+    sepa_db.set_hygiene_excluded(con, "RECOVER1", True)
+    today = datetime.date.today().isoformat()
+    idx = pd.DatetimeIndex([today])
+    df = pd.DataFrame({"open": [50.0], "high": [50.0], "low": [50.0],
+                       "close": [50.0], "volume": [500_000.0]}, index=idx)
+    sepa_db.upsert_prices(con, "RECOVER1", df)
+    sepa_db.set_hygiene_excluded(con, "RECOVER1", False)
+    con.commit()
+
+    stale = check_stale_prices(con, max_age_days=3)
+
+    assert not any(t == "RECOVER1" for t, _ in stale)

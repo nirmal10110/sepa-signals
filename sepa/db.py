@@ -10,7 +10,7 @@ PRAGMA journal_mode=WAL;
 CREATE TABLE IF NOT EXISTS securities(
   ticker TEXT PRIMARY KEY, name TEXT, exchange TEXT, sector TEXT,
   cik TEXT, active INTEGER DEFAULT 1, added_at TEXT,
-  fund_fetched_at TEXT);
+  fund_fetched_at TEXT, hygiene_excluded INTEGER DEFAULT 0);
 
 CREATE TABLE IF NOT EXISTS prices(
   ticker TEXT, date TEXT, open REAL, high REAL, low REAL, close REAL, volume REAL,
@@ -83,6 +83,10 @@ def _migrate(con):
         con.execute("ALTER TABLE securities ADD COLUMN fund_fetched_at TEXT")
     except Exception:
         pass  # column already exists
+    try:
+        con.execute("ALTER TABLE securities ADD COLUMN hygiene_excluded INTEGER DEFAULT 0")
+    except Exception:
+        pass
     for col in ("ai_verdict", "ai_note", "ai_summary", "ai_thesis", "ai_catalysts"):
         try:
             con.execute(f"ALTER TABLE signals ADD COLUMN {col} TEXT")
@@ -102,6 +106,10 @@ def _migrate(con):
             con.execute(f"ALTER TABLE signals ADD COLUMN {col} {decl}")
         except Exception:
             pass
+    try:
+        con.execute("ALTER TABLE securities ADD COLUMN yfinance_fail_streak INTEGER DEFAULT 0")
+    except Exception:
+        pass
 
 
 def connect(path=None):
@@ -126,6 +134,48 @@ def upsert_security(con, ticker, name, exchange, sector, cik=None):
         ON CONFLICT(ticker) DO UPDATE SET name=excluded.name,
         exchange=excluded.exchange, sector=excluded.sector, cik=excluded.cik""",
         (ticker, name, exchange, sector, cik))
+
+
+def set_hygiene_excluded(con, ticker, excluded: bool):
+    """Mark whether a ticker's real price data fails the hygiene filter
+    (penny stock / illiquid). Excluded tickers are intentionally never
+    given a price row, so they must not be reported as stale; this flag
+    is what lets get_stale_tickers() tell that apart from a genuine gap.
+    Self-heals: cleared whenever the ticker next loads real prices, in
+    case its price/volume later qualifies."""
+    con.execute("UPDATE securities SET hygiene_excluded=? WHERE ticker=?",
+                (1 if excluded else 0, ticker))
+
+
+def reset_fail_streaks(con, tickers: list):
+    """Zero out yfinance_fail_streak for tickers that loaded successfully."""
+    if not tickers:
+        return
+    con.executemany("UPDATE securities SET yfinance_fail_streak=0 WHERE ticker=?",
+                    [(t,) for t in tickers])
+
+
+def increment_fail_streaks(con, tickers: list):
+    """Bump yfinance_fail_streak by 1 for tickers that failed to load."""
+    if not tickers:
+        return
+    con.executemany(
+        "UPDATE securities SET yfinance_fail_streak=yfinance_fail_streak+1 WHERE ticker=?",
+        [(t,) for t in tickers])
+
+
+def deactivate_stale_streaks(con, threshold: int) -> list:
+    """Set active=0 for securities whose fail streak has reached threshold.
+    Returns the tickers newly deactivated (active was 1 before this call)."""
+    rows = con.execute(
+        "SELECT ticker FROM securities WHERE yfinance_fail_streak>=? AND active=1",
+        (threshold,)).fetchall()
+    deactivated = [r[0] for r in rows]
+    if deactivated:
+        con.execute(
+            "UPDATE securities SET active=0 WHERE yfinance_fail_streak>=? AND active=1",
+            (threshold,))
+    return deactivated
 
 
 def upsert_prices(con, ticker, df):
@@ -334,7 +384,12 @@ def get_price_latest_dates(con, tickers: list) -> dict:
 def get_stale_tickers(con, max_age_days: int) -> list:
     """Return [(ticker, last_date)] for active securities whose newest stored
     price is older than max_age_days, or that have no price data at all
-    (last_date is None in that case)."""
+    (last_date is None in that case).
+
+    Securities flagged hygiene_excluded are skipped: their price data is
+    intentionally never stored (penny stock / illiquid per hygiene_filter),
+    so they would otherwise show up as permanently "stale" every run and
+    drown out real feed problems."""
     rows = con.execute(
         """SELECT s.ticker, p.last_date
            FROM securities s
@@ -342,6 +397,7 @@ def get_stale_tickers(con, max_age_days: int) -> list:
                SELECT ticker, MAX(date) AS last_date FROM prices GROUP BY ticker
            ) p ON s.ticker = p.ticker
            WHERE s.active = 1
+             AND COALESCE(s.hygiene_excluded, 0) = 0
              AND (p.last_date IS NULL OR p.last_date < date('now', ?))
            ORDER BY s.ticker""",
         (f"-{max_age_days} days",),
