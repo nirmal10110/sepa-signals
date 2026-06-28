@@ -1,0 +1,49 @@
+2026-06-28 14:45:02 INFO    sepa  log file: C:\Users\lathe\sepa-signals\data\logs\2026-06-28\14-45-02-intraday\sepa.log
+2026-06-28 14:45:02 INFO    sepa.intraday  intraday scan: 488 watchlist tickers
+2026-06-28 14:45:05 INFO    sepa.intraday  intraday alert ALX: stage2 TT7/8 dir=ok stale=no vol=19.37x
+2026-06-28 14:45:07 INFO    sepa.intraday  intraday alert APPS: stage2 TT6/8 dir=ok stale=no vol=23.22x
+2026-06-28 14:45:14 INFO    sepa.intraday  intraday alert CNS: stage2 TT7/8 dir=ok stale=no vol=26.88x
+2026-06-28 14:45:15 INFO    sepa.intraday  intraday alert CRI: stage2 TT7/8 dir=ok stale=no vol=23.88x
+2026-06-28 14:45:16 ERROR   yfinance  $CURLF: possibly delisted; no price data found  (period=1d)
+2026-06-28 14:45:16 ERROR   sepa.intraday  intraday CURLF: unhandled error
+Traceback (most recent call last):
+  File "C:\Users\lathe\sepa-signals\sepa\run_intraday.py", line 166, in run_scan
+    live_price, live_volume = get_live_quote(t)
+                              ~~~~~~~~~~~~~~^^^
+  File "C:\Users\lathe\sepa-signals\sepa\run_intraday.py", line 85, in get_live_quote
+    raise ValueError(f"no intraday bars for {ticker}")
+ValueError: no intraday bars for CURLF
+2026-06-28 14:45:16 ERROR   yfinance  $CWAN: possibly delisted; no price data found  (period=1d)
+2026-06-28 14:45:16 ERROR   sepa.intraday  intraday CWAN: unhandled error
+Traceback (most recent call last):
+  File "C:\Users\lathe\sepa-signals\sepa\run_intraday.py", line 166, in run_scan
+    live_price, live_volume = get_live_quote(t)
+                              ~~~~~~~~~~~~~~^^^
+  File "C:\Users\lathe\sepa-signals\sepa\run_intraday.py", line 85, in get_live_quote
+    raise ValueError(f"no intraday bars for {ticker}")
+ValueError: no intraday bars for CWAN
+2026-06-28 14:45:20 INFO    sepa.intraday  intraday alert ESS: stage2 TT6/8 dir=ok stale=no vol=20.54x
+2026-06-28 14:45:28 ERROR   yfinance  $KALV: possibly delisted; no price data found  (period=1d)
+2026-06-28 14:45:28 ERROR   sepa.intraday  intraday KALV: unhandled error
+Traceback (most recent call last):
+  File "C:\Users\lathe\sepa-signals\sepa\run_intraday.py", line 166, in run_scan
+    live_price, live_volume = get_live_quote(t)
+                              ~~~~~~~~~~~~~~^^^
+  File "C:\Users\lathe\sepa-signals\sepa\run_intraday.py", line 85, in get_live_quote
+    raise ValueError(f"no intraday bars for {ticker}")
+ValueError: no intraday bars for KALV
+2026-06-28 14:45:29 INFO    sepa.intraday  intraday alert KOF: stage2 TT7/8 dir=ok stale=no vol=36.46x
+2026-06-28 14:45:37 INFO    sepa.intraday  intraday alert OKTA: stage2 TT6/8 dir=ok stale=no vol=14.89x
+2026-06-28 14:45:41 INFO    sepa.intraday  intraday alert RDWR: stage2 TT7/8 dir=ok stale=no vol=9.31x
+2026-06-28 14:45:44 INFO    sepa.intraday  intraday alert SILA: stage2 TT7/8 dir=ok stale=no vol=34.26x
+2026-06-28 14:45:45 INFO    sepa.intraday  intraday alert SMC: stage2 TT6/8 dir=ok stale=no vol=10.29x
+2026-06-28 14:45:47 ERROR   yfinance  $TCNNF: possibly delisted; no price data found  (period=1d)
+2026-06-28 14:45:47 ERROR   sepa.intraday  intraday TCNNF: unhandled error
+Traceback (most recent call last):
+  File "C:\Users\lathe\sepa-signals\sepa\run_intraday.py", line 166, in run_scan
+    live_price, live_volume = get_live_quote(t)
+                              ~~~~~~~~~~~~~~^^^
+  File "C:\Users\lathe\sepa-signals\sepa\run_intraday.py", line 85, in get_live_quote
+    raise ValueError(f"no intraday bars for {ticker}")
+ValueError: no intraday bars for TCNNF
+2026-06-28 14:45:54 INFO    sepa.intraday  intraday complete: 10 alerts sent
