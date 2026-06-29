@@ -3059,3 +3059,168 @@ From https://github.com/nirmal10110/sepa-signals
  * branch            main       -> FETCH_HEAD
 Already up to date.
 [Sun 06/28/2026 22:00:01.87] git pull done (exit 0) 
+[Sun 06/28/2026 22:30:01.23] git pull starting 
+From https://github.com/nirmal10110/sepa-signals
+ * branch            main       -> FETCH_HEAD
+Already up to date.
+[Sun 06/28/2026 22:30:01.97] git pull done (exit 0) 
+[Sun 06/28/2026 23:00:01.24] git pull starting 
+From https://github.com/nirmal10110/sepa-signals
+ * branch            main       -> FETCH_HEAD
+   d4bdb8e..d0f5f7e  main       -> origin/main
+Updating d4bdb8e..d0f5f7e
+Fast-forward
+ COMMERCIALISE.md | 192 +++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 192 insertions(+)
+ create mode 100644 COMMERCIALISE.md
+[Sun 06/28/2026 23:00:02.61] git pull done (exit 0) 
+[Sun 06/28/2026 23:30:01.25] git pull starting 
+From https://github.com/nirmal10110/sepa-signals
+ * branch            main       -> FETCH_HEAD
+Already up to date.
+[Sun 06/28/2026 23:30:01.85] git pull done (exit 0) 
+[Mon 06/29/2026  0:00:01.26] git pull starting 
+From https://github.com/nirmal10110/sepa-signals
+ * branch            main       -> FETCH_HEAD
+Already up to date.
+[Mon 06/29/2026  0:00:01.86] git pull done (exit 0) 
+[Mon 06/29/2026  0:30:01.27] git pull starting 
+From https://github.com/nirmal10110/sepa-signals
+ * branch            main       -> FETCH_HEAD
+Already up to date.
+[Mon 06/29/2026  0:30:01.89] git pull done (exit 0) 
+[Mon 06/29/2026  1:00:01.27] git pull starting 
+From https://github.com/nirmal10110/sepa-signals
+ * branch            main       -> FETCH_HEAD
+Already up to date.
+[Mon 06/29/2026  1:00:01.93] git pull done (exit 0) 
+[Mon 06/29/2026  1:30:01.28] git pull starting 
+From https://github.com/nirmal10110/sepa-signals
+ * branch            main       -> FETCH_HEAD
+Already up to date.
+[Mon 06/29/2026  1:30:01.89] git pull done (exit 0) 
+[Mon 06/29/2026  2:00:01.30] git pull starting 
+From https://github.com/nirmal10110/sepa-signals
+ * branch            main       -> FETCH_HEAD
+Already up to date.
+[Mon 06/29/2026  2:00:02.22] git pull done (exit 0) 
+[Mon 06/29/2026  2:30:01.30] git pull starting 
+From https://github.com/nirmal10110/sepa-signals
+ * branch            main       -> FETCH_HEAD
+Already up to date.
+[Mon 06/29/2026  2:30:01.92] git pull done (exit 0) 
+[Mon 06/29/2026  3:00:01.30] git pull starting 
+From https://github.com/nirmal10110/sepa-signals
+ * branch            main       -> FETCH_HEAD
+Already up to date.
+[Mon 06/29/2026  3:00:01.91] git pull done (exit 0) 
+[Mon 06/29/2026  3:30:01.32] git pull starting 
+From https://github.com/nirmal10110/sepa-signals
+ * branch            main       -> FETCH_HEAD
+Already up to date.
+[Mon 06/29/2026  3:30:01.93] git pull done (exit 0) 
+[Mon 06/29/2026  4:00:01.33] git pull starting 
+From https://github.com/nirmal10110/sepa-signals
+ * branch            main       -> FETCH_HEAD
+Already up to date.
+[Mon 06/29/2026  4:00:01.94] git pull done (exit 0) 
+[Mon 06/29/2026  4:30:01.33] git pull starting 
+From https://github.com/nirmal10110/sepa-signals
+ * branch            main       -> FETCH_HEAD
+Already up to date.
+[Mon 06/29/2026  4:30:01.95] git pull done (exit 0) 
+[Mon 06/29/2026  5:00:01.35] git pull starting 
+From https://github.com/nirmal10110/sepa-signals
+ * branch            main       -> FETCH_HEAD
+Already up to date.
+[Mon 06/29/2026  5:00:02.21] git pull done (exit 0) 
+[Mon 06/29/2026  5:30:01.36] git pull starting 
+From https://github.com/nirmal10110/sepa-signals
+ * branch            main       -> FETCH_HEAD
+Already up to date.
+[Mon 06/29/2026  5:30:01.96] git pull done (exit 0) 
+[Mon 06/29/2026  6:00:01.36] git pull starting 
+From https://github.com/nirmal10110/sepa-signals
+ * branch            main       -> FETCH_HEAD
+Already up to date.
+[Mon 06/29/2026  6:00:02.09] git pull done (exit 0) 
+[Mon 06/29/2026  6:30:01.37] git pull starting 
+From https://github.com/nirmal10110/sepa-signals
+ * branch            main       -> FETCH_HEAD
+Already up to date.
+[Mon 06/29/2026  6:30:02.03] git pull done (exit 0) 
+[Mon 06/29/2026  7:00:01.37] git pull starting 
+From https://github.com/nirmal10110/sepa-signals
+ * branch            main       -> FETCH_HEAD
+Already up to date.
+[Mon 06/29/2026  7:00:02.12] git pull done (exit 0) 
+[Mon 06/29/2026  7:30:01.39] git pull starting 
+From https://github.com/nirmal10110/sepa-signals
+ * branch            main       -> FETCH_HEAD
+Already up to date.
+[Mon 06/29/2026  7:30:02.29] git pull done (exit 0) 
+[Mon 06/29/2026  8:00:01.39] git pull starting 
+From https://github.com/nirmal10110/sepa-signals
+ * branch            main       -> FETCH_HEAD
+Already up to date.
+[Mon 06/29/2026  8:00:02.16] git pull done (exit 0) 
+[Mon 06/29/2026  8:30:01.39] git pull starting 
+From https://github.com/nirmal10110/sepa-signals
+ * branch            main       -> FETCH_HEAD
+Already up to date.
+[Mon 06/29/2026  8:30:02.18] git pull done (exit 0) 
+[Mon 06/29/2026  9:00:01.41] git pull starting 
+From https://github.com/nirmal10110/sepa-signals
+ * branch            main       -> FETCH_HEAD
+Already up to date.
+[Mon 06/29/2026  9:00:02.23] git pull done (exit 0) 
+[Mon 06/29/2026  9:30:01.41] git pull starting 
+From https://github.com/nirmal10110/sepa-signals
+ * branch            main       -> FETCH_HEAD
+Already up to date.
+[Mon 06/29/2026  9:30:02.09] git pull done (exit 0) 
+[Mon 06/29/2026 10:00:01.42] git pull starting 
+From https://github.com/nirmal10110/sepa-signals
+ * branch            main       -> FETCH_HEAD
+Already up to date.
+[Mon 06/29/2026 10:00:02.30] git pull done (exit 0) 
+[Mon 06/29/2026 10:30:01.43] git pull starting 
+From https://github.com/nirmal10110/sepa-signals
+ * branch            main       -> FETCH_HEAD
+Already up to date.
+[Mon 06/29/2026 10:30:02.24] git pull done (exit 0) 
+[Mon 06/29/2026 11:00:01.43] git pull starting 
+From https://github.com/nirmal10110/sepa-signals
+ * branch            main       -> FETCH_HEAD
+Already up to date.
+[Mon 06/29/2026 11:00:02.59] git pull done (exit 0) 
+[Mon 06/29/2026 11:30:01.45] git pull starting 
+From https://github.com/nirmal10110/sepa-signals
+ * branch            main       -> FETCH_HEAD
+Already up to date.
+[Mon 06/29/2026 11:30:02.24] git pull done (exit 0) 
+[Mon 06/29/2026 12:00:01.46] git pull starting 
+From https://github.com/nirmal10110/sepa-signals
+ * branch            main       -> FETCH_HEAD
+Already up to date.
+[Mon 06/29/2026 12:00:02.48] git pull done (exit 0) 
+[Mon 06/29/2026 12:30:01.47] git pull starting 
+From https://github.com/nirmal10110/sepa-signals
+ * branch            main       -> FETCH_HEAD
+Already up to date.
+[Mon 06/29/2026 12:30:02.23] git pull done (exit 0) 
+[Mon 06/29/2026 13:00:01.48] git pull starting 
+From https://github.com/nirmal10110/sepa-signals
+ * branch            main       -> FETCH_HEAD
+Already up to date.
+[Mon 06/29/2026 13:00:02.44] git pull done (exit 0) 
+[Mon 06/29/2026 13:30:01.49] git pull starting 
+From https://github.com/nirmal10110/sepa-signals
+ * branch            main       -> FETCH_HEAD
+Already up to date.
+[Mon 06/29/2026 13:30:02.16] git pull done (exit 0) 
+[Mon 06/29/2026 14:00:01.49] git pull starting 
+From https://github.com/nirmal10110/sepa-signals
+ * branch            main       -> FETCH_HEAD
+Already up to date.
+[Mon 06/29/2026 14:00:02.27] git pull done (exit 0) 
